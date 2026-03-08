@@ -61,8 +61,11 @@ export default function AdminProductsPage() {
             });
             if (res.ok) {
                 mutateProducts((currentData: any) => {
-                    if (!currentData) return currentData;
-                    return currentData.map((p: any) => p._id === product._id ? { ...p, featured: newValue } : p);
+                    if (!currentData || !currentData.products) return currentData;
+                    return {
+                        ...currentData,
+                        products: currentData.products.map((p: any) => p._id === product._id ? { ...p, featured: newValue } : p)
+                    };
                 }, false);
                 toast.success(newValue ? 'Онцгой болголоо ⭐' : 'Онцгой-оос хаслаа');
             } else {
