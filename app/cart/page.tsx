@@ -12,7 +12,7 @@ import AntiGravityCartItem from '@/components/cart/AntiGravityCartItem';
 import TaobaoStickyFooter from '@/components/cart/TaobaoStickyFooter';
 
 export default function CartPage() {
-    const { items } = useCartStore();
+    const { items, getTotalItems } = useCartStore();
     const { t } = useTranslation();
 
     const { data } = useSWR('/api/products?limit=4', (url) =>
@@ -132,17 +132,17 @@ export default function CartPage() {
         );
     }
 
-    const readyItems = items.filter(i => (i.stockStatus || 'in-stock') === 'in-stock');
+    const readyItems = items.filter(i => i.stockStatus !== 'pre-order');
     const preOrderItems = items.filter(i => i.stockStatus === 'pre-order');
 
     return (
-        <div className="min-h-screen bg-[#FDFEFE] pt-24 pb-[calc(env(safe-area-inset-bottom)+150px)] lg:pb-32">
+        <div className="min-h-screen bg-[#FDFEFE] pt-16 pb-[calc(env(safe-area-inset-bottom)+150px)] lg:pb-32">
             <div className="max-w-2xl mx-auto px-4">
                 {/* Header with Glassmorphism */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-10 flex items-center justify-between px-2"
+                    className="mb-6 flex items-center justify-between px-2"
                 >
                     <div className="flex items-center gap-4">
                         <Link href="/">
@@ -154,11 +154,11 @@ export default function CartPage() {
                             </motion.div>
                         </Link>
                         <div className="flex flex-col">
-                            <h1 className="text-2xl font-black text-gray-900 tracking-tight">{t('cart', 'title')}</h1>
+                            <h1 className="text-xl font-bold text-gray-900 tracking-tight">{t('cart', 'title')}</h1>
                             <div className="flex items-center gap-1.5 mt-0.5">
                                 <div className="w-1 h-1 rounded-full bg-orange-500" />
-                                <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest leading-none">
-                                    {items.length} БАРАА
+                                <span className="text-xs font-medium text-gray-500 leading-none">
+                                    {getTotalItems()} бараа
                                 </span>
                             </div>
                         </div>
@@ -172,8 +172,8 @@ export default function CartPage() {
                         <section>
                             <div className="flex items-center gap-2 mb-4 px-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
-                                <h2 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Бэлэн байгаа бараанууд</h2>
-                                <span className="text-[10px] bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full font-black border border-emerald-100/50 ml-auto flex items-center gap-1">
+                                <h2 className="text-[13px] font-bold text-slate-900">Бэлэн байгаа бараанууд</h2>
+                                <span className="text-[10px] bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full font-bold border border-emerald-100/50 ml-auto flex items-center gap-1">
                                     <Check className="w-3 h-3" strokeWidth={3} /> Маргааш хүргэгдэнэ
                                 </span>
                             </div>
@@ -192,8 +192,8 @@ export default function CartPage() {
                         <section>
                             <div className="flex items-center gap-2 mb-4 px-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)] animate-pulse" />
-                                <h2 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Захиалгын бараанууд</h2>
-                                <span className="text-[10px] bg-blue-50 text-blue-500 px-3 py-1 rounded-full font-black border border-blue-100/50 ml-auto flex items-center gap-1">
+                                <h2 className="text-[13px] font-bold text-slate-900">Захиалгын бараанууд</h2>
+                                <span className="text-[10px] bg-blue-50 text-blue-500 px-3 py-1 rounded-full font-bold border border-blue-100/50 ml-auto flex items-center gap-1">
                                     <Clock className="w-3 h-3" strokeWidth={3} /> 14 хоногт ирнэ
                                 </span>
                             </div>

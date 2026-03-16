@@ -16,6 +16,8 @@ export default function TaobaoStickyFooter() {
     const selectedInStockPrice = useCartStore((state) => state.getSelectedTotalPriceByStatus('in-stock'));
     const selectedPreOrderPrice = useCartStore((state) => state.getSelectedTotalPriceByStatus('pre-order'));
 
+    if (items.length === 0) return null;
+
     const allSelected = items.length > 0 && items.every((item) => item.selected);
 
     // Price animation hook
@@ -51,7 +53,7 @@ export default function TaobaoStickyFooter() {
                                     }`}>
                                     {allSelected && <Check className="w-3 h-3 text-white" strokeWidth={4} />}
                                 </div>
-                                <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider group-hover:text-gray-900 transition-colors">Бүгдийг сонгох</span>
+                                <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">Бүгдийг сонгох</span>
                             </button>
 
                             {(selectedInStockPrice > 0 || selectedPreOrderPrice > 0) && (
@@ -59,13 +61,13 @@ export default function TaobaoStickyFooter() {
                                     {selectedInStockPrice > 0 && (
                                         <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 rounded-lg">
                                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                            <span className="text-[9px] font-black text-emerald-600 uppercase tracking-tighter">Бэлэн: {formatCurrency(selectedInStockPrice)}₮</span>
+                                            <span className="text-[10px] font-bold text-emerald-600">Бэлэн: {formatCurrency(selectedInStockPrice)}₮</span>
                                         </div>
                                     )}
                                     {selectedPreOrderPrice > 0 && (
                                         <div className="flex items-center gap-1.5 px-2 py-1 bg-blue-50 rounded-lg">
                                             <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                                            <span className="text-[9px] font-black text-blue-600 uppercase tracking-tighter">Захиалга: {formatCurrency(selectedPreOrderPrice)}₮</span>
+                                            <span className="text-[10px] font-bold text-blue-600">Захиалга: {formatCurrency(selectedPreOrderPrice)}₮</span>
                                         </div>
                                     )}
                                 </div>
@@ -75,12 +77,12 @@ export default function TaobaoStickyFooter() {
                         {/* Bottom Row: Total & Checkout */}
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] leading-none mb-1.5">Нийт дүнгээр ({selectedTotalItems})</span>
+                                <span className="text-[11px] font-medium text-gray-500 leading-none mb-1.5">Нийт дүнгээр ({selectedTotalItems})</span>
                                 <div className="flex items-baseline gap-1">
-                                    <motion.span className="text-3xl font-black text-gray-950 tracking-tighter">
+                                    <motion.span className="text-2xl font-bold text-gray-900 tracking-tight">
                                         {displayPrice}
                                     </motion.span>
-                                    <span className="text-lg font-black text-[#FF5000]">₮</span>
+                                    <span className="text-base font-bold text-[#FF5000]">₮</span>
                                 </div>
                             </div>
 
@@ -92,8 +94,8 @@ export default function TaobaoStickyFooter() {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 disabled={selectedTotalItems === 0}
-                                className={`h-14 px-10 rounded-2xl flex items-center justify-center gap-3 font-black text-sm uppercase tracking-widest transition-all shadow-xl shadow-orange-500/10 ${selectedTotalItems > 0
-                                    ? 'bg-gray-950 text-white active:scale-95'
+                                className={`h-12 px-10 rounded-xl flex items-center justify-center gap-3 font-bold text-[16px] transition-all shadow-lg ${selectedTotalItems > 0
+                                    ? 'bg-gray-950 text-white active:scale-95 shadow-black/10'
                                     : 'bg-gray-100 text-gray-400 shadow-none grayscale cursor-not-allowed'
                                     }`}
                             >

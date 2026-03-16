@@ -12,6 +12,7 @@ export type SearchResultProduct = {
   name: string;
   price: number;
   images?: string[];
+  image?: string | null;
   category?: string;
 };
 
@@ -71,7 +72,7 @@ const SearchDropdown = ({
                   >
                     <div className="w-12 h-12 rounded-lg bg-gray-50 overflow-hidden flex-shrink-0 relative border border-gray-100/50">
                       <Image
-                        src={product.images && product.images.length > 0 ? product.images[0] : '/soyol-logo.png'}
+                        src={(product.images && product.images.length > 0) ? product.images[0] : (product.image || '/soyol-logo.png')}
                         alt={product.name}
                         fill
                         className="object-cover"

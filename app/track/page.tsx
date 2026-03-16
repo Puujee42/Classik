@@ -63,7 +63,7 @@ export default function TrackOrderPage() {
                 value={phone}
                 onChange={e => setPhone(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                placeholder="99112233"
+                placeholder="77181818"
                 className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium outline-none focus:border-[#FF5000] focus:ring-2 focus:ring-[#FF5000]/10 transition-all"
               />
             </div>

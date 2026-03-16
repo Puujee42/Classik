@@ -30,13 +30,13 @@ export default function DiscoveryProductCard({
   const [isHovered, setIsHovered] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showSecondaryImage, setShowSecondaryImage] = useState(false);
-  const [imgSrc, setImgSrc] = useState(product.image || '/soyol-logo.png');
+  const [imgSrc, setImgSrc] = useState(product.image || (product.images && product.images.length > 0 ? product.images[0] : '/soyol-logo.png'));
   const addItem = useCartStore((state) => state.addItem);
 
   // Update imgSrc if product image changes
   useEffect(() => {
-    setImgSrc(product.image || '/soyol-logo.png');
-  }, [product.image]);
+    setImgSrc(product.image || (product.images && product.images.length > 0 ? product.images[0] : '/soyol-logo.png'));
+  }, [product.image, product.images]);
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();

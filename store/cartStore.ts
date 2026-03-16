@@ -10,7 +10,7 @@ export interface CartItem extends Product {
 
 interface CartState {
   items: CartItem[];
-  addItem: (product: Product) => void;
+  addItem: (product: Product, quantity?: number, replace?: boolean) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   toggleItemSelection: (productId: string) => void; // New
@@ -47,7 +47,7 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       items: [],
 
-      addItem: async (product) => {
+      addItem: async (product, quantity = 1, replace = false) => {
         const items = get().items;
         const existingItem = items.find((item) => item.id === product.id);
         let newItems;
@@ -55,7 +55,7 @@ export const useCartStore = create<CartState>()(
         if (existingItem) {
           newItems = items.map((item) =>
             item.id === product.id
-              ? { ...item, quantity: item.quantity + 1 }
+              ? { ...item, quantity: replace ? quantity : item.quantity + quantity, selected: true }
               : item
           );
         } else {
@@ -63,7 +63,7 @@ export const useCartStore = create<CartState>()(
             ...items,
             {
               ...product,
-              quantity: 1,
+              quantity,
               selected: true,
               isReady: (product.stockStatus || 'in-stock') === 'in-stock'
             }

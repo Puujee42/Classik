@@ -43,13 +43,11 @@ export default function ProfilePage() {
   }, [isAuthenticated, wishlistCount]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      if (!isAuthenticated) {
-        router.push('/sign-in');
-      }
-    }, 500);
-    return () => clearTimeout(timer);
+    if (!isAuthenticated) {
+      router.replace('/sign-in');
+      return;
+    }
+    setIsLoading(false);
   }, [isAuthenticated, router]);
 
   const handleLogout = async () => {
@@ -112,10 +110,6 @@ export default function ProfilePage() {
         <p className="text-[14px] text-white/80 z-10 font-medium">
           {user.phone || user.email || ''}
         </p>
-
-        <Link href="/profile/edit" className="mt-3 px-4 py-1.5 border border-white/40 rounded-full text-white text-[12px] font-bold tracking-wide hover:bg-white/10 transition-colors z-10">
-          Профайл засах
-        </Link>
       </div>
 
       {/* 2. STATS ROW */}
@@ -129,11 +123,6 @@ export default function ProfilePage() {
           <div className="flex-1 flex flex-col items-center">
             <span className="text-[18px] font-bold text-[#FF6B00]">{wishlistCount}</span>
             <span className="text-[12px] text-gray-400 font-medium mt-0.5">Хадгалсан</span>
-          </div>
-          <div className="w-[1px] h-[30px] bg-gray-100"></div>
-          <div className="flex-1 flex flex-col items-center">
-            <span className="text-[18px] font-bold text-[#FF6B00]">{stats.addresses}</span>
-            <span className="text-[12px] text-gray-400 font-medium mt-0.5">Хаяг</span>
           </div>
         </div>
       </div>
@@ -154,11 +143,6 @@ export default function ProfilePage() {
             <MenuItem
               icon={Heart} iconBg="#FFF0F5" iconColor="#EC4899"
               label="Хадгалсан бараа" href="/wishlist"
-            />
-            <MenuDivider />
-            <MenuItem
-              icon={MapPin} iconBg="#F0FFF4" iconColor="#22C55E"
-              label="Хаягийн бүртгэл" href="/addresses"
             />
           </div>
         </div>

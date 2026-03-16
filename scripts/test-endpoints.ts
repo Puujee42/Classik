@@ -32,7 +32,7 @@ async function testCheckoutValidation() {
     body: JSON.stringify({
       items: [{ id: '507f1f77bcf86cd799439011', quantity: 2 }],
       fullName: 'Test User',
-      phone: '99112233',
+      phone: '77181818',
       address: 'Test Address',
       city: 'UB',
       district: 'SBD'

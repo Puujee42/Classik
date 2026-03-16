@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth } from '@/context/AuthContext';
 import RelatedProducts from './RelatedProducts';
+import ProductReviews from './ProductReviews';
 import type { Product } from '@/models/Product';
 
 export type ProductDetailData = {
@@ -42,6 +43,7 @@ export type ProductDetailData = {
   featured?: boolean;
   relatedProducts?: Product[];
   attributes?: Record<string, any>;
+  reviews?: any[]; // Add reviews to the product type
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -382,14 +384,13 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
   };
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addItem({
-        ...product,
-        image: product.image || '',
-        stockStatus: product.stockStatus as any,
-        description: product.description || undefined,
-      });
-    }
+    addItem({
+      ...product,
+      image: product.image || '',
+      stockStatus: product.stockStatus as any,
+      description: product.description || undefined,
+    }, quantity, false);
+
     toast.custom((tInst) => (
       <div className={`${tInst.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-white shadow-xl rounded-2xl pointer-events-auto flex ring-1 ring-black/5 p-4`}>
         <div className="flex items-start">
@@ -403,9 +404,9 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
     ));
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     toggleAllSelection(false);
-    addItem({ ...product, image: product.image || '', stockStatus: product.stockStatus as any, description: product.description || undefined });
+    await addItem({ ...product, image: product.image || '', stockStatus: product.stockStatus as any, description: product.description || undefined }, quantity, true);
     router.push('/checkout');
   };
 
@@ -1016,78 +1017,8 @@ function ProductInfoTabs({ product }: { product: any }) {
 
           {/* Reviews */}
           {activeTab === 'reviews' && (
-            <div className="flex flex-col lg:flex-row gap-12 py-4">
-              <div className="shrink-0 text-center lg:text-left">
-                <div className="font-sora font-black text-6xl text-slate-900 tracking-tighter leading-none mb-3">
-                  {reviewStats?.averageRating.toFixed(1) || '0.0'}
-                </div>
-                <div className="flex justify-center lg:justify-start gap-1 text-amber-500 mb-2">
-                  {[1, 2, 3, 4, 5].map(s => (
-                    <Star
-                      key={s}
-                      className={`w-5 h-5 ${s <= Math.round(reviewStats?.averageRating || 0) ? 'fill-current' : 'text-slate-200 fill-slate-200'}`}
-                    />
-                  ))}
-                </div>
-                <p className="text-sm font-bold text-slate-400">Нийт {reviewStats?.total || 0} үнэлгээ</p>
-              </div>
-
-              <div className="flex-1 space-y-3">
-                {reviewsLoading && <div className="py-8 text-center text-slate-400 text-sm">Уншиж байна...</div>}
-
-                {!reviewsLoading && [5, 4, 3, 2, 1].map((star, idx) => {
-                  const widthPct = reviewStats?.total
-                    ? Math.round(((reviewStats.distribution[star] || 0) / reviewStats.total) * 100)
-                    : 0;
-                  return (
-                    <div key={star} className="flex items-center gap-4">
-                      <span className="font-bold text-slate-600 w-3 text-sm">{star}</span>
-                      <Star className="w-4 h-4 fill-slate-200 text-slate-200 shrink-0" />
-                      <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${widthPct}%` }}
-                          transition={{ duration: 0.9, delay: idx * 0.08, ease: 'easeOut' }}
-                          className="h-full bg-amber-400 rounded-full"
-                        />
-                      </div>
-                      <span className="text-xs text-slate-400 w-8 text-right font-bold">{widthPct}%</span>
-                    </div>
-                  );
-                })}
-
-                {/* Review List */}
-                {!reviewsLoading && reviews.length > 0 && (
-                  <div className="mt-8 space-y-5 border-t border-slate-100 pt-6">
-                    {reviews.map((r: any) => (
-                      <div key={r._id} className="flex gap-4">
-                        <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center shrink-0 font-bold text-slate-500 text-sm">
-                          {r.userName?.[0] || 'А'}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold text-slate-900 text-sm">{r.userName || 'Нэргүй'}</span>
-                            {r.verified && <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-bold">✓ Баталгаат</span>}
-                          </div>
-                          <div className="flex gap-0.5 mb-2">
-                            {[1, 2, 3, 4, 5].map(s => (
-                              <Star key={s} className={`w-3.5 h-3.5 ${s <= r.rating ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-200'}`} />
-                            ))}
-                          </div>
-                          {r.comment && <p className="text-sm text-slate-600 leading-relaxed">{r.comment}</p>}
-                          <p className="text-xs text-slate-400 mt-2">{new Date(r.createdAt).toLocaleDateString('mn-MN')}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div className="pt-6">
-                  <button className="px-6 py-3 rounded-2xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-colors text-sm">
-                    Үнэлгээ бичих
-                  </button>
-                </div>
-              </div>
+            <div className="py-4">
+              <ProductReviews productId={product.id} />
             </div>
           )}
         </motion.div>

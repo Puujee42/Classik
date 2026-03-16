@@ -46,7 +46,7 @@ export default function LuxuryNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
-  const [searchResults, setSearchResults] = useState<{ id: string; name: string; price: number; images?: string[]; category?: string }[]>([]);
+  const [searchResults, setSearchResults] = useState<{ id: string; name: string; price: number; images?: string[]; image?: string | null; category?: string }[]>([]);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);

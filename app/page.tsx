@@ -270,8 +270,17 @@ export default function HomePage() {
               <p className="text-red-500">Error loading products.</p>
             </div>
           ) : loading ? (
-            <div className="flex justify-center py-20">
-              <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="grid grid-cols-2 gap-3 px-3 lg:hidden">
+              {Array(6).fill(0).map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-100/50">
+                  <div className="aspect-square bg-slate-100 animate-pulse" />
+                  <div className="p-3 space-y-2">
+                    <div className="h-3 bg-slate-100 rounded animate-pulse w-3/4" />
+                    <div className="h-3 bg-slate-100 rounded animate-pulse w-1/2" />
+                    <div className="h-5 bg-slate-100 rounded animate-pulse w-2/3" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : sortedProducts.length === 0 ? (
             <div className="text-center py-20">

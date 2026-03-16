@@ -37,6 +37,7 @@ function SearchContent() {
   const q = searchParams.get('q') ?? '';
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [recommended, setRecommended] = useState<ProductItem[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<ProductItem[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -64,6 +65,12 @@ function SearchContent() {
     fetch('/api/products?limit=8')
       .then(res => res.json())
       .then(data => setRecommended(data.products || []))
+      .catch(() => { });
+
+    // Fetch featured products for trending tags
+    fetch('/api/products?featured=true&limit=4')
+      .then(res => res.json())
+      .then(data => setFeaturedProducts(data.products || []))
       .catch(() => { });
   }, []);
 
@@ -106,13 +113,20 @@ function SearchContent() {
     });
   };
 
-  const trendingTags = [
-    { text: 'iPhone 15 Pro', status: 'HOT' },
-    { text: 'AirPods Max', status: 'NEW' },
-    { text: 'Gaming Setup', status: 'HOT' },
-    { text: 'Skin Care', status: 'TREND' },
-    { text: 'Winter Sale', status: 'HOT' },
-  ];
+  const handleTagClick = (text: string) => {
+    router.push(`/search?q=${encodeURIComponent(text)}`);
+  };
+
+  // Generate trending tags from featured products or fallback
+  const trendingTags = featuredProducts.length > 0 
+    ? featuredProducts.map(p => ({ text: p.name, status: 'HOT' }))
+    : [
+        { text: 'iPhone 15 Pro', status: 'HOT' },
+        { text: 'AirPods Max', status: 'NEW' },
+        { text: 'Gaming Setup', status: 'HOT' },
+        { text: 'Skin Care', status: 'TREND' },
+        { text: 'Winter Sale', status: 'HOT' },
+      ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -188,7 +202,8 @@ function SearchContent() {
               <motion.div
                 key={idx}
                 variants={itemVariants}
-                className="flex items-center gap-2 shrink-0 bg-white/70 backdrop-blur-md px-4 py-1.5 rounded-full border border-gray-100/50 shadow-sm transition-all active:scale-95"
+                onClick={() => handleTagClick(tag.text)}
+                className="flex items-center gap-2 shrink-0 bg-white/70 backdrop-blur-md px-4 py-1.5 rounded-full border border-gray-100/50 shadow-sm transition-all active:scale-95 cursor-pointer hover:bg-white"
               >
                 <span className="text-xs font-medium text-gray-600">{tag.text}</span>
                 {tag.status === 'HOT' && <Flame className="w-3 h-3 text-red-500 fill-red-500" />}
@@ -250,10 +265,14 @@ function SearchContent() {
             </h3>
             <div className="flex flex-wrap gap-2">
               {trendingTags.map((tag, idx) => (
-                <div key={idx} className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-orange-100 shadow-sm active:scale-95 transition-all">
+                <button
+                  key={idx}
+                  onClick={() => handleTagClick(tag.text)}
+                  className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-orange-100 shadow-sm active:scale-95 transition-all hover:bg-orange-50"
+                >
                   <span className="text-xs font-bold text-gray-700">{tag.text}</span>
                   {tag.status === 'HOT' && <Flame className="w-3 h-3 text-red-500 fill-red-500" />}
-                </div>
+                </button>
               ))}
             </div>
           </section>

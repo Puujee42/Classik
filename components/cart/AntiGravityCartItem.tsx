@@ -114,13 +114,13 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
                 <div className="flex-1 min-w-0 flex flex-col justify-between self-stretch py-0.5">
                     <div className="flex justify-between items-start gap-2">
                         <div className="min-w-0 flex-1">
-                            <h3 className="text-[13px] font-bold text-gray-900 truncate leading-tight mb-1">{item.name}</h3>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-gray-50 text-gray-500 border border-gray-100/50 uppercase tracking-tighter">
+                            <h3 className="text-sm font-medium text-gray-900 truncate leading-tight mb-1">{item.name}</h3>
+                            <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-gray-50 text-gray-400 border border-gray-100/50 uppercase tracking-tighter">
                                 {item.category}
                             </span>
                         </div>
                         <div className="text-right shrink-0">
-                            <p className="text-[15px] font-black text-gray-950 tracking-tight leading-none">
+                            <p className="text-[16px] font-bold text-gray-900 tracking-tight leading-none">
                                 {formatPrice(item.price)}
                             </p>
                         </div>
@@ -129,9 +129,9 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
                     <div className="flex items-center justify-between mt-auto">
                         <div className="flex items-center gap-2">
                             {isPreOrder ? (
-                                <span className="text-[9px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100/50 uppercase">Захиалга</span>
+                                <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100/50 uppercase">Захиалга</span>
                             ) : (
-                                <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100/50 uppercase">Бэлэн</span>
+                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100/50 uppercase">Бэлэн</span>
                             )}
                         </div>
 
@@ -144,7 +144,7 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
                             >
                                 <Minus className="w-3.5 h-3.5" strokeWidth={3} />
                             </button>
-                            <span className="w-8 text-center text-[13px] font-bold text-gray-900">{item.quantity}</span>
+                            <span className="w-8 text-center text-sm font-medium text-gray-900">{item.quantity}</span>
                             <button
                                 onClick={() => handleQtyChange(item.quantity + 1)}
                                 className="w-8 h-8 flex items-center justify-center rounded-[10px] text-gray-600 active:bg-white active:shadow-sm transition-all"

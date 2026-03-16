@@ -5,14 +5,23 @@ const QPAY_USERNAME = process.env.QPAY_USERNAME;
 const QPAY_PASSWORD = process.env.QPAY_PASSWORD;
 const QPAY_INVOICE_CODE = process.env.QPAY_INVOICE_CODE;
 
-const redis = Redis.fromEnv();
+const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    })
+    : null;
 
 export async function getQPayToken(): Promise<string> {
     const cacheKey = 'qpay_access_token';
 
     // 1. Check Redis Cache
-    const cachedToken = await redis.get<string>(cacheKey);
-    if (cachedToken) return cachedToken;
+    if (redis) {
+        try {
+            const cachedToken = await redis.get<string>(cacheKey);
+            if (cachedToken) return cachedToken;
+        } catch { }
+    }
 
     // 2. Fetch New Token
     console.log('[QPay] Fetching new access token...');
@@ -36,7 +45,11 @@ export async function getQPayToken(): Promise<string> {
     const token = data.access_token;
 
     // 3. Cache Token (expires in ~15 mins, cache for 14)
-    await redis.set(cacheKey, token, { ex: 14 * 60 });
+    if (redis) {
+        try {
+            await redis.set(cacheKey, token, { ex: 14 * 60 });
+        } catch { }
+    }
 
     return token;
 }
