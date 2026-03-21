@@ -80,7 +80,8 @@ export async function PATCH(
       'name', 'description', 'price', 'originalPrice', 'discountPercent',
       'category', 'image', 'images',
       'brand', 'model', 'delivery', 'paymentMethods',
-      'sections', 'attributes', 'wholesale'
+      'sections', 'attributes', 'wholesale',
+      'options', 'variants'
     ];
     const updateData: Record<string, any> = {};
     for (const key of allowedFields) {

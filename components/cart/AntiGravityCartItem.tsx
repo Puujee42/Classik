@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Trash2, Minus, Plus, Check } from 'lucide-react';
 import { useCartStore, type CartItem } from '@/store/cartStore';
 import { formatPrice } from '@/lib/utils';
+import Link from 'next/link';
 
 interface AntiGravityCartItemProps {
     item: CartItem;
@@ -31,15 +32,22 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
         }
     }, [item.id, item.stockStatus]);
 
+    // Animation controls
+    const [isRemoving, setIsRemoving] = useState(false);
+
     const handleRemove = async () => {
-        setRemoving(true);
-        await removeItem(item.id);
+        setIsRemoving(true);
+        setTimeout(async () => {
+            await removeItem(item.cartItemId);
+        }, 300); // Wait for the exit animation
     };
 
-    const handleQtyChange = async (newQty: number) => {
+    const handleUpdateQuantity = async (newQty: number) => {
         if (newQty < 1) return;
-        await updateQuantity(item.id, newQty);
+        await updateQuantity(item.cartItemId, newQty);
     };
+
+    const discount = item.originalPrice && item.originalPrice > item.price;
 
     const isPreOrder = item.stockStatus === 'pre-order';
 
@@ -89,15 +97,20 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
                 className="relative z-10 flex items-center p-4 gap-4 bg-transparent border-transparent"
             >
                 {/* Selection Checkbox */}
-                <button
-                    onClick={() => toggleItemSelection(item.id)}
-                    className={`shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${item.selected
-                        ? 'bg-[#FF5000] border-[#FF5000] shadow-sm'
-                        : 'border-gray-200 bg-white'
-                        }`}
+                <motion.div
+                    className="shrink-0 pt-0.5 relative z-10"
+                    whileTap={{ scale: 0.9 }}
                 >
-                    {item.selected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
-                </button>
+                    <button
+                        onClick={() => toggleItemSelection(item.cartItemId)}
+                        className={`w-5 h-5 rounded flex items-center justify-center transition-all ${item.selected
+                            ? 'bg-[#FF5000] border-[#FF5000] text-white shadow-sm'
+                            : 'border-gray-200 bg-white'
+                            }`}
+                    >
+                        {item.selected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
+                    </button>
+                </motion.div>
 
                 {/* Product Image */}
                 <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-gray-50 shrink-0 border border-gray-50 px-1">
@@ -114,7 +127,17 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
                 <div className="flex-1 min-w-0 flex flex-col justify-between self-stretch py-0.5">
                     <div className="flex justify-between items-start gap-2">
                         <div className="min-w-0 flex-1">
-                            <h3 className="text-sm font-medium text-gray-900 truncate leading-tight mb-1">{item.name}</h3>
+                            <Link href={`/product/${item.id}`} className="hover:text-[#FF5000] transition-colors">
+                                <h3 className="font-bold text-slate-900 text-[15px] leading-tight truncate">{item.name}</h3>
+                            </Link>
+
+                            {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
+                                <p className="text-xs font-medium text-slate-500 mt-1 flex items-center gap-1.5 opacity-90">
+                                    <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                                    {Object.values(item.selectedOptions).join(' / ')}
+                                </p>
+                            )}
+
                             <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-gray-50 text-gray-400 border border-gray-100/50 uppercase tracking-tighter">
                                 {item.category}
                             </span>
@@ -138,7 +161,7 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
                         {/* Quantity Controls - Premium 12px Rounded */}
                         <div className="flex items-center bg-[#F4F4F5] rounded-[12px] p-0.5 border border-gray-100 shadow-sm">
                             <button
-                                onClick={() => handleQtyChange(item.quantity - 1)}
+                                onClick={() => handleUpdateQuantity(item.quantity - 1)}
                                 className={`w-8 h-8 flex items-center justify-center rounded-[10px] transition-all ${item.quantity <= 1 ? 'text-gray-300' : 'text-gray-600 active:bg-white active:shadow-sm'}`}
                                 disabled={item.quantity <= 1}
                             >
@@ -146,7 +169,7 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
                             </button>
                             <span className="w-8 text-center text-sm font-medium text-gray-900">{item.quantity}</span>
                             <button
-                                onClick={() => handleQtyChange(item.quantity + 1)}
+                                onClick={() => handleUpdateQuantity(item.quantity + 1)}
                                 className="w-8 h-8 flex items-center justify-center rounded-[10px] text-gray-600 active:bg-white active:shadow-sm transition-all"
                             >
                                 <Plus className="w-3.5 h-3.5" strokeWidth={3} />

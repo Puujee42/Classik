@@ -1,9 +1,10 @@
 'use client';
 
-import { motion, Variants } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, Variants, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Heart, Star, ArrowRight } from 'lucide-react';
+import { Heart, Star, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useWishlistStore } from '@/store/wishlistStore';
 import toast from 'react-hot-toast';
 import { useLanguage } from '@/context/LanguageContext';
@@ -19,6 +20,7 @@ interface Product {
     discountPercent?: number;
     sections?: string[];
     image?: string | null;
+    images?: string[];
     category: string;
     stockStatus?: string;
     createdAt?: string | Date;
@@ -48,8 +50,24 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
     const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore();
     const { formatPrice: formatPriceWithCurrency } = useLanguage();
     const { t } = useTranslation();
+    const [activeIdx, setActiveIdx] = useState(0);
+    const isDragging = useRef(false);
 
     const isWishlisted = isInWishlist(product.id);
+
+    // Build images array: combine main image + additional images, deduplicate
+    const allImages: string[] = (() => {
+        const combined: string[] = [];
+        if (product.image) combined.push(product.image);
+        if (product.images?.length) {
+            product.images.forEach(img => {
+                if (!combined.includes(img)) combined.push(img);
+            });
+        }
+        return combined.length > 0 ? combined : ['/placeholder.png'];
+    })();
+
+    const hasMultiple = allImages.length > 1;
 
     return (
         <motion.div
@@ -60,10 +78,10 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
         >
-            <Link href={`/product/${product.id}`} className="block h-full">
+            <Link href={`/product/${product.id}`} className="block h-full" onClick={(e) => { if (isDragging.current) e.preventDefault(); }}>
                 <div className="bg-white rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-200 h-full flex flex-col relative">
 
-                    {/* Image Section */}
+                    {/* Image Section with Slider */}
                     <div className="relative aspect-square overflow-hidden bg-gray-50/50">
                         {/* Badges */}
                         <div className="absolute top-3 left-3 z-10 flex flex-col gap-2 items-start">
@@ -103,7 +121,6 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
                             )}
                         </div>
 
-
                         {/* Wishlist Button */}
                         <motion.button
                             whileTap={{ scale: 0.8 }}
@@ -125,13 +142,78 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
                             />
                         </motion.button>
 
-                        <Image
-                            src={product.image || '/placeholder.png'}
-                            alt={product.name}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-400 ease-in-out p-2"
-                            sizes="(max-width: 768px) 50vw, 25vw"
-                        />
+                        {/* Image Slider */}
+                        {hasMultiple ? (
+                            <motion.div
+                                drag="x"
+                                dragConstraints={{ left: 0, right: 0 }}
+                                dragElastic={0.1}
+                                onDragStart={() => { isDragging.current = true; }}
+                                onDragEnd={(_, info) => {
+                                    if (Math.abs(info.offset.x) > 50) {
+                                        if (info.offset.x < 0 && activeIdx < allImages.length - 1) setActiveIdx(p => p + 1);
+                                        else if (info.offset.x > 0 && activeIdx > 0) setActiveIdx(p => p - 1);
+                                    }
+                                    setTimeout(() => { isDragging.current = false; }, 10);
+                                }}
+                                animate={{ x: `-${activeIdx * 100}%` }}
+                                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                                className="flex w-full h-full"
+                            >
+                                {allImages.map((img, i) => (
+                                    <div key={i} className="w-full h-full shrink-0 relative">
+                                        <Image
+                                            src={img}
+                                            alt={product.name}
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-400 ease-in-out p-2"
+                                            sizes="(max-width: 768px) 50vw, 25vw"
+                                        />
+                                    </div>
+                                ))}
+                            </motion.div>
+                        ) : (
+                            <Image
+                                src={allImages[0]}
+                                alt={product.name}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-400 ease-in-out p-2"
+                                sizes="(max-width: 768px) 50vw, 25vw"
+                            />
+                        )}
+
+                        {/* Dot Indicators */}
+                        {hasMultiple && (
+                            <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10">
+                                {allImages.map((_, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveIdx(i); }}
+                                        className={`rounded-full transition-all duration-300 ${activeIdx === i ? 'w-4 h-1.5 bg-[#FF5000]' : 'w-1.5 h-1.5 bg-slate-300/80'}`}
+                                    />
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Arrow Nav (Desktop hover only) */}
+                        {hasMultiple && (
+                            <>
+                                <button
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveIdx(p => Math.max(0, p - 1)); }}
+                                    className="absolute left-1.5 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-10 text-slate-600 hover:text-[#FF5000] disabled:opacity-0"
+                                    disabled={activeIdx === 0}
+                                >
+                                    <ChevronLeft className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveIdx(p => Math.min(allImages.length - 1, p + 1)); }}
+                                    className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-10 text-slate-600 hover:text-[#FF5000] disabled:opacity-0"
+                                    disabled={activeIdx === allImages.length - 1}
+                                >
+                                    <ChevronRight className="w-4 h-4" />
+                                </button>
+                            </>
+                        )}
                     </div>
 
                     {/* Content Section */}

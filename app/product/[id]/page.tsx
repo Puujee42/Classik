@@ -87,6 +87,13 @@ export default async function ProductDetailPage({
       paymentMethods: product.paymentMethods || undefined,
       sections: product.sections || [],
       attributes: product.attributes || {},
+      options: product.options || [],
+      variants: product.variants || [],
+      salesCount: product.salesCount || 0,
+      shippingOrigin: product.shippingOrigin || undefined,
+      shippingDestination: product.shippingDestination || undefined,
+      dispatchTime: product.dispatchTime || undefined,
+      sizeGuideUrl: product.sizeGuideUrl || undefined,
       wholesale: product.wholesale || false,
       featured: product.featured || false,
       createdAt: product.createdAt ? new Date(product.createdAt).toISOString() : new Date().toISOString(),
@@ -95,7 +102,7 @@ export default async function ProductDetailPage({
       relatedProducts: mappedRelatedProducts,
     };
 
-    return <ProductDetailClient product={productData} />;
+    return <ProductDetailClient product={productData} initialReviews={[]} />;
   } catch {
     notFound();
   }

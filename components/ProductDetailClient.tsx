@@ -1,23 +1,20 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useScroll } from 'framer-motion';
 import Image from 'next/image';
-import {
-  Heart, Share2, Star, ShoppingBag, Truck,
-  Clock, Minus, Plus, ArrowRight, ShieldCheck, Lock, Package, BadgeCheck,
-  CheckCircle2, RotateCcw, ChevronLeft, ChevronRight, X,
-} from 'lucide-react';
+import { X, Heart, ShoppingBag, Minus, Plus, BadgeCheck, Truck, ShieldCheck, RotateCcw, ArrowRight, Star, ArrowLeft, Package, Lock, FileText, List, CheckCircle2, ChevronLeft, ChevronRight, Share2, Clock } from 'lucide-react';
+import useSWR from 'swr';
+import { useAuth } from '@/context/AuthContext';
 import { formatPrice } from '@/lib/utils';
+import { Product } from '@/models/Product';
 import { useCartStore } from '@/store/cartStore';
 import toast from 'react-hot-toast';
 import { useTranslation } from '@/hooks/useTranslation';
-import { useAuth } from '@/context/AuthContext';
 import RelatedProducts from './RelatedProducts';
 import ProductReviews from './ProductReviews';
-import type { Product } from '@/models/Product';
 
 export type ProductDetailData = {
   id: string;
@@ -32,6 +29,11 @@ export type ProductDetailData = {
   category: string;
   stockStatus: string;
   inventory?: number;
+  salesCount?: number;
+  shippingOrigin?: string;
+  shippingDestination?: string;
+  dispatchTime?: string;
+  sizeGuideUrl?: string;
   brand?: string;
   model?: string;
   delivery?: string;
@@ -44,6 +46,9 @@ export type ProductDetailData = {
   relatedProducts?: Product[];
   attributes?: Record<string, any>;
   reviews?: any[]; // Add reviews to the product type
+  options?: any[];
+  variants?: any[];
+  subcategory?: string;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -303,15 +308,52 @@ function useFloatingOrb(lerpAmt = 0.035) {
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function ProductDetailClient({ product }: { product: ProductDetailData }) {
-  const { isAuthenticated } = useAuth();
-  const [isWishlisted, setIsWishlisted] = useState(false);
+export default function ProductDetailClient({ product, initialReviews }: { product: ProductDetailData, initialReviews: any[] }) {
+  const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
+  
+  const { data: categoriesData } = useSWR('/api/categories', (url) => fetch(url).then(r => r.json()));
+  const categories = categoriesData?.categories || [];
+
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [showLightbox, setShowLightbox] = useState(false);
   const [deliveryEstimate, setDeliveryEstimate] = useState<string | null>(null);
+  const [isWishlisted, setIsWishlisted] = useState(false);
 
-  const router = useRouter();
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+
+  // Auto-select option if there is only 1 value
+  useEffect(() => {
+    if (product.options?.length) {
+      const initial: Record<string, string> = {};
+      product.options.forEach((opt: any) => {
+        if (opt.values.length === 1) {
+          initial[opt.name] = opt.values[0];
+        }
+      });
+      if (Object.keys(initial).length > 0) {
+        setSelectedOptions(prev => ({ ...prev, ...initial }));
+      }
+    }
+  }, [product.options]);
+
+  const selectedVariant = useMemo(() => {
+    if (!product.variants?.length) return null;
+    return product.variants.find((v: any) => 
+      product.options?.every((opt: any) => v.options[opt.name] === selectedOptions[opt.name])
+    ) || null;
+  }, [selectedOptions, product.variants, product.options]);
+
+  const displayPrice = selectedVariant?.price || product.price;
+  const displayInventory = selectedVariant ? selectedVariant.inventory : (product.inventory ?? 0);
+  const isOutOfStock = product.options?.length ? (!selectedVariant || displayInventory <= 0) : (displayInventory <= 0);
+
+  const canAddToCart = !product.options?.length || (
+    product.options.every((o: any) => selectedOptions[o.name]) &&
+    selectedVariant && selectedVariant.inventory > 0
+  );
+
   const { addItem, toggleAllSelection } = useCartStore();
   const { t } = useTranslation();
 
@@ -342,21 +384,35 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
       .catch(() => null);
   }, [product.id, isAuthenticated]);
 
-  const images: string[] = product.images?.length
-    ? product.images
-    : product.image
-      ? [product.image]
-      : ['/placeholder-product.png'];
+  const images: string[] = (() => {
+    const combined: string[] = [];
+    if (product.image) combined.push(product.image);
+    if (product.images?.length) {
+      product.images.forEach(img => {
+        if (!combined.includes(img)) combined.push(img);
+      });
+    }
+    return combined.length > 0 ? combined : ['/placeholder-product.png'];
+  })();
 
-  const discount = product.originalPrice && product.originalPrice > product.price
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+  const discount = product.originalPrice && product.originalPrice > displayPrice
+    ? Math.round(((product.originalPrice - displayPrice) / product.originalPrice) * 100)
     : 0;
 
-  const savings = product.originalPrice && product.originalPrice > product.price
-    ? product.originalPrice - product.price
+  const savings = product.originalPrice && product.originalPrice > displayPrice
+    ? product.originalPrice - displayPrice
     : 0;
 
-  // ── Handlers (all unchanged) ───────────────────────────────────────────────
+  const categoryObj = categories.find((c: any) => c.id === product.category);
+  const categoryName = categoryObj ? categoryObj.name : product.category;
+  
+  let subcategoryName = null;
+  if (product.subcategory && categoryObj?.subcategories) {
+    const subObj = categoryObj.subcategories.find((s: any) => s.id === product.subcategory);
+    if (subObj) subcategoryName = subObj.name;
+  }
+
+  // ── Handlers ───────────────────────────────────────────────
   const handleWishlist = async () => {
     if (!isAuthenticated) return toast.error('Нэвтрэх шаардлагатай', { style: { borderRadius: '16px' } });
     const next = !isWishlisted;
@@ -384,17 +440,29 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
   };
 
   const handleAddToCart = () => {
+    if (product.options?.length && !product.options.every(o => selectedOptions[o.name])) {
+      toast.error('Сонголтуудаа гүйцэд сонгоно үю', { style: { borderRadius: '16px' } });
+      return;
+    }
+    if (isOutOfStock) {
+      toast.error('Агуулахад үлдэгдэл хүрэлцэхгүй байна', { style: { borderRadius: '16px' } });
+      return;
+    }
+
     addItem({
       ...product,
       image: product.image || '',
       stockStatus: product.stockStatus as any,
       description: product.description || undefined,
+      price: displayPrice,
+      variantId: selectedVariant?.id,
+      selectedOptions: product.options?.length ? selectedOptions : undefined,
     }, quantity, false);
 
     toast.custom((tInst) => (
       <div className={`${tInst.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-white shadow-xl rounded-2xl pointer-events-auto flex ring-1 ring-black/5 p-4`}>
         <div className="flex items-start">
-          <CheckCircle2 className="h-8 w-8 text-[#FF5000]" />
+          <CheckCircle2 className="h-8 w-8 text-[#FF500]" />
           <div className="ml-3">
             <p className="font-bold text-slate-900" style={{ fontFamily: 'Sora, sans-serif' }}>Сагсанд орлоо</p>
             <p className="mt-1 text-sm text-slate-500">{product.name}</p>
@@ -405,8 +473,25 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
   };
 
   const handleBuyNow = async () => {
+    if (product.options?.length && !product.options.every((o: any) => selectedOptions[o.name])) {
+      toast.error('Сонголтуудаа гүйцэд сонгоно үю', { style: { borderRadius: '16px' } });
+      return;
+    }
+    if (isOutOfStock) {
+      toast.error('Агуулахад үлдэгдэл хүрэлцэхгүй байна', { style: { borderRadius: '16px' } });
+      return;
+    }
+
     toggleAllSelection(false);
-    await addItem({ ...product, image: product.image || '', stockStatus: product.stockStatus as any, description: product.description || undefined }, quantity, true);
+    await addItem({ 
+      ...product, 
+      image: product.image || '', 
+      stockStatus: product.stockStatus as any, 
+      description: product.description || undefined,
+      price: displayPrice,
+      variantId: selectedVariant?.id,
+      selectedOptions: product.options?.length ? selectedOptions : undefined,
+    }, quantity, true);
     router.push('/checkout');
   };
 
@@ -434,19 +519,19 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
 
       <div className="min-h-screen pb-[140px] md:pb-20 font-dm bg-[#FAFAF9] text-slate-600 overflow-hidden">
 
-        {/* Mobile back button */} 
-        <div 
-          className="lg:hidden fixed top-0 left-0 z-[110] p-3" 
-          style={{ paddingTop: 'calc(env(safe-area-inset-top) + 8px)' }} 
-        > 
-          <motion.button 
-            whileTap={{ scale: 0.9 }} 
-            onClick={() => router.back()} 
-            className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-md border border-slate-100/80" 
-          > 
-            <ChevronLeft className="w-5 h-5 text-slate-700" strokeWidth={2.5} /> 
-          </motion.button> 
-        </div> 
+        {/* Mobile back button */}
+        <div
+          className="lg:hidden fixed top-0 left-0 z-[110] p-3"
+          style={{ paddingTop: 'calc(env(safe-area-inset-top) + 8px)' }}
+        >
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => router.back()}
+            className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-md border border-slate-100/80"
+          >
+            <ChevronLeft className="w-5 h-5 text-slate-700" strokeWidth={2.5} />
+          </motion.button>
+        </div>
 
         {/* ── Sticky header ─────────────────────────────────────────────── */}
         <AnimatePresence>
@@ -466,7 +551,7 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
                   </div>
                   <div>
                     <p className="font-bold text-slate-900 text-sm leading-tight line-clamp-1 max-w-xs">{product.name}</p>
-                    <p className="font-sora font-bold text-[#FF5000] text-sm leading-none mt-0.5">{formatPrice(product.price)}</p>
+                    <p className="font-sora font-bold text-[#FF500] text-sm leading-none mt-0.5">{formatPrice(product.price)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -519,14 +604,14 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
                   {images.length > 1 && (<>
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveImageIndex(p => Math.max(0, p - 1)); }}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-slate-100 text-slate-600 hover:text-[#FF5000] disabled:opacity-30"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-slate-100 text-slate-600 hover:text-[#FF500] disabled:opacity-30"
                       disabled={activeImageIndex === 0}
                     >
                       <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveImageIndex(p => Math.min(images.length - 1, p + 1)); }}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-slate-100 text-slate-600 hover:text-[#FF5000] disabled:opacity-30"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-slate-100 text-slate-600 hover:text-[#FF500] disabled:opacity-30"
                       disabled={activeImageIndex === images.length - 1}
                     >
                       <ChevronRight className="w-5 h-5" />
@@ -639,7 +724,7 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
               </div>
             </div>
 
-            {/* ── RIGHT: INFO PANEL ────────────────────────────────────────── */}
+            {/* ── RIGHT: INFO PANEL (TAOBAO LAYOUT) ────────────────────────────────────────── */}
             <div ref={orb.containerRef} className="lg:col-span-6 xl:col-span-5 relative md:mt-0 -mt-6">
 
               {/* Floating orb */}
@@ -651,170 +736,174 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
                 />
               </div>
 
-              <div className="relative z-10 flex flex-col gap-5 bg-white md:bg-transparent rounded-t-[2rem] md:rounded-none px-5 md:px-0 pt-6 md:pt-0 shadow-[0_-8px_40px_rgba(0,0,0,0.07)] md:shadow-none">
-
-                {/* Brand & rating row */}
-                <div className="flex items-center justify-between flex-wrap gap-3">
-                  <Link href={`/store/${product.category}`}
-                    className="flex items-center gap-1.5 text-[#FF5000] font-bold text-xs tracking-widest bg-orange-50 px-3.5 py-1.5 rounded-full hover:bg-orange-100 transition-colors uppercase border border-orange-100">
-                    <BadgeCheck className="w-3.5 h-3.5" />
-                    {product.brand || product.category}
-                  </Link>
-                </div>
-
-                {/* Title */}
-                <h1 className="font-sora font-bold text-[22px] md:text-4xl text-slate-900 leading-[1.2] tracking-tight">
+              <div className="relative z-10 flex flex-col bg-white md:bg-transparent px-5 md:px-0 pt-6 md:pt-0">
+                {/* 1. Product Title */}
+                <h1 className="text-xl md:text-[22px] font-bold text-gray-900 leading-snug mb-3">
                   {product.name}
                 </h1>
 
-                {/* Price card with parallax tilt */}
-                <div
-                  className="bg-[#FFF8F5] md:bg-white rounded-2xl md:rounded-3xl p-4 md:p-5 border border-orange-100 shadow-sm relative overflow-hidden"
-                  onMouseMove={tilt.handleMouseMove}
-                  onMouseEnter={tilt.handleMouseEnter}
-                  onMouseLeave={tilt.handleMouseLeave}
-                >
-                  <div ref={tilt.ref} className="origin-center bg-white">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Үнэ</p>
-
-                    {/* Price row */}
-                    <div className="flex items-end gap-4 flex-wrap">
-                      <span className="font-sora font-extrabold text-[32px] md:text-4xl lg:text-5xl text-[#FF5000] tracking-tighter leading-none">
-                        {formatPrice(product.price)}
-                      </span>
+                {/* 2. Price Panel (Taobao Style) */}
+                <div className="bg-[#FFF8F6] p-4 rounded-sm flex flex-col gap-2 mb-4 border border-[#FFE8E3]">
+                  {/* Row 1: Original Price */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <span className="text-gray-500 text-sm min-w-[60px]">Үнэ</span>
                       {product.originalPrice && (
-                        <span className="text-lg font-bold text-slate-300 line-through decoration-slate-300 leading-none mb-0.5">
+                        <span className="text-gray-400 text-sm line-through">
                           {formatPrice(product.originalPrice)}
                         </span>
                       )}
                     </div>
+                    <span className="text-gray-500 text-xs text-right">3 борлуулагдсан</span>
+                  </div>
 
-                    {/* Savings badge + stock status */}
-                    <div className="flex items-center gap-3 mt-3 flex-wrap">
-                      {savings > 0 && (
-                        <div className="flex items-center gap-1.5 bg-orange-50 text-orange-600 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-100">
-                          {formatPrice(savings)} хэмнэлт · {discount}%
-                        </div>
-                      )}
-                      {/* Stock pulse */}
-                      <div className="flex items-center gap-1.5">
-                        <div className={`relative w-2 h-2 rounded-full ${product.stockStatus === 'in-stock' ? 'bg-emerald-500' : 'bg-amber-500'}`}>
-                          <div className={`absolute inset-0 rounded-full animate-ping ${product.stockStatus === 'in-stock' ? 'bg-emerald-500' : 'bg-amber-500'} opacity-60`} />
-                        </div>
-                        <span className={`text-xs font-bold ${product.stockStatus === 'in-stock' ? 'text-emerald-600' : 'text-amber-600'}`}>
-                          {product.stockStatus === 'in-stock' ? 'Бэлэн байгаа' : 'Захиалгаар'}
-                        </span>
-                      </div>
+                  {/* Row 2: Promo Price */}
+                  <div className="flex items-end gap-4 mt-1">
+                    <span className="text-gray-500 text-sm min-w-[60px] pb-1.5">Хямдрал</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[28px] md:text-[34px] font-bold text-[#FF500] leading-none tracking-tight font-sora">
+                        {formatPrice(displayPrice)}
+                      </span>
+                      <span className="bg-[#FF500] text-white text-[10px] px-1.5 py-0.5 rounded-sm font-bold tracking-wider">
+                        {product.stockStatus === 'pre-order' ? 'ЗАХИАЛГААР' : 'БЭЛЭН'}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Short description */}
-                <p className="text-slate-500 text-sm font-medium leading-relaxed line-clamp-3">
-                  {product.description || 'Дээд зэргийн чанартай, албан ёсны эрхтэй борлуулагдаж буй бүтээгдэхүүн. Орчин үеийн загвар, онцгой шийдэл.'}
-                </p>
+                {/* 3. Details Matrix Grid */}
+                <div className="flex flex-col gap-4 text-sm mb-6 border-b border-gray-100 pb-6">
+                  {/* Shipping */}
+                  <div className="flex items-start">
+                    <span className="text-gray-500 min-w-[70px] mt-0.5">Хүргэлт</span>
+                    <div className="flex flex-col gap-1.5 text-gray-900">
+                      <div className="flex items-center gap-2">
+                        <span>{product.shippingOrigin || 'БНХАУ'}</span>
+                        <ChevronRight className="w-3 h-3 text-gray-400" />
+                        <span>{product.shippingDestination || 'Улаанбаатар'}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="font-medium">{product.delivery || 'Үнэгүй'}</span>
+                        <span className="text-gray-400">|</span>
+                        <span className="text-gray-600">{product.dispatchTime || '48 цагийн дотор илгээнэ'}</span>
+                      </div>
+                    </div>
+                  </div>
 
-                {/* Spec pills */}
-                <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1 md:flex-wrap">
-                  {product.brand && (
-                    <span className="bg-slate-50 text-slate-700 px-3 py-1.5 rounded-full text-xs font-bold border border-slate-100 shadow-sm shrink-0">
-                      🏷️ {product.brand}
-                    </span>
+                  {/* Variations mapped dynamically if exist, else static fallback example */}
+                  {product.options && product.options.length > 0 && (
+                    product.options.map((option: any) => (
+                      <div key={option.id} className="flex items-start mt-2">
+                        <span className="text-gray-500 min-w-[70px] mt-2">{option.name}</span>
+                        <div className="flex-1">
+                          <div className="flex flex-wrap gap-2">
+                            {option.values.map((val: any) => {
+                              const isSelected = selectedOptions[option.name] === val;
+                              
+                              // Find an image from variants that matches this specific option value
+                              let valImage = '';
+                              if (product.variants) {
+                                const matchingVariant = product.variants.find((v: any) => v.options[option.name] === val && v.image);
+                                if (matchingVariant) {
+                                  valImage = matchingVariant.image;
+                                }
+                              }
+                              const hasImage = !!valImage;
+
+                              return (
+                                <button
+                                  key={val}
+                                  onClick={() => setSelectedOptions(p => ({ ...p, [option.name]: val }))}
+                                  className={`transition-all border ${
+                                    isSelected 
+                                      ? 'border-[#FF5000] border-2 px-3 py-1 bg-white text-gray-900' 
+                                      : 'border-gray-300 bg-white text-gray-900 px-3 py-1 hover:border-[#FF5000]'
+                                  } ${hasImage ? 'rounded-sm flex items-center gap-2 h-9' : 'rounded-sm h-8'}`}
+                                >
+                                  {hasImage && (
+                                    <div className="w-5 h-5 bg-gray-100 rounded-sm overflow-hidden shrink-0">
+                                      <Image src={valImage} width={20} height={20} alt="" className="object-cover w-full h-full" />
+                                    </div>
+                                  )}
+                                  <span className={isSelected ? 'font-bold' : 'font-medium'}>{val}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        {option.name.includes('Хэмжээ') && product.sizeGuideUrl && (
+                          <a href={product.sizeGuideUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 text-xs hover:underline mt-2 ml-2 shrink-0">
+                            Хэмжээний заавар
+                          </a>
+                        )}
+                      </div>
+                    ))
                   )}
-                  {product.model && (
-                    <span className="bg-slate-50 text-slate-700 px-3 py-1.5 rounded-full text-xs font-bold border border-slate-100 shadow-sm shrink-0">
-                      📱 {product.model}
-                    </span>
-                  )}
-                  <span className="bg-slate-50 text-slate-700 px-3 py-1.5 rounded-full text-xs font-bold border border-slate-100 shadow-sm shrink-0">
-                    📦 {product.delivery || 'Хэвийн хүргэлт'}
-                  </span>
-                  <span className="bg-slate-50 text-slate-700 px-3 py-1.5 rounded-full text-xs font-bold border border-slate-100 shadow-sm shrink-0">
-                    💳 QPay · SocialPay
-                  </span>
-                </div>
 
-                <hr className="border-slate-100" />
-
-                {/* Quantity & CTA */}
-                <div className="space-y-4">
                   {/* Quantity */}
-                  <div className="flex items-center gap-4">
-                    <span className="font-bold text-slate-900 text-sm">Тоо хэмжээ:</span>
-                    <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-slate-100 shadow-sm">
-                      <div
-                        onMouseMove={minusPhysics.handleMouseMove}
-                        onMouseEnter={minusPhysics.handleMouseEnter}
-                        onMouseLeave={minusPhysics.handleMouseLeave}
-                      >
-                        <motion.button
-                          ref={minusPhysics.ref}
-                          whileTap={{ scale: 0.9 }}
+                  <div className="flex items-center mt-4">
+                    <span className="text-gray-500 min-w-[70px]">Тоо</span>
+                    <div className="flex items-center">
+                      <div className="flex border border-gray-300 rounded-sm overflow-hidden h-8">
+                        <button 
                           onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                          className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center rounded-xl text-slate-600 hover:text-[#FF5000] hover:bg-orange-50 transition-colors"
+                          className="w-8 flex items-center justify-center bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors"
                         >
-                          <Minus className="w-4 h-4" strokeWidth={3} />
-                        </motion.button>
-                      </div>
-                      <span className="w-8 text-center font-sora font-bold text-lg text-slate-900">{quantity}</span>
-                      <div
-                        onMouseMove={plusPhysics.handleMouseMove}
-                        onMouseEnter={plusPhysics.handleMouseEnter}
-                        onMouseLeave={plusPhysics.handleMouseLeave}
-                      >
-                        <motion.button
-                          ref={plusPhysics.ref}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => setQuantity(Math.min(product.inventory ?? 10, quantity + 1))}
-                          className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center rounded-xl text-slate-600 hover:text-[#FF5000] hover:bg-orange-50 transition-colors"
+                          <Minus className="w-3 h-3" strokeWidth={2.5} />
+                        </button>
+                        <div className="w-12 flex items-center justify-center border-l border-r border-gray-300 text-sm font-medium text-gray-900">
+                          {quantity}
+                        </div>
+                        <button 
+                          onClick={() => setQuantity(Math.min(displayInventory, quantity + 1))}
+                          className="w-8 flex items-center justify-center bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors"
                         >
-                          <Plus className="w-4 h-4" strokeWidth={3} />
-                        </motion.button>
+                          <Plus className="w-3 h-3" strokeWidth={2.5} />
+                        </button>
                       </div>
+                      <span className="text-gray-400 ml-3 text-xs">
+                        {displayInventory} Ширхэг бэлэн
+                      </span>
                     </div>
                   </div>
+                </div>
 
-                  {/* Desktop CTAs */}
-                  <div className="hidden md:grid grid-cols-2 gap-3 pt-1">
-                    <motion.button
-                      whileTap={{ scale: 0.97 }}
-                      onClick={handleAddToCart}
-                      className="py-4 rounded-2xl bg-white border-2 border-slate-200 text-slate-900 font-bold hover:border-slate-300 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <ShoppingBag className="w-5 h-5" strokeWidth={2} />
-                      Сагсанд нэмэх
-                    </motion.button>
+                {/* 4. Call to Action Buttons */}
+                <div className="flex gap-3 mb-6">
+                  <button
+                    onClick={handleBuyNow}
+                    disabled={!canAddToCart}
+                    className="flex-1 bg-[#FFE4D0] text-[#FF500] py-3.5 rounded-sm font-bold text-[15px] hover:bg-[#FFD4B8] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    Шууд авах
+                  </button>
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={!canAddToCart}
+                    className="flex-1 bg-[#FF4400] text-white py-3.5 rounded-sm font-bold text-[15px] hover:bg-[#E63D00] transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_4px_12px_rgba(255,68,0,0.3)]"
+                  >
+                    <ShoppingBag className="w-4 h-4" />
+                    Сагсанд нэмэх
+                  </button>
+                </div>
 
-                    <button
-                      ref={magneticBuy.ref}
-                      onClick={handleBuyNow}
-                      className="py-4 rounded-2xl bg-[#FF5000] text-white font-bold shadow-[0_12px_30px_rgba(255,80,0,0.28)] hover:bg-[#E64500] transition-colors flex items-center justify-center gap-2"
-                    >
-                      Шууд авах
-                      <ArrowRight className="w-5 h-5" strokeWidth={2} />
-                    </button>
-                  </div>
-
-                  {/* Security row */}
-                  <div className="hidden md:flex justify-center gap-6">
-                    <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold text-slate-400">
-                      <Lock className="w-3 h-3" />Аюулгүй гүйлгээ
-                    </span>
-                    <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold text-slate-400">
-                      <ShieldCheck className="w-3 h-3" />Баталгаат
-                    </span>
-                    <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold text-slate-400">
-                      <Package className="w-3 h-3" />Хайрцагт
-                    </span>
+                {/* 5. Footer/Trust Row */}
+                <div className="flex items-center">
+                  <span className="text-gray-500 text-xs min-w-[70px]">Төлбөр</span>
+                  <div className="flex items-center gap-4 text-xs font-medium text-gray-600">
+                    <span className="flex items-center gap-1"><span className="w-4 h-4 bg-blue-100 text-blue-600 rounded-sm flex items-center justify-center font-bold text-[9px]">Q</span> QPay</span>
+                    <span className="flex items-center gap-1"><span className="w-4 h-4 bg-emerald-100 text-emerald-600 rounded-sm flex items-center justify-center font-bold text-[9px]">S</span> SocialPay</span>
+                    <span className="flex items-center gap-1"><span className="w-4 h-4 bg-gray-100 text-gray-600 rounded-sm flex items-center justify-center font-bold text-[9px]">C</span> Банкны карт</span>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
 
-          {/* ── TABS ──────────────────────────────────────────────────────── */}
+          {/* ── SECTIONS ──────────────────────────────────────────────────────── */}
           <div className="mt-16 md:mt-24">
-            <ProductInfoTabs product={product} />
+            <ProductInfoSections product={product} />
           </div>
 
           {/* ── RELATED ───────────────────────────────────────────────────── */}
@@ -893,7 +982,7 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
               Нийт үнэ
             </span>
-            <span className="font-sora font-extrabold text-[18px] text-[#FF5000] leading-none truncate">
+            <span className="font-sora font-extrabold text-[18px] text-[#FF500] leading-none truncate">
               {formatPrice(product.price * quantity)}
             </span>
             {quantity > 1 && (
@@ -903,14 +992,14 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
             )}
           </div>
 
-          {/* Сагслах */}
+          {/* Сагslaх */}
           <motion.button
             whileTap={{ scale: 0.93 }}
             onClick={handleAddToCart}
             className="flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-2xl bg-slate-100 text-slate-900 font-bold text-sm active:bg-slate-200 transition-colors shrink-0"
           >
             <ShoppingBag className="w-4 h-4" strokeWidth={2} />
-            Сагслах
+            Сагslaх
           </motion.button>
 
           {/* Худалдан авах */}
@@ -929,100 +1018,58 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TABS COMPONENT
+// SECTIONS COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 
-function ProductInfoTabs({ product }: { product: any }) {
-  const tabs = [
-    { id: 'description', label: 'Тайлбар' },
-    { id: 'specs', label: 'Үзүүлэлт' },
-    { id: 'reviews', label: `Үнэлгээ${product.reviewCount ? ` (${product.reviewCount})` : ''}` },
-  ];
-  const [activeTab, setActiveTab] = useState('description');
-  const [reviews, setReviews] = useState<any[]>([]);
-  const [reviewStats, setReviewStats] = useState<{ averageRating: number; distribution: Record<number, number>; total: number } | null>(null);
-  const [reviewsLoading, setReviewsLoading] = useState(false);
-
-  useEffect(() => {
-    if (activeTab !== 'reviews') return;
-    setReviewsLoading(true);
-    fetch(`/api/reviews?productId=${product.id}&limit=5`)
-      .then(r => r.json())
-      .then(data => {
-        setReviews(data.reviews || []);
-        setReviewStats({
-          averageRating: data.averageRating || 0,
-          distribution: data.distribution || {},
-          total: data.total || 0,
-        });
-      })
-      .finally(() => setReviewsLoading(false));
-  }, [activeTab, product.id]);
-
+function ProductInfoSections({ product }: { product: any }) {
   return (
-    <div className="bg-white rounded-3xl p-4 md:p-10 shadow-sm border border-slate-100 font-dm">
-      {/* Tab bar */}
-      <div className="flex border-b border-slate-100">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-3 md:px-5 md:py-4 text-sm font-bold relative transition-colors ${activeTab === tab.id ? 'text-[#FF5000]' : 'text-slate-400 hover:text-slate-700'}`}
-          >
-            {tab.label}
-            {activeTab === tab.id && (
-              <motion.div
-                layoutId="tabUnderline"
-                className="absolute bottom-0 left-4 right-4 h-[3px] bg-[#FF5000] rounded-t-full"
-                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              />
-            )}
-          </button>
-        ))}
+    <div className="flex flex-col gap-8 md:gap-12">
+      {/* Description Section */}
+      <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100 font-dm">
+        <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+          <FileText className="w-6 h-6 text-[#FF5000]" />
+          Тайлбар
+        </h3>
+        <div className="prose prose-sm md:prose-base text-slate-600 max-w-none">
+          <p className="leading-relaxed font-medium">
+            {product.description || 'Дэлгэрэнгүй мэдээлэл ороогүй байна.'}
+          </p>
+        </div>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-          className="mt-8"
-        >
-          {/* Description */}
-          {activeTab === 'description' && (
-            <div className="prose prose-sm text-slate-600 max-w-none">
-              <p className="leading-relaxed font-medium text-base">
-                {product.description || 'Дэлгэрэнгүй мэдээлэл ороогүй байна.'}
-              </p>
-            </div>
+      {/* Specs Section */}
+      <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100 font-dm">
+        <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+          <List className="w-6 h-6 text-[#FF5000]" />
+          Үзүүлэлт
+        </h3>
+        <div className="divide-y divide-slate-50 border border-slate-100 rounded-2xl overflow-hidden">
+          {product.attributes && Object.keys(product.attributes).length > 0 ? (
+            Object.entries(product.attributes).map(([k, v], i) => (
+              <div key={k} className={`flex py-4 px-6 ${i % 2 === 0 ? 'bg-slate-50/50' : 'bg-white'}`}>
+                <span className="w-2/5 font-bold text-slate-400 text-sm md:text-base">{k}</span>
+                <span className="w-3/5 font-bold text-slate-900 text-sm md:text-base">{String(v)}</span>
+              </div>
+            ))
+          ) : (
+            <p className="text-slate-400 font-medium italic py-6 px-6 text-center">Үзүүлэлтийн мэдээлэл байхгүй байна.</p>
           )}
+        </div>
+      </div>
 
-          {/* Specs */}
-          {activeTab === 'specs' && (
-            <div className="divide-y divide-slate-50">
-              {product.attributes && Object.keys(product.attributes).length > 0 ? (
-                Object.entries(product.attributes).map(([k, v], i) => (
-                  <div key={k} className={`flex py-3.5 ${i % 2 === 0 ? 'bg-slate-50/50 -mx-6 px-6' : ''}`}>
-                    <span className="w-2/5 font-bold text-slate-400 text-sm">{k}</span>
-                    <span className="w-3/5 font-bold text-slate-900 text-sm">{String(v)}</span>
-                  </div>
-                ))
-              ) : (
-                <p className="text-slate-400 font-medium italic py-4">Үзүүлэлтийн мэдээлэл байхгүй байна.</p>
-              )}
-            </div>
-          )}
-
-          {/* Reviews */}
-          {activeTab === 'reviews' && (
-            <div className="py-4">
-              <ProductReviews productId={product.id} />
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
+      {/* Reviews Section */}
+      <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100 font-dm">
+        <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+          <Star className="w-6 h-6 text-[#FF5000]" fill="currentColor" />
+          Үнэлгээ {product.reviewCount ? `(${product.reviewCount})` : ''}
+        </h3>
+        <div className="py-2">
+          <ProductReviews productId={product.id} />
+        </div>
+      </div>
     </div>
   );
 }
+
+// Minimal Icons
+// ... existing code ...

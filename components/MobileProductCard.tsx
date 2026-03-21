@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,6 +20,22 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
     const { convertPrice, currency } = useLanguage();
     const addItem = useCartStore((state) => state.addItem);
     const price = convertPrice(product.price);
+    const [activeIdx, setActiveIdx] = useState(0);
+    const isDragging = useRef(false);
+
+    // Build images array: combine main image + additional images, deduplicate
+    const allImages: string[] = (() => {
+        const combined: string[] = [];
+        if (product.image) combined.push(product.image);
+        if (product.images?.length) {
+            product.images.forEach(img => {
+                if (!combined.includes(img)) combined.push(img);
+            });
+        }
+        return combined.length > 0 ? combined : ['/placeholder.png'];
+    })();
+
+    const hasMultiple = allImages.length > 1;
 
     // Format price
     const formattedPrice = currency === 'USD'
@@ -31,15 +48,60 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
             transition={{ type: 'spring', stiffness: 400, damping: 30 }} 
             className="group relative bg-white rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-gray-100/50 will-change-transform"
         >
-            <Link href={`/product/${product.id}`} className="block">
+            <Link href={`/product/${product.id}`} className="block" onClick={(e) => { if (isDragging.current) e.preventDefault(); }}>
                 <div className="relative aspect-square overflow-hidden bg-gray-50 rounded-t-2xl">
-                    <Image
-                        src={product.image || '/placeholder.png'}
-                        alt={product.name}
-                        fill
-                        sizes="(max-width: 768px) 50vw"
-                        className="object-cover"
-                    />
+                    {/* Image Slider */}
+                    {hasMultiple ? (
+                        <motion.div
+                            drag="x"
+                            dragConstraints={{ left: 0, right: 0 }}
+                            dragElastic={0.1}
+                            onDragStart={() => { isDragging.current = true; }}
+                            onDragEnd={(_, info) => {
+                                if (Math.abs(info.offset.x) > 50) {
+                                    if (info.offset.x < 0 && activeIdx < allImages.length - 1) setActiveIdx(p => p + 1);
+                                    else if (info.offset.x > 0 && activeIdx > 0) setActiveIdx(p => p - 1);
+                                }
+                                setTimeout(() => { isDragging.current = false; }, 10);
+                            }}
+                            animate={{ x: `-${activeIdx * 100}%` }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                            className="flex w-full h-full"
+                        >
+                            {allImages.map((img, i) => (
+                                <div key={i} className="w-full h-full shrink-0 relative">
+                                    <Image
+                                        src={img}
+                                        alt={product.name}
+                                        fill
+                                        sizes="(max-width: 768px) 50vw"
+                                        className="object-cover"
+                                    />
+                                </div>
+                            ))}
+                        </motion.div>
+                    ) : (
+                        <Image
+                            src={allImages[0]}
+                            alt={product.name}
+                            fill
+                            sizes="(max-width: 768px) 50vw"
+                            className="object-cover"
+                        />
+                    )}
+
+                    {/* Dot Indicators */}
+                    {hasMultiple && (
+                        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10">
+                            {allImages.map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveIdx(i); }}
+                                    className={`rounded-full transition-all duration-300 ${activeIdx === i ? 'w-4 h-1.5 bg-[#FF5000]' : 'w-1.5 h-1.5 bg-white/70'}`}
+                                />
+                            ))}
+                        </div>
+                    )}
 
                     {/* Premium Status & Discount Badges */}
                     <div className="absolute top-2 left-2 z-10 flex flex-col gap-1.5 items-start">

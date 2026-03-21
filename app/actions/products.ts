@@ -15,13 +15,27 @@ export type ProductFormData = {
   image: string;
   images?: string[];
   category: string;
+  subcategory?: string;
   stockStatus: string;
   inventory: number;
+  salesCount?: number;
+  shippingOrigin?: string;
+  shippingDestination?: string;
+  dispatchTime?: string;
+  sizeGuideUrl?: string;
   brand?: string;
   model?: string;
   delivery?: string;
   paymentMethods?: string;
   attributes?: Record<string, string>;
+  options?: { id: string; name: string; values: string[] }[];
+  variants?: {
+    id: string;
+    options: Record<string, string>;
+    inventory: number;
+    price?: number;
+    image?: string;
+  }[];
   featured?: boolean;
 };
 
@@ -33,9 +47,19 @@ export async function createProduct(data: ProductFormData) {
     }
 
     const products = await getCollection('products');
+    
+    // Create a clean data object
+    const productData: any = { ...data };
+    
+    // Ensure numeric types
+    productData.inventory = Number(productData.inventory) || 0;
+    productData.price = Number(productData.price) || 0;
+    if (productData.originalPrice !== undefined) productData.originalPrice = Number(productData.originalPrice) || 0;
+    if (productData.discountPercent !== undefined) productData.discountPercent = Number(productData.discountPercent) || 0;
+    if (productData.salesCount !== undefined) productData.salesCount = Number(productData.salesCount) || 0;
+
     const result = await products.insertOne({
-      ...data,
-      inventory: Number(data.inventory) || 0, // Ensure strictly number
+      ...productData,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -96,11 +120,18 @@ export async function updateProduct(productId: string, data: Partial<ProductForm
 
     const products = await getCollection('products');
 
-    // Sanitize inventory if it exists in the update
-    const updateData = { ...data };
-    if (updateData.inventory !== undefined) {
-      updateData.inventory = Number(updateData.inventory);
-    }
+    // Create a clean update object with only provided fields
+    const updateData: any = { ...data };
+    
+    // Ensure numeric types
+    if (updateData.inventory !== undefined) updateData.inventory = Number(updateData.inventory) || 0;
+    if (updateData.price !== undefined) updateData.price = Number(updateData.price) || 0;
+    if (updateData.originalPrice !== undefined) updateData.originalPrice = Number(updateData.originalPrice) || 0;
+    if (updateData.discountPercent !== undefined) updateData.discountPercent = Number(updateData.discountPercent) || 0;
+    if (updateData.salesCount !== undefined) updateData.salesCount = Number(updateData.salesCount) || 0;
+
+    // Remove _id if it accidentally exists in data
+    delete updateData._id;
 
     await products.updateOne(
       { _id: new ObjectId(productId) },

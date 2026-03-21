@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Save, ArrowLeft, Image as ImageIcon, Box, FileText, CheckCircle2, Star, List, Plus, Trash2, Upload } from 'lucide-react';
+import { Loader2, Save, ArrowLeft, Image as ImageIcon, Box, FileText, CheckCircle2, Star, List, Plus, Trash2, Upload, Layers } from 'lucide-react';
 import { CldUploadWidget } from 'next-cloudinary';
 import useSWR from 'swr';
 import toast from 'react-hot-toast';
+import VariantsManager, { ProductOption, ProductVariant } from './VariantsManager';
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -40,14 +41,22 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
         image: initialData?.image || '',
         images: initialData?.images || [],
         category: initialData?.category || '',
+        subcategory: initialData?.subcategory || '',
         stockStatus: initialData?.stockStatus || 'in-stock',
         inventory: initialData?.inventory?.toString() || '0',
+        salesCount: initialData?.salesCount?.toString() || '0',
+        shippingOrigin: initialData?.shippingOrigin || 'БНХАУ',
+        shippingDestination: initialData?.shippingDestination || 'Улаанбаатар',
+        dispatchTime: initialData?.dispatchTime || '48 цагийн дотор илгээнэ',
+        sizeGuideUrl: initialData?.sizeGuideUrl || '',
         brand: initialData?.brand || '',
         model: initialData?.model || '',
         delivery: initialData?.delivery || 'Үнэгүй',
         paymentMethods: initialData?.paymentMethods || 'QPay, SocialPay, Card',
         featured: initialData?.featured || false,
-        attributes: initialData?.attributes || {}
+        attributes: initialData?.attributes || {},
+        options: initialData?.options || [],
+        variants: initialData?.variants || []
     });
 
     const [attributeRows, setAttributeRows] = useState<{ key: string, value: string }[]>(
@@ -95,7 +104,7 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
         e.preventDefault();
 
         if (!formData.name || !formData.price || !formData.category) {
-            toast.error('Шаардлагатай талбаруудыг бөглөнө үү (Нэр, Үнэ, Ангилал)');
+            toast.error('Шаардлагатай талбаруудыг бөглөнө үю (Нэр, Үнэ, Ангилал)');
             return;
         }
 
@@ -110,6 +119,8 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
         const submitData = {
             ...formData,
             attributes: attributesObj,
+            options: formData.options,
+            variants: formData.variants,
         };
 
         await onSubmit(submitData);
@@ -119,6 +130,7 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
         { id: 'basic', label: 'Ерөнхий', icon: FileText },
         { id: 'media', label: 'Зураг', icon: ImageIcon },
         { id: 'attributes', label: 'Шинж чанар', icon: List },
+        { id: 'variants', label: 'Хувилбар', icon: Layers },
         { id: 'pricing', label: 'Үнэ & Үлдэгдэл', icon: Box },
     ];
 
@@ -208,9 +220,56 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
                                         type="text"
                                         value={formData.model}
                                         onChange={(e) => handleChange('model', e.target.value)}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all text-sm"
-                                        placeholder="iPhone 15 Pro Max"
+                                        placeholder="Жишээ нь: iPhone 15 Pro"
+                                        className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-500/50 text-sm transition-colors placeholder:text-slate-600"
                                     />
+                                </div>
+                            </div>
+
+                            {/* Shipping & Additional Info */}
+                            <div className="pt-6 border-t border-slate-800">
+                                <h3 className="text-sm font-bold text-white mb-4">Хүргэлт & Нэмэлт мэдээлэл <span className="text-slate-500 text-xs font-normal ml-2">(Taobao харагдац)</span></h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-400 mb-2">Гарах цэг (Origin)</label>
+                                        <input
+                                            type="text"
+                                            value={formData.shippingOrigin}
+                                            onChange={(e) => handleChange('shippingOrigin', e.target.value)}
+                                            placeholder="БНХАУ"
+                                            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-500/50 text-sm transition-colors placeholder:text-slate-600"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-400 mb-2">Хүрэх цэг (Destination)</label>
+                                        <input
+                                            type="text"
+                                            value={formData.shippingDestination}
+                                            onChange={(e) => handleChange('shippingDestination', e.target.value)}
+                                            placeholder="Улаанбаатар"
+                                            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-500/50 text-sm transition-colors placeholder:text-slate-600"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-xs font-medium text-slate-400 mb-2">Гарах хугацаа</label>
+                                        <input
+                                            type="text"
+                                            value={formData.dispatchTime}
+                                            onChange={(e) => handleChange('dispatchTime', e.target.value)}
+                                            placeholder="48 цагийн дотор илгээнэ"
+                                            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-500/50 text-sm transition-colors placeholder:text-slate-600"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2 pt-2">
+                                        <label className="block text-xs font-medium text-slate-400 mb-2">Хэмжээний заавар линк (URL)</label>
+                                        <input
+                                            type="url"
+                                            value={formData.sizeGuideUrl}
+                                            onChange={(e) => handleChange('sizeGuideUrl', e.target.value)}
+                                            placeholder="https://example.com/size-guide"
+                                            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-500/50 text-sm transition-colors placeholder:text-slate-600"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -379,6 +438,23 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
                         </div>
                     )}
 
+                    {/* Variants Tab */}
+                    {activeTab === 'variants' && (
+                        <div className="space-y-6 animate-in fade-in duration-300">
+                            <VariantsManager 
+                                options={formData.options}
+                                variants={formData.variants}
+                                onChange={(opts, vars) => {
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        options: opts,
+                                        variants: vars
+                                    }));
+                                }}
+                            />
+                        </div>
+                    )}
+
                     {/* Pricing Tab */}
                     {activeTab === 'pricing' && (
                         <div className="space-y-6 animate-in fade-in duration-300">
@@ -450,10 +526,35 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
                                     </div>
                                     <p className="text-xs text-slate-500 mt-2 text-center">Одоогийн үлдэгдэл: <strong className={parseInt(formData.inventory) > 0 ? 'text-emerald-500' : 'text-red-500'}>{formData.inventory} ширхэг</strong></p>
                                 </div>
+
+                                {/* Status Component */}
+                                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                                    <h3 className="text-sm font-bold text-white mb-4">Бэлэн байдал</h3>
+                                    <select
+                                        value={formData.stockStatus}
+                                        onChange={(e) => handleChange('stockStatus', e.target.value)}
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500/50 appearance-none font-medium"
+                                    >
+                                        <option value="in-stock">Бэлэн байгаа</option>
+                                        <option value="pre-order">Урьдчилсан захиалга</option>
+                                        <option value="out-of-stock">Дууссан</option>
+                                    </select>
+                                </div>
+
+                                {/* Sales Count */}
+                                <div className="pt-4 border-t border-slate-800 border-dashed">
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Борлуулагдсан тоо</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        value={formData.salesCount}
+                                        onChange={(e) => handleChange('salesCount', e.target.value)}
+                                        className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-500/50 text-sm transition-colors"
+                                    />
+                                </div>
                             </div>
                         </div>
                     )}
-
 
                 </div>
             </div>
@@ -503,13 +604,38 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
                         <h3 className="text-sm font-bold text-white mb-4">Ангилал <span className="text-red-500">*</span></h3>
                         <select
                             value={formData.category}
-                            onChange={(e) => handleChange('category', e.target.value)}
-                            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-500/50 appearance-none text-sm transition-colors"
+                            onChange={(e) => {
+                                handleChange('category', e.target.value);
+                                handleChange('subcategory', ''); // Reset subcategory when category changes
+                            }}
+                            className="w-full px-4 py-3 mb-4 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-500/50 appearance-none text-sm transition-colors"
                         >
                             {categories.map((cat: any) => (
                                 <option key={cat.id} value={cat.id}>{cat.name}</option>
                             ))}
                         </select>
+                        
+                        {(() => {
+                            const selectedCat = categories.find((c: any) => c.id === formData.category);
+                            if (selectedCat && selectedCat.subcategories && selectedCat.subcategories.length > 0) {
+                                return (
+                                    <>
+                                        <h3 className="text-sm font-bold text-white mb-4 mt-2">Дэд Ангилал</h3>
+                                        <select
+                                            value={formData.subcategory}
+                                            onChange={(e) => handleChange('subcategory', e.target.value)}
+                                            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-amber-500/50 appearance-none text-sm transition-colors"
+                                        >
+                                            <option value="">Сонгох...</option>
+                                            {selectedCat.subcategories.map((subcat: any) => (
+                                                <option key={subcat.id} value={subcat.id}>{subcat.name}</option>
+                                            ))}
+                                        </select>
+                                    </>
+                                );
+                            }
+                            return null;
+                        })()}
                     </div>
 
                     <div className="pt-6 border-t border-slate-800">

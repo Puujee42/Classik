@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -29,14 +29,25 @@ export default function DiscoveryProductCard({
   const { isAuthenticated } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [showSecondaryImage, setShowSecondaryImage] = useState(false);
-  const [imgSrc, setImgSrc] = useState(product.image || (product.images && product.images.length > 0 ? product.images[0] : '/soyol-logo.png'));
+  const [activeIdx, setActiveIdx] = useState(0);
+  const isDragging = useRef(false);
   const addItem = useCartStore((state) => state.addItem);
 
-  // Update imgSrc if product image changes
-  useEffect(() => {
-    setImgSrc(product.image || (product.images && product.images.length > 0 ? product.images[0] : '/soyol-logo.png'));
-  }, [product.image, product.images]);
+  // Build images array: combine main image + additional images, deduplicate
+  const allImages: string[] = (() => {
+      const combined: string[] = [];
+      if (product.image) combined.push(product.image);
+      if (product.images?.length) {
+          product.images.forEach(img => {
+              if (!combined.includes(img)) combined.push(img);
+          });
+      }
+      return combined.length > 0 ? combined : ['/soyol-logo.png'];
+  })();
+
+  const hasMultiple = allImages.length > 1;
+
+
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -95,26 +106,66 @@ export default function DiscoveryProductCard({
     >
       {/* Image Container */}
       <div className="relative aspect-square bg-gray-50/50 overflow-hidden shrink-0">
-        {/* Images with Zoom Effect */}
-        <AnimatePresence mode="wait">
+        {/* Image Slider */}
+        {hasMultiple ? (
           <motion.div
-            key={showSecondaryImage ? 'secondary' : 'primary'}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, scale: isHovered ? 1.05 : 1 }}
-            exit={{ opacity: 0 }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.1}
+            onDragStart={() => { isDragging.current = true; }}
+            onDragEnd={(_, info) => {
+              if (Math.abs(info.offset.x) > 50) {
+                if (info.offset.x < 0 && activeIdx < allImages.length - 1) setActiveIdx(p => p + 1);
+                else if (info.offset.x > 0 && activeIdx > 0) setActiveIdx(p => p - 1);
+              }
+              setTimeout(() => { isDragging.current = false; }, 10);
+            }}
+            animate={{ x: `-${activeIdx * 100}%` }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="flex w-full h-full"
+          >
+            {allImages.map((img, i) => (
+              <div key={i} className="w-full h-full shrink-0 relative">
+                <Image
+                  src={img}
+                  alt={product.name}
+                  fill
+                  className="object-contain p-4"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  onError={(e) => { (e.target as HTMLImageElement).src = '/soyol-logo.png'; }}
+                />
+              </div>
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            animate={{ scale: isHovered ? 1.05 : 1 }}
             transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
             className="absolute inset-0"
           >
             <Image
-              src={imgSrc}
+              src={allImages[0]}
               alt={product.name}
               fill
               className="object-contain p-4"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              onError={() => setImgSrc('/soyol-logo.png')}
+              onError={(e) => { (e.target as HTMLImageElement).src = '/soyol-logo.png'; }}
             />
           </motion.div>
-        </AnimatePresence>
+        )}
+
+        {/* Dot Indicators */}
+        {hasMultiple && (
+          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10">
+            {allImages.map((_, i) => (
+              <button
+                key={i}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveIdx(i); }}
+                className={`rounded-full transition-all duration-300 ${activeIdx === i ? 'w-4 h-1.5 bg-[#FF5000]' : 'w-1.5 h-1.5 bg-slate-300/80'}`}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Status Badges - Minimalist Pill Design (Top Left) */}
         <div className="absolute top-2 left-2 z-10 flex flex-col gap-1.5 pointer-events-none">
@@ -213,16 +264,14 @@ export default function DiscoveryProductCard({
       }}
       onHoverStart={() => {
         setIsHovered(true);
-        setShowSecondaryImage(true);
       }}
       onHoverEnd={() => {
         setIsHovered(false);
-        setShowSecondaryImage(false);
       }}
       className="group block h-full"
     >
       {product.id ? (
-        <Link href={`/product/${product.id}`} className="block h-full">
+        <Link href={`/product/${product.id}`} className="block h-full" onClick={(e) => { if (isDragging.current) e.preventDefault(); }}>
           <InnerCard />
         </Link>
       ) : (

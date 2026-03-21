@@ -33,9 +33,12 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   const handleQuantity = (item: CartItem, delta: number) => {
     const next = item.quantity + delta;
-    if (next < 1) removeItem(item.id);
-    else updateQuantity(item.id, next);
+    if (next < 1) removeItem(item.cartItemId);
+    else updateQuantity(item.cartItemId, next);
   };
+
+  const selectedItems = items.filter(i => i.selected);
+  const selectedCount = selectedItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <AnimatePresence>
@@ -110,12 +113,19 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       </div>
                       <div className="flex-1 flex flex-col justify-between min-w-0">
                         <div>
-                          <h4 className="font-bold text-slate-900 text-sm line-clamp-2 leading-snug group-hover:text-orange-600 transition-colors">
-                            {item.name}
-                          </h4>
-                          <p className="text-orange-500 font-bold text-sm mt-1.5">
-                            {formatPrice(item.price)}
-                          </p>
+                          <h4 className="font-bold text-slate-900 text-sm truncate">{item.name}</h4>
+                          
+                          {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
+                            <p className="text-xs text-slate-500 mt-0.5 font-medium flex items-center gap-1">
+                              <span className="w-1 h-1 rounded-full bg-slate-200"></span>
+                              {Object.values(item.selectedOptions).join(' / ')}
+                            </p>
+                          )}
+
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="font-sora font-bold text-[#FF5000]">{item.price?.toLocaleString()}₮</span>
+                            <span className="text-slate-500 text-sm">{item.quantity} шт.</span>
+                          </div>
                         </div>
                         <div className="flex items-center justify-between mt-2">
                           <div className="flex items-center bg-slate-50 rounded-lg p-1 border border-slate-100">
@@ -136,8 +146,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                             </button>
                           </div>
                           <button
-                            onClick={() => removeItem(item.id)}
-                            className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                            onClick={() => removeItem(item.cartItemId)}
+                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors self-start ml-2"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/mongodb';
+import { ObjectId } from 'mongodb';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,13 +11,15 @@ export async function GET(
   try {
     const { slug } = await params;
     const categories = await getCollection('categories');
-    // Try finding by id (slug) first, as per schema
-    let category = await categories.findOne({ id: slug });
     
-    // Fallback to finding by 'slug' field if 'id' not found (legacy support)
-    if (!category) {
-        category = await categories.findOne({ slug });
+    let query;
+    try {
+      query = { _id: new ObjectId(slug) };
+    } catch (e) {
+      query = { $or: [{ id: slug }, { slug: slug }] };
     }
+    
+    const category = await categories.findOne(query);
 
     if (!category) {
       return NextResponse.json(
@@ -45,8 +48,15 @@ export async function PUT(
 
     const categories = await getCollection('categories');
     
+    let query;
+    try {
+      query = { _id: new ObjectId(slug) };
+    } catch (e) {
+      query = { $or: [{ id: slug }, { slug: slug }] };
+    }
+
     // Check if category exists
-    const existing = await categories.findOne({ id: slug });
+    const existing = await categories.findOne(query);
     if (!existing) {
         return NextResponse.json({ error: 'Category not found' }, { status: 404 });
     }
@@ -57,7 +67,7 @@ export async function PUT(
     if (subcategories) updateData.subcategories = subcategories;
 
     await categories.updateOne(
-      { id: slug },
+      query,
       { $set: updateData }
     );
 

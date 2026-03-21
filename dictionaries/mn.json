@@ -2,8 +2,8 @@
   "nav": {
     "home": "Нүүр",
     "newArrivals": "Шинэ бараа",
-    "readyToShip": "[Бэлэн]",
-    "preOrder": "[Захиалгаар]",
+    "readyToShip": "Бэлэн бараа",
+    "preOrder": "Захиалгын бараа",
     "deals": "Онцлох",
     "sale": "Хямдрал",
     "help": "Тусламж",
@@ -65,13 +65,13 @@
     "back": "Буцаан",
     "orderSummary": "Захиалгын дүн",
     "removed": "хасагдлаа",
-    "inStock": "[Бэлэн]",
-    "preOrder": "[Захиалгаар]"
+    "inStock": "Бэлэн бараа",
+    "preOrder": "Захиалгын бараа"
   },
   "filters": {
     "all": "Бүгд",
-    "ready": "[Бэлэн]",
-    "preorder": "[Захиалгаар]",
+    "ready": "Бэлэн бараа",
+    "preorder": "Захиалгын бараа",
     "sortBy": "Эрэмбэлэх",
     "newest": "Шинэ эхэнд",
     "priceLowHigh": "Үнэ: Бага → Их",
@@ -87,8 +87,8 @@
     "deliveryTime": "7-14 хоног"
   },
   "product": {
-    "ready": "[Бэлэн]",
-    "preorder": "[Захиалгаар]",
+    "ready": "Бэлэн бараа",
+    "preorder": "Захиалгын бараа",
     "addedToWishlist": "Хүсэлд нэмэгдлээ",
     "removedFromWishlist": "Хүслээс хасагдлаа",
     "viewDetails": "Дэлгэрэнгүй",

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCollection } from '@/lib/mongodb';
+import { getCollection } from '@/lib/mongodb'; // Note: You might want to remove this if you aren't using it
 import { ObjectId } from 'mongodb';
 import { z } from 'zod';
 import { auth } from '@/lib/auth';
@@ -7,7 +7,10 @@ import { auth } from '@/lib/auth';
 const CheckoutSchema = z.object({
   items: z.array(z.object({
     id: z.string(),
-    quantity: z.number().min(1).max(99)
+    quantity: z.number().min(1).max(99),
+    variantId: z.string().optional(),
+    // Fix: Explicitly declare both the Key and Value types as z.string()
+    selectedOptions: z.record(z.string(), z.string()).optional()
   })).min(1).max(20),
   fullName: z.string().min(2),
   phone: z.string().min(8),
@@ -56,8 +59,18 @@ export async function POST(request: NextRequest) {
           if (!product) throw new Error(`Product not found: ${item.id}`);
 
           // Inventory Check
-          if (product.stockStatus === 'in-stock' && (product.inventory || 0) < item.quantity) {
-            throw new Error(`Insufficient stock for ${product.name}. Available: ${product.inventory || 0}`);
+          let availableStock = product.inventory || 0;
+          let variant = null;
+
+          if (item.variantId && product.variants?.length) {
+            variant = product.variants.find((v: any) => v.id === item.variantId);
+            if (variant) {
+              availableStock = variant.inventory;
+            }
+          }
+
+          if (product.stockStatus === 'in-stock' && availableStock < item.quantity) {
+            throw new Error(`Insufficient stock for ${product.name}. Available: ${availableStock}`);
           }
 
           // Vendor & Commission Calculation
@@ -76,6 +89,8 @@ export async function POST(request: NextRequest) {
           orderItems.push({
             id: item.id,
             productId: item.id, // For fallback
+            variantId: item.variantId || null,
+            selectedOptions: item.selectedOptions || null,
             name: product.name,
             price: product.price,
             quantity: item.quantity,
@@ -102,11 +117,19 @@ export async function POST(request: NextRequest) {
 
         // 4. Update Inventory
         for (const item of items) {
-          await productsCollection.updateOne(
-            { _id: new ObjectId(item.id), stockStatus: 'in-stock' },
-            { $inc: { inventory: -item.quantity } },
-            { session }
-          );
+          if (item.variantId) {
+            await productsCollection.updateOne(
+              { _id: new ObjectId(item.id), 'variants.id': item.variantId },
+              { $inc: { 'variants.$.inventory': -item.quantity } },
+              { session }
+            );
+          } else {
+            await productsCollection.updateOne(
+              { _id: new ObjectId(item.id), stockStatus: 'in-stock' },
+              { $inc: { inventory: -item.quantity } },
+              { session }
+            );
+          }
         }
       });
 

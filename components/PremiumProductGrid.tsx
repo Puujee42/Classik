@@ -13,6 +13,7 @@ interface Product {
   discountPercent?: number;
   sections?: string[];
   image?: string | null;
+  images?: string[];
   category: string;
   stockStatus?: string;
   createdAt?: string | Date;

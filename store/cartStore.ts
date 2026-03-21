@@ -3,17 +3,20 @@ import { persist, createJSONStorage, type StateStorage } from 'zustand/middlewar
 import type { Product } from '@models/Product';
 
 export interface CartItem extends Product {
+  cartItemId: string; // Unique identifier for the cart item (productId or productId-variantId)
   quantity: number;
   selected: boolean; // New: flag for Taobao-style selection
   isReady?: boolean; // New: flag for stock availability
+  variantId?: string;
+  selectedOptions?: Record<string, string>;
 }
 
 interface CartState {
   items: CartItem[];
-  addItem: (product: Product, quantity?: number, replace?: boolean) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  toggleItemSelection: (productId: string) => void; // New
+  addItem: (product: Omit<CartItem, 'cartItemId' | 'selected' | 'isReady' | 'quantity'>, quantity?: number, replace?: boolean) => void;
+  removeItem: (cartItemId: string) => void;
+  updateQuantity: (cartItemId: string, quantity: number) => void;
+  toggleItemSelection: (cartItemId: string) => void; // New
   toggleAllSelection: (selected: boolean) => void; // New
   clearCart: () => void;
   getTotalItems: () => number;
@@ -49,12 +52,14 @@ export const useCartStore = create<CartState>()(
 
       addItem: async (product, quantity = 1, replace = false) => {
         const items = get().items;
-        const existingItem = items.find((item) => item.id === product.id);
+        const cartItemId = product.variantId ? `${product.id}-${product.variantId}` : product.id;
+        
+        const existingItem = items.find((item) => item.cartItemId === cartItemId);
         let newItems;
 
         if (existingItem) {
           newItems = items.map((item) =>
-            item.id === product.id
+            item.cartItemId === cartItemId
               ? { ...item, quantity: replace ? quantity : item.quantity + quantity, selected: true }
               : item
           );
@@ -63,10 +68,11 @@ export const useCartStore = create<CartState>()(
             ...items,
             {
               ...product,
+              cartItemId,
               quantity,
               selected: true,
               isReady: (product.stockStatus || 'in-stock') === 'in-stock'
-            }
+            } as CartItem
           ];
         }
 
@@ -88,8 +94,8 @@ export const useCartStore = create<CartState>()(
         }
       },
 
-      removeItem: async (productId) => {
-        const newItems = get().items.filter((item) => item.id !== productId);
+      removeItem: async (cartItemId) => {
+        const newItems = get().items.filter((item) => item.cartItemId !== cartItemId);
         set({ items: newItems });
 
         if (currentStorage === localStorage) {
@@ -105,13 +111,13 @@ export const useCartStore = create<CartState>()(
         }
       },
 
-      updateQuantity: async (productId, quantity) => {
+      updateQuantity: async (cartItemId, quantity) => {
         if (quantity <= 0) {
-          get().removeItem(productId);
+          get().removeItem(cartItemId);
           return;
         }
         const newItems = get().items.map((item) =>
-          item.id === productId ? { ...item, quantity } : item
+          item.cartItemId === cartItemId ? { ...item, quantity } : item
         );
         set({ items: newItems });
 
@@ -124,10 +130,10 @@ export const useCartStore = create<CartState>()(
         }
       },
 
-      toggleItemSelection: (productId) => {
+      toggleItemSelection: (cartItemId) => {
         set({
           items: get().items.map((item) =>
-            item.id === productId ? { ...item, selected: !item.selected } : item
+            item.cartItemId === cartItemId ? { ...item, selected: !item.selected } : item
           ),
         });
       },
@@ -204,18 +210,23 @@ export const useCartStore = create<CartState>()(
           const mergedMap = new Map<string, CartItem>();
 
           // Start with DB items
-          dbItems.forEach(item => mergedMap.set(item.id, item));
+          dbItems.forEach(item => {
+            const id = item.cartItemId || (item.variantId ? `${item.id}-${item.variantId}` : item.id);
+            mergedMap.set(id, { ...item, cartItemId: id });
+          });
 
           // Merge guest items
           guestItems.forEach(item => {
-            if (mergedMap.has(item.id)) {
-              const existing = mergedMap.get(item.id)!;
-              mergedMap.set(item.id, {
+            const id = item.cartItemId || (item.variantId ? `${item.id}-${item.variantId}` : item.id);
+            if (mergedMap.has(id)) {
+              const existing = mergedMap.get(id)!;
+              mergedMap.set(id, {
                 ...item,
+                cartItemId: id,
                 quantity: existing.quantity + item.quantity
               });
             } else {
-              mergedMap.set(item.id, item);
+              mergedMap.set(id, { ...item, cartItemId: id });
             }
           });
 

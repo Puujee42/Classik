@@ -10,7 +10,6 @@ import type { OrderFormData } from '@models/Order';
 import toast from 'react-hot-toast';
 import { useUser } from '@/context/AuthContext';
 import useSWR from 'swr';
-import Link from 'next/link';
 import QPay from '@/components/checkout/QPay';
 
 interface Address {
@@ -194,22 +193,27 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
+      const cartItems = selectedItems.map(item => ({
+        id: item.id,
+        quantity: item.quantity,
+        variantId: item.variantId,
+        selectedOptions: item.selectedOptions
+      }));
+
       const orderData = {
-        userId: user?.id,
-        items: selectedItems.map(item => ({
-          productId: item.id,
-          productName: item.name,
-          productImage: item.image || null,
-          quantity: item.quantity,
-          price: item.price,
-          stockStatus: (item as any).stockStatus || 'in-stock',
-        })),
-        total: grandTotal,
+        items: cartItems,
+        // ОВОГ НЭРИЙГ ЗАССАН ХЭСЭГ: formData.fullName-ээр шууд авна
+        fullName: formData.fullName,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        district: formData.district,
+        notes: formData.notes,
         status: 'pending',
         hasPreOrder,
         deliveryEstimate,
         paymentMethod,
-        deliveryMethod, // Add delivery method to order data
+        deliveryMethod,
         shipping: deliveryMethod === 'delivery' ? formData : {
           ...formData,
           address: 'Store Pickup',
@@ -217,7 +221,7 @@ export default function CheckoutPage() {
           district: 'Sukhbaatar'
         },
         shippingCost: DELIVERY_FEE,
-        saveAddress: saveAddress && addressTab === 'new', // Only save if it's a new address form
+        saveAddress: saveAddress && addressTab === 'new',
       };
 
       const res = await fetch('/api/orders', {
@@ -694,7 +698,6 @@ export default function CheckoutPage() {
             </div>
           </div>
         </form>
-
 
       </div>
     </div>

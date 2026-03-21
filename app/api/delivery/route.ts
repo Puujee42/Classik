@@ -13,6 +13,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ estimation: 'Маргааш хүргэгдэнэ (Бэлэн бараа)' });
         }
 
+        if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+            return NextResponse.json({ estimation: 'Солонгосоос 7-14 хоногийн дотор ирнэ.' });
+        }
+
         const model = genAI.getGenerativeModel({
             model: 'gemini-2.5-flash',
         });
