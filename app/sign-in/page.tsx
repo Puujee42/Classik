@@ -79,10 +79,10 @@ function SignInContent() {
               <Sparkles className="w-7 h-7 text-[#E06B8B]" />
             </motion.div>
             <h1 className="font-serif text-3xl text-[#333] mb-2">
-              Welcome Back
+              Тавтай морил
             </h1>
             <p className="text-[#888] text-sm font-light">
-              {mode === 'password' ? 'Sign in to your Classik account' : 'Enter your phone for a one-time code'}
+              {mode === 'password' ? 'Classik account-даа нэвтэрнэ үү' : 'Нэг удаагийн код авахын тулд утсаа оруулна уу'}
             </p>
           </div>
 
@@ -91,24 +91,22 @@ function SignInContent() {
             <button
               type="button"
               onClick={() => setMode('password')}
-              className={`flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-[0.15em] transition-all ${
-                mode === 'password'
-                  ? 'bg-white shadow-[0_4px_12px_rgba(224,107,139,0.1)] text-[#E06B8B]'
-                  : 'text-[#999]'
-              }`}
+              className={`flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-[0.15em] transition-all ${mode === 'password'
+                ? 'bg-white shadow-[0_4px_12px_rgba(224,107,139,0.1)] text-[#E06B8B]'
+                : 'text-[#999]'
+                }`}
             >
-              Password
+              Нууц үг
             </button>
             <button
               type="button"
               onClick={() => setMode('otp')}
-              className={`flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-[0.15em] transition-all ${
-                mode === 'otp'
-                  ? 'bg-white shadow-[0_4px_12px_rgba(224,107,139,0.1)] text-[#E06B8B]'
-                  : 'text-[#999]'
-              }`}
+              className={`flex-1 py-2.5 rounded-full text-xs font-bold uppercase tracking-[0.15em] transition-all ${mode === 'otp'
+                ? 'bg-white shadow-[0_4px_12px_rgba(224,107,139,0.1)] text-[#E06B8B]'
+                : 'text-[#999]'
+                }`}
             >
-              OTP Code
+              Нэг удаагийн код
             </button>
           </div>
 
@@ -118,7 +116,7 @@ function SignInContent() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-[#999] uppercase tracking-[0.2em] ml-1">
-                    Phone Number
+                    Утасны дугаар
                   </label>
                   <div className="relative group">
                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#ccc] group-focus-within:text-[#E06B8B] transition-colors" />
@@ -135,7 +133,7 @@ function SignInContent() {
 
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-[#999] uppercase tracking-[0.2em] ml-1">
-                    Password
+                    Нууц үг
                   </label>
                   <div className="relative group">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#ccc] group-focus-within:text-[#E06B8B] transition-colors" />
@@ -234,7 +232,7 @@ function SignInContent() {
                     {otpLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Sign In'}
                   </motion.button>
                   <button type="button" onClick={() => setOtpStep('phone')} className="w-full text-sm text-[#999] font-medium py-2 hover:text-[#E06B8B] transition-colors">
-                    ← Change number
+                    ← Өөр дугаар сонгох
                   </button>
                 </div>
               )}
@@ -251,9 +249,9 @@ function SignInContent() {
           </div>
 
           <p className="text-center text-sm text-[#999]">
-            Don't have an account?{' '}
+            Бүртгэлгүй юу?{' '}
             <Link href="/sign-up" className="text-[#E06B8B] font-bold hover:underline underline-offset-4 transition-colors">
-              Create one
+              Бүртгүүлэх
             </Link>
           </p>
         </div>
