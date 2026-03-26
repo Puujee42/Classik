@@ -339,7 +339,7 @@ export default function AIChatWindow({ onBack }: AIChatWindowProps) {
                     >
                         {/* Avatar */}
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-lg ${msg.role === 'user'
-                            ? 'bg-[#FF5000] ring-2 ring-orange-500/30'
+                            ? 'bg-[#E06B8B] ring-2 ring-orange-500/30'
                             : 'bg-gradient-to-tr from-blue-600 to-cyan-400 ring-2 ring-blue-500/30'
                             }`}>
                             {msg.role === 'user' ? <User className="w-4 h-4 text-white" strokeWidth={1.2} /> : <Bot className="w-4 h-4 text-white" strokeWidth={1.2} />}
@@ -347,7 +347,7 @@ export default function AIChatWindow({ onBack }: AIChatWindowProps) {
 
                         {/* Bubble */}
                         <div className={`max-w-[85%] rounded-2xl px-5 py-3 shadow-md ${msg.role === 'user'
-                            ? 'bg-[#FF5000] text-white rounded-tr-none'
+                            ? 'bg-[#E06B8B] text-white rounded-tr-none'
                             : 'bg-slate-800 text-slate-200 rounded-tl-none border border-white/5'
                             }`}>
                             {getMessageFiles(msg).length > 0 && (
@@ -440,7 +440,7 @@ export default function AIChatWindow({ onBack }: AIChatWindowProps) {
                     <button
                         type="submit"
                         disabled={((!input || !input.trim()) && !attachment) || isLoading}
-                        className="p-3 bg-[#FF5000] text-white rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-orange-500/25 transition-all active:scale-95 shrink-0"
+                        className="p-3 bg-[#E06B8B] text-white rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-[#E06B8B]/25 transition-all active:scale-95 shrink-0"
                     >
                         {isLoading ? <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.2} /> : <Send className="w-4 h-4" strokeWidth={1.2} />}
                     </button>

@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
 import { Loader2, Phone, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 
 export default function AuthForm() {
@@ -15,143 +14,109 @@ export default function AuthForm() {
     const [isCheckingUser, setIsCheckingUser] = useState(false);
 
     const checkUserExistence = async (phone: string) => {
-        if (!phone || phone.length < 8) return;
-
-        // Only check if we are in registration mode
-        if (isLogin) return;
-
+        if (!phone || phone.length < 8 || isLogin) return;
         setIsCheckingUser(true);
         try {
             const res = await fetch('/api/auth/check-user', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone }),
             });
-
             const data = await res.json();
-
             if (data.exists) {
-                toast.error('Энэ дугаар бүртгэлтэй байна. Нэвтэрнэ үү.', {
-                    duration: 4000,
-                    icon: '⚠️'
-                });
+                toast.error('Энэ дугаар бүртгэлтэй байна. Нэвтэрнэ үү.', { duration: 4000, icon: '⚠️' });
                 setIsLogin(true);
             }
-        } catch (error) {
-            console.error('Failed to check user:', error);
-        } finally {
-            setIsCheckingUser(false);
-        }
+        } catch (error) { console.error('Failed to check user:', error); }
+        finally { setIsCheckingUser(false); }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-
         const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-
         try {
             const res = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
-
             const data = await res.json();
-
-            if (!res.ok) {
-                toast.error(data.error || 'Something went wrong');
-            } else {
-                if (isLogin) {
-                    toast.success('Тавтай морилно уу!');
-                    router.push('/');
-                    router.refresh();
-                } else {
-                    toast.success('Амжилттай бүртгэгдлээ! Нэвтэрнэ үү.');
-                    setIsLogin(true);
-                }
+            if (!res.ok) { toast.error(data.error || 'Something went wrong'); }
+            else {
+                if (isLogin) { toast.success('Тавтай морилно уу!'); router.push('/'); router.refresh(); }
+                else { toast.success('Амжилттай бүртгэгдлээ! Нэвтэрнэ үү.'); setIsLogin(true); }
             }
-        } catch (error) {
-            toast.error('Алкдаа гарлаа');
-        } finally {
-            setLoading(false);
-        }
+        } catch { toast.error('Алдаа гарлаа'); }
+        finally { setLoading(false); }
     };
 
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="w-full"
         >
-            <div className="relative bg-black/40 border border-white/10 p-8 sm:p-10 rounded-3xl shadow-2xl backdrop-blur-xl overflow-hidden">
-                {/* Decorative Top Gradient */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-50"></div>
+            <div className="relative bg-white border border-[#D4AF37]/10 p-8 sm:p-10 rounded-3xl shadow-[0_20px_60px_rgba(224,107,139,0.08)] overflow-hidden">
+                {/* Decorative Top Line */}
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#E06B8B] to-transparent opacity-40" />
 
                 <div className="text-center mb-10">
                     <motion.div
-                        initial={{ rotate: -180, opacity: 0 }}
-                        animate={{ rotate: 0, opacity: 1 }}
-                        transition={{ duration: 0.8 }}
-                        className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 mb-6 shadow-lg shadow-orange-500/30"
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ duration: 0.7 }}
+                        className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#FCEEF2] to-[#E06B8B]/20 mb-6 border border-[#E06B8B]/15"
                     >
-                        <Sparkles className="w-7 h-7 text-white" />
+                        <Sparkles className="w-7 h-7 text-[#E06B8B]" />
                     </motion.div>
-                    <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">
-                        {isLogin ? 'Нэвтрэх' : 'Бүртгүүлэх'}
+                    <h2 className="font-serif text-3xl text-[#333] mb-2">
+                        {isLogin ? 'Welcome Back' : 'Create Account'}
                     </h2>
-                    <p className="text-slate-300/80 text-sm">
-                        {isLogin ? 'Тавтай морилно уу! Эргэн ирсэнд баярлалаа.' : 'Шинэ ертөнцөд хөл тавихад бэлэн үү?'}
+                    <p className="text-[#888] text-sm font-light">
+                        {isLogin ? 'Sign in to your Classik account' : 'Join the Classik skincare community'}
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="space-y-4">
-                        <div className="group">
-                            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 ml-1">Утасны дугаар</label>
-                            <div className="relative">
-                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-amber-400 transition-colors duration-300" />
+                        {/* Phone */}
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-[#999] uppercase tracking-[0.2em] ml-1">Phone Number</label>
+                            <div className="relative group">
+                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#ccc] group-focus-within:text-[#E06B8B] transition-colors" />
                                 <input
-                                    type="tel"
-                                    required
-                                    value={formData.phone}
+                                    type="tel" required value={formData.phone}
                                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                     onBlur={(e) => checkUserExistence(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:bg-white/10 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 outline-none transition-all duration-300"
+                                    className="w-full pl-11 pr-4 py-4 bg-[#FAF9F6] border border-[#D4AF37]/12 rounded-2xl focus:ring-2 focus:ring-[#E06B8B]/15 focus:border-[#E06B8B]/40 outline-none transition-all text-[#333] placeholder:text-[#ccc] text-sm font-medium"
                                     placeholder="9911..."
                                 />
                             </div>
                         </div>
 
+                        {/* Registration Fields */}
                         {!isLogin && (
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="group">
-                                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 ml-1">Таны нэр</label>
-                                    <div className="relative">
-                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-amber-400 transition-colors duration-300" />
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-[#999] uppercase tracking-[0.2em] ml-1">Name</label>
+                                    <div className="relative group">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#ccc] group-focus-within:text-[#E06B8B] transition-colors" />
                                         <input
-                                            type="text"
-                                            required={!isLogin}
-                                            value={formData.name}
+                                            type="text" required={!isLogin} value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                            className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:bg-white/10 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 outline-none transition-all duration-300"
-                                            placeholder="Бат"
+                                            className="w-full pl-11 pr-4 py-4 bg-[#FAF9F6] border border-[#D4AF37]/12 rounded-2xl focus:ring-2 focus:ring-[#E06B8B]/15 focus:border-[#E06B8B]/40 outline-none transition-all text-[#333] placeholder:text-[#ccc] text-sm font-medium"
+                                            placeholder="Name"
                                         />
                                     </div>
                                 </div>
-                                <div className="group">
-                                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 ml-1">Нас</label>
-                                    <div className="relative">
-                                        <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-amber-400 transition-colors duration-300" />
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-[#999] uppercase tracking-[0.2em] ml-1">Age</label>
+                                    <div className="relative group">
+                                        <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#ccc] group-focus-within:text-[#E06B8B] transition-colors" />
                                         <input
-                                            type="number"
-                                            required={!isLogin}
-                                            min="1"
-                                            max="120"
-                                            value={formData.age}
+                                            type="number" required={!isLogin} min="1" max="120" value={formData.age}
                                             onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                                            className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:bg-white/10 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 outline-none transition-all duration-300"
+                                            className="w-full pl-11 pr-4 py-4 bg-[#FAF9F6] border border-[#D4AF37]/12 rounded-2xl focus:ring-2 focus:ring-[#E06B8B]/15 focus:border-[#E06B8B]/40 outline-none transition-all text-[#333] placeholder:text-[#ccc] text-sm font-medium"
                                             placeholder="25"
                                         />
                                     </div>
@@ -159,16 +124,15 @@ export default function AuthForm() {
                             </div>
                         )}
 
-                        <div className="group">
-                            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 ml-1">Нууц үг</label>
-                            <div className="relative">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-amber-400 transition-colors duration-300" />
+                        {/* Password */}
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-[#999] uppercase tracking-[0.2em] ml-1">Password</label>
+                            <div className="relative group">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#ccc] group-focus-within:text-[#E06B8B] transition-colors" />
                                 <input
-                                    type="password"
-                                    required
-                                    value={formData.password}
+                                    type="password" required value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:bg-white/10 focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 outline-none transition-all duration-300"
+                                    className="w-full pl-11 pr-4 py-4 bg-[#FAF9F6] border border-[#D4AF37]/12 rounded-2xl focus:ring-2 focus:ring-[#E06B8B]/15 focus:border-[#E06B8B]/40 outline-none transition-all text-[#333] placeholder:text-[#ccc] text-sm font-medium"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -176,33 +140,34 @@ export default function AuthForm() {
                     </div>
 
                     <motion.button
-                        whileHover={{ scale: 1.01, boxShadow: "0 10px 30px -10px rgba(245, 158, 11, 0.5)" }}
+                        whileHover={{ y: -3, boxShadow: '0 15px 35px rgba(224, 107, 139, 0.35)' }}
                         whileTap={{ scale: 0.98 }}
-                        type="submit"
-                        disabled={loading}
-                        className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-500/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-lg"
+                        type="submit" disabled={loading}
+                        className="w-full py-4 bg-[#E06B8B] text-white rounded-full font-bold text-sm uppercase tracking-[0.15em] shadow-[0_8px_25px_rgba(224,107,139,0.3)] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
                     >
-                        {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (
-                            <>
-                                {isLogin ? 'Нэвтрэх' : 'Бүртгүүлэх'}
-                                <ArrowRight className="w-5 h-5" />
-                            </>
+                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                            <>{isLogin ? 'Sign In' : 'Create Account'} <ArrowRight className="w-4 h-4" /></>
                         )}
                     </motion.button>
                 </form>
 
-                <div className="mt-8">
-                    <div className="text-center">
-                        <button
-                            onClick={() => setIsLogin(!isLogin)}
-                            className="text-slate-400 hover:text-white text-sm font-medium transition-colors hover:underline underline-offset-4"
-                        >
-                            {isLogin ? "Бүртгэлгүй юу? " : "Бүртгэлтэй юу? "}
-                            <span className="text-amber-400 hover:text-amber-300">
-                                {isLogin ? "Шинээр бүртгүүлэх" : "Нэвтрэх"}
-                            </span>
-                        </button>
-                    </div>
+                {/* Toggle */}
+                <div className="flex items-center gap-3 my-6">
+                    <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-[#D4AF37]/15" />
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-[#ccc] font-bold">or</span>
+                    <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent to-[#D4AF37]/15" />
+                </div>
+
+                <div className="text-center">
+                    <button
+                        onClick={() => setIsLogin(!isLogin)}
+                        className="text-[#999] text-sm font-light transition-colors"
+                    >
+                        {isLogin ? "Don't have an account? " : "Already have an account? "}
+                        <span className="text-[#E06B8B] font-bold hover:underline underline-offset-4">
+                            {isLogin ? "Create one" : "Sign in"}
+                        </span>
+                    </button>
                 </div>
             </div>
         </motion.div>

@@ -13,6 +13,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { formatPrice } from '@/lib/utils';
 import { deleteProduct } from '@/app/actions/products';
+import { useVibe } from '@/context/VibeContext';
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -21,6 +22,7 @@ export default function AdminProductsPage() {
     const [filterCategory, setFilterCategory] = useState('all');
     const [togglingFeatured, setTogglingFeatured] = useState<string | null>(null);
     const [editingStock, setEditingStock] = useState<{ id: string, value: string } | null>(null);
+    const { currentVibe } = useVibe();
 
     const { data: productsData, mutate: mutateProducts } = useSWR('/api/products', fetcher);
     const { data: categoriesData } = useSWR('/api/categories', fetcher);
@@ -122,7 +124,8 @@ export default function AdminProductsPage() {
                     </div>
                     <Link
                         href="/admin/products/new"
-                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-slate-950 rounded-xl hover:bg-amber-400 transition-colors font-bold shadow-lg shadow-amber-500/20 text-sm"
+                        className="flex items-center gap-2 px-4 py-2 text-white rounded-xl transition-colors font-bold shadow-lg text-sm"
+                        style={{ backgroundColor: currentVibe.accent, boxShadow: `0 8px 20px ${currentVibe.glow}` }}
                     >
                         <PlusCircle className="w-4 h-4" />
                         <span className="hidden sm:inline">Бараа нэмэх</span>
@@ -144,7 +147,8 @@ export default function AdminProductsPage() {
                             placeholder="Бараа хайх... ( ' / ' дарж идэвхжүүлнэ )"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 text-sm transition-all"
+                            className="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 text-sm transition-all"
+                            style={{ '--tw-ring-color': `${currentVibe.accent}80`, borderColor: searchTerm ? `${currentVibe.accent}50` : undefined } as React.CSSProperties}
                         />
                     </div>
 
@@ -154,7 +158,8 @@ export default function AdminProductsPage() {
                         <Filter className="w-4 h-4 text-slate-500 hidden sm:block shrink-0" />
                         <button
                             onClick={() => setFilterCategory('all')}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${filterCategory === 'all' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors`}
+                            style={filterCategory === 'all' ? { backgroundColor: currentVibe.accent, color: 'white' } : { backgroundColor: 'rgb(30 41 59)', color: '#94a3b8' }}
                         >
                             Ангилал бүгд
                         </button>
@@ -162,7 +167,8 @@ export default function AdminProductsPage() {
                             <button
                                 key={cat.id}
                                 onClick={() => setFilterCategory(cat.id)}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${filterCategory === cat.id ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors`}
+                                style={filterCategory === cat.id ? { backgroundColor: currentVibe.accent, color: 'white' } : { backgroundColor: 'rgb(30 41 59)', color: '#94a3b8' }}
                             >
                                 {cat.name}
                             </button>
@@ -172,52 +178,53 @@ export default function AdminProductsPage() {
 
                 {/* List */}
 
-                {/* MOBILE CARD LIST — md-с дээш нуугдана */} 
-                <div className="md:hidden space-y-3"> 
-                  {loading ? ( 
-                    <div className="py-12 text-center"> 
-                      <Loader2 className="w-6 h-6 animate-spin text-amber-500 mx-auto" /> 
-                    </div> 
-                  ) : filteredProducts.map((product: any) => ( 
-                    <div key={product._id} className="bg-slate-900 border border-slate-800 rounded-2xl p-4"> 
-                      <div className="flex gap-3 items-start"> 
-                        <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 shrink-0"> 
-                          {product.image && <img src={product.image} alt="" className="w-full h-full object-cover" />} 
-                        </div> 
-                        <div className="flex-1 min-w-0"> 
-                          <p className="font-bold text-white text-sm leading-tight line-clamp-2">{product.name}</p> 
-                          <p className="text-xs text-slate-500 mt-0.5">{product.category}</p> 
-                          <p className="font-black text-amber-500 text-sm mt-1">{formatPrice(product.price)}</p> 
-                        </div> 
-                        <div className="flex flex-col gap-1.5 shrink-0"> 
-                          <Link href={`/admin/products/${product._id}`} 
-                            className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors"> 
-                            <Pencil className="w-4 h-4" /> 
-                          </Link> 
-                          <button onClick={() => handleDelete(product._id)} 
-                            className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-red-400 transition-colors"> 
-                            <Trash2 className="w-4 h-4" /> 
-                          </button> 
-                        </div> 
-                      </div> 
-                      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-800"> 
-                        <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${product.stockStatus === 'in-stock' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}> 
-                          {product.stockStatus === 'in-stock' ? '● Бэлэн' : '○ Захиалга'} 
-                        </span> 
-                        <span className="text-xs text-slate-500">Үлд: {product.inventory ?? 0}ш</span> 
-                        <button 
-                          onClick={() => handleToggleFeatured(product)} 
-                          disabled={togglingFeatured === product._id} 
-                          className={`ml-auto text-xs font-bold px-2 py-1 rounded-lg transition-colors ${product.featured ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-500'}`} 
-                        > 
-                          {togglingFeatured === product._id ? <Loader2 className="w-3 h-3 animate-spin" /> : product.featured ? '⭐ Онцгой' : 'Онцгой болгох'} 
-                        </button> 
-                      </div> 
-                    </div> 
-                  ))} 
-                </div> 
+                {/* MOBILE CARD LIST */}
+                <div className="md:hidden space-y-3">
+                  {loading ? (
+                    <div className="py-12 text-center">
+                      <Loader2 className="w-6 h-6 animate-spin mx-auto" style={{ color: currentVibe.accent }} />
+                    </div>
+                  ) : filteredProducts.map((product: any) => (
+                    <div key={product._id} className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                      <div className="flex gap-3 items-start">
+                        <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 shrink-0">
+                          {product.image && <img src={product.image} alt="" className="w-full h-full object-cover" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-white text-sm leading-tight line-clamp-2">{product.name}</p>
+                          <p className="text-xs text-slate-500 mt-0.5">{product.category}</p>
+                          <p className="font-black text-sm mt-1" style={{ color: currentVibe.accent }}>{formatPrice(product.price)}</p>
+                        </div>
+                        <div className="flex flex-col gap-1.5 shrink-0">
+                          <Link href={`/admin/products/${product._id}`}
+                            className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors">
+                            <Pencil className="w-4 h-4" />
+                          </Link>
+                          <button onClick={() => handleDelete(product._id)}
+                            className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-red-400 transition-colors">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-800">
+                        <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${product.stockStatus === 'in-stock' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                          {product.stockStatus === 'in-stock' ? '● Бэлэн' : '○ Захиалга'}
+                        </span>
+                        <span className="text-xs text-slate-500">Үлд: {product.inventory ?? 0}ш</span>
+                        <button
+                          onClick={() => handleToggleFeatured(product)}
+                          disabled={togglingFeatured === product._id}
+                          className={`ml-auto text-xs font-bold px-2 py-1 rounded-lg transition-colors`}
+                          style={product.featured ? { backgroundColor: `${currentVibe.accent}30`, color: currentVibe.accent } : { backgroundColor: 'rgb(30 41 59)', color: '#64748b' }}
+                        >
+                          {togglingFeatured === product._id ? <Loader2 className="w-3 h-3 animate-spin" /> : product.featured ? '⭐ Онцгой' : 'Онцгой болгох'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-                {/* DESKTOP TABLE — mobile-д нуугдана */} 
+                {/* DESKTOP TABLE */}
                 <div className="hidden md:block bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
                     <div className="overflow-x-auto">
                         <table className="w-full">
@@ -235,7 +242,7 @@ export default function AdminProductsPage() {
                                 {loading ? (
                                     <tr>
                                         <td colSpan={6} className="px-6 py-20 text-center">
-                                            <Loader2 className="w-8 h-8 text-amber-500 animate-spin mx-auto" />
+                                            <Loader2 className="w-8 h-8 animate-spin mx-auto" style={{ color: currentVibe.accent }} />
                                             <p className="text-slate-500 text-sm mt-4">Ачаалж байна...</p>
                                         </td>
                                     </tr>
@@ -252,13 +259,13 @@ export default function AdminProductsPage() {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <Link href={`/admin/products/${p._id}`} className="text-sm font-bold text-white hover:text-amber-400 transition-colors line-clamp-1">
+                                                <Link href={`/admin/products/${p._id}`} className="text-sm font-bold text-white transition-colors" style={{ '--hover-color': currentVibe.accent } as React.CSSProperties}>
                                                     {p.name}
                                                 </Link>
                                                 <div className="text-xs text-slate-500 mt-1">{categories.find((c: any) => c.id === p.category)?.name || p.category}</div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="text-amber-400 font-bold text-sm">{formatPrice(p.price)}</span>
+                                                <span className="font-bold text-sm" style={{ color: currentVibe.accent }}>{formatPrice(p.price)}</span>
                                                 {p.originalPrice && p.originalPrice > p.price && (
                                                     <span className="ml-2 text-xs text-slate-500 line-through">{formatPrice(p.originalPrice)}</span>
                                                 )}
@@ -272,14 +279,16 @@ export default function AdminProductsPage() {
                                                             onChange={e => setEditingStock({ id: p._id, value: e.target.value })}
                                                             onBlur={() => handleStockUpdate(p._id, parseInt(editingStock!.value) || 0)}
                                                             onKeyDown={e => e.key === 'Enter' && handleStockUpdate(p._id, parseInt(editingStock!.value) || 0)}
-                                                            className="w-16 bg-slate-700 text-white text-sm rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                                            className="w-16 bg-slate-700 text-white text-sm rounded px-2 py-1 focus:outline-none focus:ring-1"
+                                                            style={{ '--tw-ring-color': `${currentVibe.accent}80` } as React.CSSProperties}
                                                             autoFocus
                                                         />
                                                     ) : (
                                                         <>
                                                             <span
                                                                 onClick={() => setEditingStock({ id: p._id, value: String(p.inventory || 0) })}
-                                                                className={`cursor-pointer hover:text-amber-400 transition-colors text-sm font-bold ${(p.inventory || 0) < 5 ? 'text-red-400' : 'text-slate-300'}`}
+                                                                className={`cursor-pointer transition-colors text-sm font-bold ${(p.inventory || 0) < 5 ? 'text-red-400' : 'text-slate-300'}`}
+                                                                style={{ '--hover-color': currentVibe.accent } as React.CSSProperties}
                                                             >
                                                                 {p.inventory || 0}ш
                                                             </span>
@@ -294,13 +303,20 @@ export default function AdminProductsPage() {
                                                 <button
                                                     onClick={() => handleToggleFeatured(p)}
                                                     disabled={togglingFeatured === p._id}
-                                                    className={`p-2 rounded-lg transition-all duration-200 ${p.featured ? 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30' : 'bg-slate-800 text-slate-500 hover:text-slate-300 hover:bg-slate-700'} disabled:opacity-50`}
+                                                    className="p-2 rounded-lg transition-all duration-200 disabled:opacity-50"
+                                                    style={p.featured ? {
+                                                        backgroundColor: `${currentVibe.accent}30`,
+                                                        color: currentVibe.accent,
+                                                    } : {
+                                                        backgroundColor: 'rgb(30 41 59)',
+                                                        color: '#64748b',
+                                                    }}
                                                     title={p.featured ? 'Онцгой-оос хасах' : 'Онцгой болгох'}
                                                 >
                                                     {togglingFeatured === p._id ? (
                                                         <Loader2 className="w-4 h-4 animate-spin" />
                                                     ) : (
-                                                        <Star className={`w-4 h-4 ${p.featured ? 'fill-amber-500' : ''}`} />
+                                                        <Star className={`w-4 h-4 ${p.featured ? 'fill-current' : ''}`} />
                                                     )}
                                                 </button>
                                             </td>
@@ -333,7 +349,7 @@ export default function AdminProductsPage() {
                                                 <Search className="w-6 h-6 text-slate-500" />
                                             </div>
                                             <h3 className="text-lg font-bold text-white mb-1">Бараа олдсонгүй</h3>
-                                            <p className="text-slate-500 text-sm">Хайлтын утга эсвэл ангиллаа өөрчилж үзнэ үү.</p>
+                                            <p className="text-slate-500 text-sm">Хайлтын утга эсвэл ангиллаа өөрчилж үзнэ үю.</p>
                                         </td>
                                     </tr>
                                 )}

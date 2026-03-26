@@ -37,6 +37,7 @@
     "livekit-server-sdk": "^2.15.0",
     "lucide-react": "^0.563.0",
     "mongodb": "^7.1.0",
+    "mongoose": "^9.3.3",
     "next": "^16.1.6",
     "next-cloudinary": "^6.17.5",
     "nodemailer": "^8.0.1",

@@ -104,7 +104,7 @@ function SearchContent() {
       duration: 2000,
       position: 'top-right',
       style: {
-        background: '#FF7900',
+        background: '#F0AEC1',
         color: 'white',
         fontWeight: 'bold',
         borderRadius: '12px',
@@ -183,7 +183,7 @@ function SearchContent() {
               autoFocus 
               defaultValue={q} 
               placeholder="Бараа хайх..." 
-              className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium outline-none focus:border-[#FF5000] focus:ring-2 focus:ring-[#FF5000]/10 transition-all" 
+              className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium outline-none focus:border-[#D47A93] focus:ring-2 focus:ring-[#D47A93]/10 transition-all" 
             /> 
           </form> 
 
@@ -342,7 +342,7 @@ function SearchContent() {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="rounded-full h-12 w-12 border-b-2 border-[#FF5000] mx-auto mb-4"
+            className="rounded-full h-12 w-12 border-b-2 border-[#D47A93] mx-auto mb-4"
           />
           <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">{t('product', 'loading') || 'Searching...'}</p>
         </div>
@@ -367,7 +367,7 @@ function SearchContent() {
             type="search" 
             defaultValue={q} 
             placeholder="Бараа хайх..." 
-            className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium outline-none focus:border-[#FF5000] focus:ring-2 focus:ring-[#FF5000]/10 transition-all shadow-sm" 
+            className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium outline-none focus:border-[#D47A93] focus:ring-2 focus:ring-[#D47A93]/10 transition-all shadow-sm" 
           /> 
         </form>
 
@@ -400,7 +400,7 @@ function SearchContent() {
             <p className="text-gray-400 text-sm max-w-[200px] mx-auto mb-8">Өөр үгээр дахин хайж үзнэ үү</p>
             <Link
               href="/"
-              className="inline-block px-10 py-4 bg-[#FF5000] text-white font-black rounded-full shadow-lg shadow-orange-500/30 active:scale-95 transition-all text-sm uppercase tracking-wider"
+              className="inline-block px-10 py-4 bg-[#D47A93] text-white font-black rounded-full shadow-lg shadow-orange-500/30 active:scale-95 transition-all text-sm uppercase tracking-wider"
             >
               Буцах
             </Link>
@@ -433,7 +433,7 @@ export default function SearchPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF7900]" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F0AEC1]" />
         </div>
       }
     >

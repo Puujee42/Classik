@@ -100,7 +100,7 @@ export default function MobileHero() {
                         whileTap={{ scale: 0.9 }}
                         className="flex flex-col items-center gap-2 min-w-[70px]"
                     >
-                        <div className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center text-2xl shadow-sm border border-orange-100 hover:bg-orange-100 transition-colors">
+                        <div className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center text-2xl shadow-sm border border-orange-100 hover:bg-[#FCEEF2] transition-colors">
                             {item.icon}
                         </div>
                         <span className="text-[10px] font-bold text-gray-700 uppercase tracking-tighter">

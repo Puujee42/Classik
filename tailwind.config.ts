@@ -8,31 +8,62 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        soyol: {
-          DEFAULT: "#F57E20",
-          light: "#ff9d4d",
-          dark: "#d46610",
+        orange: {
+          50: '#FCEEF2', // Pastel pink
+          100: '#FADEE5',
+          200: '#F5BDCB',
+          300: '#F09CB1',
+          400: '#E87D9A',
+          500: '#E06B8B', // Rose Pink
+          600: '#C55B7A', // Darker Rose
+          700: '#AA4B69',
+          800: '#8F3B58',
+          900: '#742B47',
         },
-        dark: {
-          DEFAULT: "#111111",
-          light: "#1a1a1a",
+        amber: {
+          50: '#FBF8F0',
+          100: '#F7F1E1',
+          200: '#EFE3C3',
+          300: '#E7D5A5',
+          400: '#DFC787',
+          500: '#D4AF37', // Soft Gold
+          600: '#C5A059', // Darker Gold
+          700: '#AB8B4A',
+          800: '#91763B',
+          900: '#77612C',
+        },
+        soyol: {
+          light: '#FCEEF2',
+          DEFAULT: '#E06B8B',
+          dark: '#C55B7A',
+        },
+        gold: {
+          light: '#F7F1E1',
+          DEFAULT: '#D4AF37',
+          dark: '#C5A059',
         },
       },
       fontFamily: {
-        sans: ["Plus Jakarta Sans", "Inter", "ui-sans-serif", "system-ui"],
+        sans: ['var(--font-lato)', 'Montserrat', 'sans-serif'],
+        serif: ['var(--font-playfair)', 'Cinzel', 'serif'],
+        script: ['var(--font-great-vibes)', 'cursive'],
       },
       animation: {
-        skeleton: "skeleton 1.5s ease-in-out infinite",
-        glow: "glow 2s ease-in-out infinite",
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "aurora": "aurora 60s linear infinite",
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'gradient': 'gradient 8s linear infinite',
       },
       keyframes: {
-        skeleton: {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.5" },
+        "accordion-down": {
+          from: { height: "0" },
+          "50%": { backgroundPosition: "100% 50%, 100% 50%, 100% 50%" },
+          "100%": { backgroundPosition: "350% 50%, 350% 50%, 350% 50%" },
         },
-        glow: {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(245, 126, 32, 0.5)" },
-          "50%": { boxShadow: "0 0 40px rgba(245, 126, 32, 0.8)" },
+        gradient: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
         },
       },
     },

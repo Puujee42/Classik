@@ -256,7 +256,7 @@ export default function CategoryPage() {
                 >
                   <Link href={`/product/${product.id}`} className="block relative aspect-[4/5] overflow-hidden bg-slate-100">
                     <Image
-                      src={(product.images && product.images.length > 0) ? product.images[0] : '/soyol-logo.png'}
+                      src={(product.images && product.images.length > 0) ? product.images[0] : '/soyol-logo-new.png'}
                       alt={product.name}
                       fill
                       className="object-contain p-4 transition-transform duration-700 group-hover:scale-110"

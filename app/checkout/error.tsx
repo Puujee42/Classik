@@ -35,7 +35,7 @@ export default function CheckoutError({
           </button>
           <Link
             href="/cart"
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-orange-500 hover:text-orange-500 transition"
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-orange-500 hover:text-[#E06B8B] transition"
           >
             <ShoppingBag className="w-4 h-4" />
             Сагс руу

@@ -74,7 +74,7 @@ export default function MinimalistCategory({ onCategorySelect, className = '', c
                                 onCategorySelect?.(category.id);
                             }}
                             className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-all duration-300 group ${activeCategory === category.id
-                                    ? 'bg-white shadow-md text-orange-600 scale-100'
+                                    ? 'bg-white shadow-md text-[#E06B8B] scale-100'
                                     : 'hover:bg-white/50 text-slate-500 hover:text-slate-900'
                                 }`}
                         >
@@ -106,7 +106,7 @@ export default function MinimalistCategory({ onCategorySelect, className = '', c
                         <h2 className="text-2xl font-black text-slate-900 tracking-tighter">
                             {activeCategoryData?.name}
                         </h2>
-                        <Link href={`/category/${activeCategory}`} className="flex items-center gap-1 text-xs font-bold text-orange-600 hover:text-orange-700 uppercase tracking-widest group">
+                        <Link href={`/category/${activeCategory}`} className="flex items-center gap-1 text-xs font-bold text-[#E06B8B] hover:text-orange-700 uppercase tracking-widest group">
                             View All
                             <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
@@ -127,7 +127,7 @@ export default function MinimalistCategory({ onCategorySelect, className = '', c
                                             {/* <Image src={sub.image} alt={sub.name} fill className="object-contain p-2" /> */}
                                         </div>
                                     </div>
-                                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-orange-600 transition-colors text-center">
+                                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-[#E06B8B] transition-colors text-center">
                                         {sub.name}
                                     </h3>
                                 </Link>
@@ -136,7 +136,7 @@ export default function MinimalistCategory({ onCategorySelect, className = '', c
                             // Generic grid if no subcategories, just to show Minimalist Grid structure
                             Array.from({ length: 8 }).map((_, i) => (
                                 <div key={i} className="group cursor-pointer">
-                                    <div className="aspect-square rounded-3xl bg-slate-50 mb-4 relative overflow-hidden group-hover:shadow-xl group-hover:shadow-orange-500/10 transition-all duration-300">
+                                    <div className="aspect-square rounded-3xl bg-slate-50 mb-4 relative overflow-hidden group-hover:shadow-xl group-hover:shadow-[#E06B8B]/10 transition-all duration-300">
                                         <div className="absolute inset-4 bg-white rounded-2xl flex items-center justify-center p-2">
                                             {/* Mock Image using object-contain */}
                                             <div className="w-full h-full relative">
@@ -145,7 +145,7 @@ export default function MinimalistCategory({ onCategorySelect, className = '', c
                                         </div>
                                     </div>
                                     <div className="text-center">
-                                        <h3 className="text-sm font-bold text-slate-900 group-hover:text-orange-600 transition-colors">Item {i + 1}</h3>
+                                        <h3 className="text-sm font-bold text-slate-900 group-hover:text-[#E06B8B] transition-colors">Item {i + 1}</h3>
                                     </div>
                                 </div>
                             ))

@@ -117,7 +117,7 @@ export default function LanguageCurrencySelector() {
           <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">
             {currentLang.code}
           </span>
-          <span className="text-xs font-bold text-gray-800 group-hover:text-orange-600 transition-colors">
+          <span className="text-xs font-bold text-gray-800 group-hover:text-[#E06B8B] transition-colors">
             {currency} {currentLang.symbol}
           </span>
         </div>
@@ -181,7 +181,7 @@ export default function LanguageCurrencySelector() {
                       animate={{ scale: 1 }}
                       transition={{ type: "spring", stiffness: 500, damping: 30 }}
                     >
-                      <Check className="w-4 h-4 text-orange-500" strokeWidth={3} />
+                      <Check className="w-4 h-4 text-[#E06B8B]" strokeWidth={3} />
                     </motion.div>
                   )}
                 </motion.button>

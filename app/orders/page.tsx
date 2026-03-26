@@ -39,7 +39,7 @@ export default function MyOrdersPage() {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-[#FF5000] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#D47A93] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -82,7 +82,7 @@ export default function MyOrdersPage() {
 
       <div className="max-w-3xl mx-auto">
         <div className="hidden lg:flex items-center gap-4 mb-8 px-4">
-          <Link href="/profile" className="p-3 bg-white rounded-2xl border border-slate-100 shadow-sm hover:border-[#FF5000] text-slate-400 hover:text-[#FF5000] transition-all">
+          <Link href="/profile" className="p-3 bg-white rounded-2xl border border-slate-100 shadow-sm hover:border-[#D47A93] text-slate-400 hover:text-[#D47A93] transition-all">
             <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
           </Link>
           <h1 className="text-3xl font-black text-slate-900">Миний захиалга</h1>
@@ -94,14 +94,14 @@ export default function MyOrdersPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`shrink-0 whitespace-nowrap px-4 py-4 text-[13px] sm:text-[14px] font-bold relative transition-colors ${activeTab === tab ? 'text-[#FF5000]' : 'text-slate-400 hover:text-slate-600'
+              className={`shrink-0 whitespace-nowrap px-4 py-4 text-[13px] sm:text-[14px] font-bold relative transition-colors ${activeTab === tab ? 'text-[#D47A93]' : 'text-slate-400 hover:text-slate-600'
                 }`}
             >
               {tab}
               {activeTab === tab && (
                 <motion.div
                   layoutId="orderTabIndicator"
-                  className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#FF5000] rounded-t-full"
+                  className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#D47A93] rounded-t-full"
                 />
               )}
             </button>
@@ -148,7 +148,7 @@ export default function MyOrdersPage() {
                     {/* Top Row */}
                     <div className="flex justify-between items-center mb-4 pb-4 border-b border-slate-50">
                       <div className="flex flex-col">
-                        <span className="text-[14px] font-black text-slate-900 group-hover:text-[#FF5000] transition-colors">#{order._id.slice(-6).toUpperCase()}</span>
+                        <span className="text-[14px] font-black text-slate-900 group-hover:text-[#D47A93] transition-colors">#{order._id.slice(-6).toUpperCase()}</span>
                         <span className="text-[11px] font-bold text-slate-400">{new Date(order.createdAt).toLocaleDateString('mn-MN')}</span>
                       </div>
                       <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${status.bg} ${status.color}`}>
@@ -161,7 +161,7 @@ export default function MyOrdersPage() {
 
                     {/* Product Row */}
                     <Link href={`/orders/${order._id}`} className="flex gap-4 mb-5">
-                      <div className="w-16 h-16 rounded-2xl bg-slate-50 overflow-hidden shrink-0 relative border border-slate-100 group-hover:border-[#FF5000]/20 transition-colors">
+                      <div className="w-16 h-16 rounded-2xl bg-slate-50 overflow-hidden shrink-0 relative border border-slate-100 group-hover:border-[#D47A93]/20 transition-colors">
                         <Image
                           src={firstItem.image || 'https://res.cloudinary.com/dc127wztz/image/upload/v1770896452/banner1_nw6nok.png'}
                           alt={firstItem.name || 'Product'}
@@ -170,7 +170,7 @@ export default function MyOrdersPage() {
                         />
                       </div>
                       <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <h3 className="text-[15px] font-bold text-slate-900 leading-snug mb-1 group-hover:text-[#FF5000] transition-colors">
+                        <h3 className="text-[15px] font-bold text-slate-900 leading-snug mb-1 group-hover:text-[#D47A93] transition-colors">
                           {firstItem.name || 'Манай бүтээгдэхүүн'}
                           {remainingItems > 0 && <span className="text-slate-400 font-medium text-xs ml-1">гэх мэт {remainingItems + 1} бараа</span>}
                         </h3>
@@ -189,7 +189,7 @@ export default function MyOrdersPage() {
                           
                           {/* Active Line */}
                           <div 
-                            className="absolute top-[9px] left-0 h-0.5 bg-[#FF5000] transition-all duration-700 -z-0" 
+                            className="absolute top-[9px] left-0 h-0.5 bg-[#D47A93] transition-all duration-700 -z-0" 
                             style={{ 
                               width: `${(Math.max(0, getStepIndex(order.status)) / 3) * 100}%` 
                             }}
@@ -208,7 +208,7 @@ export default function MyOrdersPage() {
                             return (
                               <div key={step.id} className="flex flex-col items-center gap-2 relative z-10">
                                 <div className={`w-[20px] h-[20px] rounded-full flex items-center justify-center transition-all duration-500 ${
-                                  isCompleted ? 'bg-[#FF5000] shadow-lg shadow-orange-500/30' : 'bg-white border-2 border-slate-100'
+                                  isCompleted ? 'bg-[#D47A93] shadow-lg shadow-orange-500/30' : 'bg-white border-2 border-slate-100'
                                 }`}>
                                   {isCompleted ? (
                                     <CheckCircle2 className="w-3 h-3 text-white" strokeWidth={3} />
@@ -218,7 +218,7 @@ export default function MyOrdersPage() {
                                 </div>
                                 <span className={`text-[9px] font-black uppercase tracking-tight transition-colors duration-500 ${
                                   isCompleted ? 'text-slate-900' : 'text-slate-400'
-                                } ${isActive ? 'text-[#FF5000]' : ''}`}>
+                                } ${isActive ? 'text-[#D47A93]' : ''}`}>
                                   {step.label}
                                 </span>
                               </div>
@@ -232,13 +232,13 @@ export default function MyOrdersPage() {
                     <div className="flex justify-between items-center pt-4 border-t border-slate-50">
                       <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Нийт дүн</span>
-                        <span className="text-[18px] font-black text-[#FF5000]">
+                        <span className="text-[18px] font-black text-[#D47A93]">
                           {formatPrice(order.total || order.totalPrice || 0)}
                         </span>
                       </div>
                       <Link
                         href={`/orders/${order._id}`}
-                        className="px-6 py-2.5 rounded-2xl bg-slate-50 text-slate-900 text-[13px] font-black hover:bg-[#FF5000] hover:text-white transition-all active:scale-95 shadow-sm border border-slate-100"
+                        className="px-6 py-2.5 rounded-2xl bg-slate-50 text-slate-900 text-[13px] font-black hover:bg-[#D47A93] hover:text-white transition-all active:scale-95 shadow-sm border border-slate-100"
                       >
                         Дэлгэрэнгүй
                       </Link>
@@ -264,7 +264,7 @@ export default function MyOrdersPage() {
               </p>
               <Link
                 href="/"
-                className="px-8 py-3.5 bg-[#FF5000] text-white rounded-2xl font-black text-sm shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all active:scale-95"
+                className="px-8 py-3.5 bg-[#D47A93] text-white rounded-2xl font-black text-sm shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all active:scale-95"
               >
                 Дэлгүүр хэсэх
               </Link>

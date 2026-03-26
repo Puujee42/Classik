@@ -53,8 +53,8 @@ export default function MagneticCTA({
         font-bold text-white tracking-wide
         bg-gradient-to-r from-orange-500 via-orange-600 to-orange-500
         bg-[length:200%_auto] animate-shimmer
-        shadow-lg shadow-orange-500/30
-        hover:shadow-xl hover:shadow-orange-500/50
+        shadow-lg shadow-[#E06B8B]/30
+        hover:shadow-xl hover:shadow-[#E06B8B]/50
         disabled:opacity-50 disabled:cursor-not-allowed
         transition-all duration-300
         ${className}

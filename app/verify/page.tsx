@@ -123,7 +123,7 @@ export default function VerifyPage() {
 
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <ShieldCheck className="w-8 h-8 text-[#F57E20]" />
+            <ShieldCheck className="w-8 h-8 text-[#C5A059]" />
           </div>
           <h1 className="text-2xl font-black text-slate-900 mb-2">Баталгаажуулах</h1>
           <p className="text-slate-500 text-sm">
@@ -148,20 +148,20 @@ export default function VerifyPage() {
               onKeyDown={(e) => handleKeyDown(index, e)}
               disabled={isLoading}
               className={`w-12 h-14 text-center text-xl font-bold bg-slate-50 border rounded-xl outline-none transition-all
-                ${digit ? 'border-[#F57E20] ring-1 ring-[#F57E20]/20 bg-white' : 'border-slate-200 focus:border-[#F57E20] focus:bg-white'}
+                ${digit ? 'border-[#C5A059] ring-1 ring-[#C5A059]/20 bg-white' : 'border-slate-200 focus:border-[#C5A059] focus:bg-white'}
               `}
             />
           ))}
         </div>
 
         {isLoading && (
-          <div className="flex justify-center text-[#F57E20]">
+          <div className="flex justify-center text-[#C5A059]">
             <Loader2 className="w-6 h-6 animate-spin" />
           </div>
         )}
 
         <p className="text-center text-xs text-slate-400 mt-6">
-          Код ирэхгүй байна уу? <button onClick={handleResend} className="text-[#F57E20] font-bold hover:underline" disabled={isLoading}>Дахин илгээх</button>
+          Код ирэхгүй байна уу? <button onClick={handleResend} className="text-[#C5A059] font-bold hover:underline" disabled={isLoading}>Дахин илгээх</button>
         </p>
       </div>
     </div>

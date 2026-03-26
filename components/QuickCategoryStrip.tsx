@@ -203,17 +203,7 @@ export default function QuickCategoryStrip({ onStockFilterChange }: QuickCategor
             [Бэлэн]
           </motion.button>
 
-          <motion.button
-            whileTap={{ scale: 0.98 }}
-            onClick={() => handleStockFilterClick('pre-order')}
-            className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all border flex items-center justify-center gap-2 ${activeStockFilter === 'pre-order'
-              ? 'bg-orange-50 border-orange-500 text-orange-700 shadow-sm'
-              : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
-              }`}
-          >
-            <span className="text-base">✈️</span>
-            [Захиалгаар]
-          </motion.button>
+
         </div>
 
       </div>

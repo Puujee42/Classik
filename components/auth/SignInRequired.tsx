@@ -21,7 +21,7 @@ export default function SignInRequired({ title, description, iconType }: SignInR
                 className="max-w-md w-full bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100 text-center"
             >
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-50 rounded-full mb-6">
-                    <Icon className="w-10 h-10 text-orange-500" strokeWidth={1.5} />
+                    <Icon className="w-10 h-10 text-[#E06B8B]" strokeWidth={1.5} />
                 </div>
                 
                 <h2 className="text-2xl font-bold text-slate-900 mb-3">{title}</h2>
@@ -32,7 +32,7 @@ export default function SignInRequired({ title, description, iconType }: SignInR
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="w-full py-4 bg-orange-500 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/25"
+                            className="w-full py-4 bg-orange-500 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-orange-600 transition-colors shadow-lg shadow-[#E06B8B]/25"
                         >
                             <LogIn className="w-5 h-5" />
                             Нэвтрэх

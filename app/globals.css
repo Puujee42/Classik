@@ -1,32 +1,38 @@
-/* Inter font is loaded via next/font in layout.tsx – no duplicate @import to avoid render-blocking request */
-
+/* Fonts loaded via next/font in layout.tsx */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Luxury Typography */
+/* ═══════════════════════════════════════════════════════════════════
+   CLASSIK STORE — Design System
+   Rose Pink (#E06B8B) · Gold (#D4AF37) · Pearl (#FAF9F6)
+   ═══════════════════════════════════════════════════════════════════ */
+
 @layer base {
   html {
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--font-lato), 'Montserrat', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: none;
-    background: #FFFFFF;
+    background: #FAF9F6;
   }
 }
 
 :root {
-  /* Soyol Brand Colors */
-  --brand-primary: #F57E20;
-  --brand-primary-light: #ff9d4d;
-  --brand-primary-dark: #d46610;
-  --brand-secondary: #1a1a1a;
-  --brand-accent: #F57E20;
-
-  /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(245, 126, 32, 0.1);
-  --glass-shadow: rgba(245, 126, 32, 0.08);
+  --brand-rose: #E06B8B;
+  --brand-rose-light: #FCEEF2;
+  --brand-rose-dark: #C55B7A;
+  --brand-gold: #D4AF37;
+  --brand-gold-muted: #C5A059;
+  --brand-pearl: #FAF9F6;
+  --brand-text: #333333;
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(212, 175, 55, 0.15);
+  /* Vibe theme defaults (overridden by JS) */
+  --vibe-accent: #E06B8B;
+  --vibe-accent-rgb: 224, 107, 139;
+  --vibe-glow: rgba(224, 107, 139, 0.3);
+  --vibe-bg: #FCEEF2;
 }
 
 * {
@@ -36,9 +42,9 @@
 }
 
 body {
-  font-family: 'Inter', ui-sans-serif, system-ui;
-  background: #FFFFFF;
-  color: #1a1a1a;
+  font-family: var(--font-lato), 'Montserrat', ui-sans-serif, system-ui;
+  background: #FAF9F6;
+  color: #333333;
   line-height: 1.6;
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
@@ -46,225 +52,224 @@ body {
   overscroll-behavior-y: none;
 }
 
-/* Orange Gradient */
-.gradient-orange {
-  background: linear-gradient(135deg, #FF7900 0%, #ff8c1a 100%);
+/* ─── Rose Gradients ─────────────────────────────────────────────── */
+.gradient-rose {
+  background: linear-gradient(135deg, #E06B8B 0%, #C55B7A 100%);
 }
-
-.gradient-orange-light {
-  background: linear-gradient(135deg, #FF7900 0%, #FFB88C 100%);
+.gradient-rose-light {
+  background: linear-gradient(135deg, #FCEEF2 0%, #FAF9F6 100%);
 }
-
-.gradient-text-orange {
-  background: linear-gradient(135deg, #FF7900 0%, #ff8c1a 100%);
+.gradient-text-rose {
+  background: linear-gradient(135deg, #E06B8B 0%, #D4AF37 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Glassmorphism (Clean White) */
+/* ─── Glassmorphism ──────────────────────────────────────────────── */
 .glass-white {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+  box-shadow: 0 4px 30px rgba(224, 107, 139, 0.06);
+}
+.luxury-glass {
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid #FF7900;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+.luxury-glass-light {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
 }
 
-/* Orange Glow */
-.glow-orange {
-  box-shadow: 0 4px 20px rgba(255, 121, 0, 0.3);
-  transition: all 0.15s ease;
+/* ─── Pill Buttons (Rose Pink) ───────────────────────────────────── */
+.btn-rose {
+  background: var(--vibe-accent);
+  color: white;
+  border-radius: 9999px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(var(--vibe-accent-rgb), 0.25);
+}
+.btn-rose:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(var(--vibe-accent-rgb), 0.4);
 }
 
-.glow-orange:hover {
-  box-shadow: 0 8px 30px rgba(255, 121, 0, 0.4), 0 4px 15px rgba(255, 121, 0, 0.2);
+/* ─── Product Cards ──────────────────────────────────────────────── */
+.card-classik {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  box-shadow: 0 10px 30px rgba(var(--vibe-accent-rgb), 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-classik:hover {
+  border-color: rgba(212, 175, 55, 0.25);
+  box-shadow: 0 20px 50px rgba(var(--vibe-accent-rgb), 0.15);
+  transform: translateY(-6px);
+}
+
+/* ─── Gold Accents ───────────────────────────────────────────────── */
+.border-gold {
+  border-color: rgba(212, 175, 55, 0.3);
+}
+.text-gold {
+  color: #D4AF37;
+}
+.ring-gold {
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.2);
+}
+
+/* ─── Rose Glow ──────────────────────────────────────────────────── */
+.glow-rose {
+  box-shadow: 0 4px 20px rgba(var(--vibe-accent-rgb), 0.25);
+  transition: all 0.3s ease;
+}
+.glow-rose:hover {
+  box-shadow: 0 8px 35px rgba(var(--vibe-accent-rgb), 0.4), 0 4px 15px rgba(var(--vibe-accent-rgb), 0.2);
   transform: translateY(-2px);
 }
 
-/* Orange Search Focus Glow */
-.search-orange-glow:focus {
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1), 0 4px 12px rgba(249, 115, 22, 0.15);
-  border-color: rgb(249, 115, 22);
-}
+/* ─── Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: var(--vibe-accent); border-radius: 4px; }
+::-webkit-scrollbar-track { background: var(--vibe-bg); }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
 
-/* Premium Orange Gradient Button */
-.btn-orange-gradient {
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-orange-gradient:hover {
-  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
-  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
-  transform: translateY(-1px);
-}
-
-/* Card Clean Shadow */
-.card-clean {
-  background: white;
-  border: 1px solid #f0f0f0;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.card-clean:hover {
-  border-color: #FF7900;
-  box-shadow: 0 8px 24px rgba(255, 121, 0, 0.15);
-  transform: translateY(-4px);
-}
-
-/* Floating */
+/* ─── Animations ─────────────────────────────────────────────────── */
 @keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-8px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
 }
-
-/* Icon Bounce Animation */
-@keyframes iconBounce {
-
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-  }
-
-  50% {
-    transform: translateY(-4px) scale(1.05);
-  }
-}
-
-.icon-bounce:hover {
-  animation: iconBounce 0.6s ease-in-out;
-}
-
-/* Smooth Icon Float */
-@keyframes iconFloat {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-3px);
-  }
-}
-
-.icon-float:hover {
-  animation: iconFloat 1s ease-in-out infinite;
-}
-
-/* Orange Border Accent */
-.border-accent {
-  border-bottom: 2px solid transparent;
-  transition: border-color 0.3s ease;
-}
-
-.border-accent:hover {
-  border-bottom-color: #FF7900;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #FF7900;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: #F5F5F5;
-}
-
-/* Hide Scrollbar Utility */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Shimmer Animation for Search Bar */
 @keyframes shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes searchDropdownFade {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes goldPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+.animate-shimmer-border { background-size: 200% auto; animation: shimmer 4s linear infinite; }
+.search-dropdown-enter { animation: searchDropdownFade 0.15s ease-out; }
+
+/* ─── Signature Rose-Gold Shimmer Skeleton ────────────────────────── */
+@keyframes roseShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-classik {
+  background: linear-gradient(
+    90deg,
+    #FCEEF2 0%,
+    #FFF5F0 20%,
+    rgba(212, 175, 55, 0.12) 40%,
+    #FCEEF2 60%,
+    #FFF5F0 80%,
+    rgba(224, 107, 139, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: roseShimmer 2.5s ease-in-out infinite;
+  border-radius: 12px;
+}
+.skeleton-classik-text {
+  background: linear-gradient(
+    90deg,
+    #FCEEF2 25%,
+    rgba(212, 175, 55, 0.15) 50%,
+    #FCEEF2 75%
+  );
+  background-size: 200% 100%;
+  animation: roseShimmer 2s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* ─── Fly-to-Cart Animation ──────────────────────────────────────── */
+@keyframes flyToCart {
   0% {
-    background-position: 200% center;
+    opacity: 1;
+    transform: scale(1) translate(0, 0);
   }
-
+  50% {
+    opacity: 0.8;
+    transform: scale(0.5) translate(var(--fly-x, 0px), -120px);
+  }
   100% {
-    background-position: -200% center;
+    opacity: 0;
+    transform: scale(0.1) translate(var(--fly-x, 0px), var(--fly-y, -300px));
   }
 }
-
-.animate-shimmer-border {
-  background-size: 200% auto;
-  animation: shimmer 4s linear infinite;
+.fly-to-cart {
+  animation: flyToCart 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  pointer-events: none;
+  position: fixed;
+  z-index: 9999;
 }
 
-/* Disable double-tap to zoom on mobile (touch devices) */
+/* ─── 3D Card Tilt Perspective ───────────────────────────────────── */
+.card-3d-container {
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease;
+}
+.card-3d-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(212, 175, 55, 0.08) 40%,
+    transparent 70%
+  );
+}
+.card-3d:hover .card-3d-glare {
+  opacity: 1;
+}
+
+/* ─── Mood Vibe Transitions ──────────────────────────────────────── */
+.vibe-glow { --vibe-accent: #E06B8B; --vibe-glow: rgba(224, 107, 139, 0.3); }
+.vibe-calm { --vibe-accent: #7CB9A8; --vibe-glow: rgba(124, 185, 168, 0.3); }
+.vibe-radiant { --vibe-accent: #D4AF37; --vibe-glow: rgba(212, 175, 55, 0.3); }
+
+/* ─── Touch & Responsive ─────────────────────────────────────────── */
+* { -webkit-tap-highlight-color: rgba(var(--vibe-accent-rgb), 0.08); }
+
 @media (max-width: 768px) {
-  html {
-    touch-action: manipulation;
-    -ms-touch-action: manipulation;
-  }
-
-  * {
-    touch-action: manipulation;
-  }
+  html { touch-action: manipulation; }
+  * { touch-action: manipulation; }
+  input[type="text"], input[type="email"], input[type="tel"],
+  input[type="number"], textarea, select { font-size: 16px !important; }
+  button:focus-visible, a:focus-visible, input:focus-visible,
+  textarea:focus-visible { outline: 2px solid var(--vibe-accent); outline-offset: 2px; }
 }
-
-/* Mobile bottom nav safe area (notched devices) */
-.safe-area-pb {
-  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
-}
-
-/* Mobile Responsive Utilities */
 @media (max-width: 640px) {
-
-  /* Prevent horizontal scroll on mobile */
-  body {
-    overflow-x: hidden;
-  }
-
-  /* Better touch targets for mobile */
-  button,
-  a {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  /* Optimize text readability on mobile */
-  h1 {
-    font-size: 1.75rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  h3 {
-    font-size: 1.25rem;
-  }
-
-  /* Better spacing on mobile */
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+  body { overflow-x: hidden; }
+  button, a { min-height: 44px; min-width: 44px; }
+  img { image-rendering: -webkit-optimize-contrast; }
 }
 
-/* Safe area for notched devices (iPhone X, etc.) */
+.safe-area-pb { padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px)); }
 @supports (padding: max(0px)) {
   body {
     padding-left: max(0px, env(safe-area-inset-left));
@@ -272,235 +277,76 @@ body {
   }
 }
 
-/* Prevent zoom on input focus (iOS) */
-@media (max-width: 768px) {
-
-  input[type="text"],
-  input[type="email"],
-  input[type="tel"],
-  input[type="number"],
-  textarea,
-  select {
-    font-size: 16px !important;
-  }
-}
-
-/* Smooth drawer animation performance */
-.drawer-content {
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-/* Better tap highlight */
-* {
-  -webkit-tap-highlight-color: rgba(255, 121, 0, 0.1);
-}
-
-/* Luxury Glassmorphism */
-.luxury-glass {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-}
-
-.luxury-glass-light {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px) saturate(150%);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-}
-
-/* Premium Hover Effects */
-.luxury-hover {
-  transition: all 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.luxury-hover:hover {
-  transform: translateY(-1px);
-}
-
-/* Smooth Underline Animation */
-.luxury-link {
-  position: relative;
-}
-
-.luxury-link::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.luxury-link:hover::after {
-  transform: scaleX(1);
-}
-
-/* Mobile Navigation Drawer Animations */
-@media (max-width: 1024px) {
-  .mobile-drawer {
-    transform: translateX(100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .mobile-drawer.open {
-    transform: translateX(0);
-  }
-
-  /* Prevent body scroll when drawer is open */
-  body.drawer-open {
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-  }
-}
-
-/* Responsive Grid Utilities */
-.responsive-grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-}
-
-@media (min-width: 640px) {
-  .responsive-grid-2 {
-    gap: 1rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .responsive-grid-2 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.25rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .responsive-grid-2 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.5rem;
-  }
-}
-
-/* Touch-friendly buttons on mobile */
-@media (max-width: 768px) {
-
-  button,
-  a.button,
-  .button {
-    min-height: 44px;
-    touch-action: manipulation;
-  }
-
-  /* Slightly larger touch targets for icon buttons */
-  button[aria-label],
-  button.icon-button {
-    min-width: 44px;
-    min-height: 44px;
-  }
-}
-
-/* Optimize images for mobile */
-@media (max-width: 640px) {
-  img {
-    image-rendering: -webkit-optimize-contrast;
-  }
-}
-
-/* Smooth scrolling on mobile */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
-
-/* Better focus states for accessibility */
-@media (max-width: 768px) {
-
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible {
-    outline: 2px solid #FF7900;
-    outline-offset: 2px;
-  }
-}
-
-/* Prevent layout shifts on mobile */
-@media (max-width: 640px) {
-  * {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-}
-
-/* Better mobile modal/drawer backdrop */
 .mobile-backdrop {
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background-color: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   animation: fadeIn 0.3s ease;
 }
+.mobile-slide { transform: translateZ(0); backface-visibility: hidden; perspective: 1000px; }
+.drawer-content { will-change: transform; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+@media (max-width: 1024px) {
+  .mobile-drawer { transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .mobile-drawer.open { transform: translateX(0); }
+  body.drawer-open { overflow: hidden; position: fixed; width: 100%; }
 }
 
-/* Optimize transforms for mobile performance */
-.mobile-slide {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
+/* ─── Grid Utilities ─────────────────────────────────────────────── */
+.responsive-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
 }
+@media (min-width: 640px) { .responsive-grid-2 { gap: 1rem; } }
+@media (min-width: 768px) { .responsive-grid-2 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; } }
+@media (min-width: 1024px) { .responsive-grid-2 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; } }
 
-/* Search dropdown entrance */
-@keyframes searchDropdownFade {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.search-dropdown-enter {
-  animation: searchDropdownFade 0.15s ease-out;
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
 }
 
 @layer utilities {
-  .smooth-scroll {
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
+  .smooth-scroll { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+  .gpu { transform: translateZ(0); will-change: transform; backface-visibility: hidden; }
+  .no-tap { -webkit-tap-highlight-color: transparent; touch-action: manipulation; user-select: none; }
+}
+
+/* ─── Mobile Signature Touches ───────────────────────────────────── */
+@media (max-width: 1024px) {
+  /* Card press glow on touch */
+  .card-classik:active {
+    box-shadow: 0 0 0 3px rgba(var(--vibe-accent-rgb), 0.15), 0 10px 30px rgba(var(--vibe-accent-rgb), 0.12);
+    border-color: rgba(var(--vibe-accent-rgb), 0.2);
   }
 
-  .gpu {
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    will-change: transform;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-
-  .no-tap {
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    user-select: none;
-    -webkit-user-select: none;
+  /* Mobile product card active state */
+  .group:active .card-classik {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 2px rgba(var(--vibe-accent-rgb), 0.12), 0 12px 32px rgba(var(--vibe-accent-rgb), 0.1);
   }
 }
+
+/* ─── Long Press Hint Animation ──────────────────────────────────── */
+@keyframes longPressHint {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--vibe-accent-rgb), 0.2); }
+  50% { transform: scale(0.97); box-shadow: 0 0 0 6px rgba(var(--vibe-accent-rgb), 0.1); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--vibe-accent-rgb), 0); }
+}
+
+/* ─── Button Press Shine ─────────────────────────────────────────── */
+@keyframes btnShine {
+  0% { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+.btn-rose:active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+  background-size: 200% 100%;
+  animation: btnShine 0.5s ease forwards;
+}
+.btn-rose { position: relative; overflow: hidden; }

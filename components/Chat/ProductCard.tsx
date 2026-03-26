@@ -76,12 +76,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                         </span>
                     </div>
                     <div className="flex items-center justify-between mt-2">
-                        <span className="font-bold text-orange-600 text-sm">
+                        <span className="font-bold text-[#E06B8B] text-sm">
                             {formatPrice(product.price)}
                         </span>
                         <button
                             onClick={handleAddToCart}
-                            className="p-2 bg-[#FF5000] text-white rounded-xl hover:bg-[#E64500] transition-colors shadow-sm"
+                            className="p-2 bg-[#E06B8B] text-white rounded-xl hover:bg-[#E64500] transition-colors shadow-sm"
                         >
                             <ShoppingCart className="w-4 h-4" strokeWidth={1.2} />
                         </button>

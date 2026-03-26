@@ -76,13 +76,13 @@ export default function SignUpPage() {
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-900 uppercase tracking-wider ml-1">Нэр</label>
                         <div className="relative group">
-                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#F57E20] transition-colors" />
+                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#C5A059] transition-colors" />
                             <input
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 placeholder="Таны нэр"
-                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-[#F57E20]/20 focus:border-[#F57E20] outline-none transition-all font-medium text-slate-900 text-base"
+                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all font-medium text-slate-900 text-base"
                             />
                         </div>
                     </div>
@@ -90,13 +90,13 @@ export default function SignUpPage() {
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-900 uppercase tracking-wider ml-1">Утас</label>
                         <div className="relative group">
-                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#F57E20] transition-colors" />
+                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#C5A059] transition-colors" />
                             <input
                                 type="tel"
                                 value={formData.phone}
                                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                 placeholder="77181818"
-                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-[#F57E20]/20 focus:border-[#F57E20] outline-none transition-all font-medium text-slate-900 text-base"
+                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all font-medium text-slate-900 text-base"
                             />
                         </div>
                     </div>
@@ -104,13 +104,13 @@ export default function SignUpPage() {
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-900 uppercase tracking-wider ml-1">Нас</label>
                         <div className="relative group">
-                            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#F57E20] transition-colors" />
+                            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#C5A059] transition-colors" />
                             <input
                                 type="number"
                                 value={formData.age}
                                 onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                                 placeholder="25"
-                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-[#F57E20]/20 focus:border-[#F57E20] outline-none transition-all font-medium text-slate-900 text-base"
+                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all font-medium text-slate-900 text-base"
                             />
                         </div>
                     </div>
@@ -118,13 +118,13 @@ export default function SignUpPage() {
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-900 uppercase tracking-wider ml-1">Нууц үг</label>
                         <div className="relative group">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#F57E20] transition-colors" />
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#C5A059] transition-colors" />
                             <input
                                 type="password"
                                 value={formData.password}
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 placeholder="••••••••"
-                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-[#F57E20]/20 focus:border-[#F57E20] outline-none transition-all font-medium text-slate-900 text-base"
+                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all font-medium text-slate-900 text-base"
                             />
                         </div>
                     </div>
@@ -132,7 +132,7 @@ export default function SignUpPage() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full py-4 bg-[#F57E20] hover:bg-[#e66d00] text-white rounded-2xl font-bold text-sm shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed mt-4"
+                        className="w-full py-4 bg-[#C5A059] hover:bg-[#e66d00] text-white rounded-2xl font-bold text-sm shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed mt-4"
                     >
                         {isLoading ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
@@ -148,7 +148,7 @@ export default function SignUpPage() {
                 <SocialAuthButtons mode="signUp" />
 
                 <p className="text-center text-xs text-slate-400 mt-6">
-                    Аль хэдийн бүртгэлтэй юу? <Link href="/sign-in" className="text-[#F57E20] font-bold hover:underline">Нэвтрэх</Link>
+                    Аль хэдийн бүртгэлтэй юу? <Link href="/sign-in" className="text-[#C5A059] font-bold hover:underline">Нэвтрэх</Link>
                 </p>
             </div>
         </div>

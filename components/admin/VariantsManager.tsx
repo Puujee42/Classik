@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Plus, Trash2, Tag, Layers } from 'lucide-react';
 
 export interface ProductOption {
@@ -26,12 +26,18 @@ const SUGGESTED_COLORS = ['Хар', 'Цагаан', 'Саарал', 'Улаан'
 export default function VariantsManager({ options, variants, onChange }: VariantsManagerProps) {
   const [localOptions, setLocalOptions] = useState<ProductOption[]>(options);
   const [localVariants, setLocalVariants] = useState<ProductVariant[]>(variants);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  // Helper to notify parent of changes
+  const notifyParent = useCallback((opts: ProductOption[], vars: ProductVariant[]) => {
+    onChangeRef.current(opts, vars);
+  }, []);
 
   // Generate all possible combinations
   const combineOptions = useCallback((opts: ProductOption[]) => {
     if (opts.length === 0 || opts.every(o => o.values.length === 0)) return [];
     
-    // Filter out options with no values
     const validOpts = opts.filter(o => o.values.length > 0 && o.name.trim() !== '');
     if (validOpts.length === 0) return [];
 
@@ -50,14 +56,10 @@ export default function VariantsManager({ options, variants, onChange }: Variant
     return combinations;
   }, []);
 
-  // Update variants when options change
-  useEffect(() => {
-    onChange?.(localOptions, localVariants);
-  }, [localOptions, localVariants]);
-
   const handleAddOption = () => {
     const newOptions = [...localOptions, { id: Date.now().toString(), name: '', values: [] }];
     setLocalOptions(newOptions);
+    notifyParent(newOptions, localVariants);
   };
 
   const handleUpdateOptionName = (id: string, name: string) => {
@@ -65,17 +67,20 @@ export default function VariantsManager({ options, variants, onChange }: Variant
     const newOptions = localOptions.map(o => o.id === id ? { ...o, name } : o);
     setLocalOptions(newOptions);
     
-    // When an option name changes, we need to update the keys in all variants' options objects
     const oldOption = oldOptions.find(o => o.id === id);
     if (oldOption && oldOption.name && name && oldOption.name !== name) {
-      setLocalVariants(vars => vars.map(v => {
+      const newVariants = localVariants.map(v => {
         const newVariantOptions = { ...v.options };
         if (oldOption.name in newVariantOptions) {
           newVariantOptions[name] = newVariantOptions[oldOption.name];
           delete newVariantOptions[oldOption.name];
         }
         return { ...v, options: newVariantOptions };
-      }));
+      });
+      setLocalVariants(newVariants);
+      notifyParent(newOptions, newVariants);
+    } else {
+      notifyParent(newOptions, localVariants);
     }
   };
 
@@ -124,12 +129,11 @@ export default function VariantsManager({ options, variants, onChange }: Variant
     const combos = combineOptions(newOptions);
     if (combos.length === 0) {
       setLocalVariants([]);
+      notifyParent(newOptions, []);
       return;
     }
 
     const newVariants: ProductVariant[] = combos.map(combo => {
-      // Find existing variant to preserve price and inventory
-      // We match by comparing all option values
       const existing = currentVariants.find(v => {
         const vKeys = Object.keys(v.options);
         const comboKeys = Object.keys(combo);
@@ -144,16 +148,19 @@ export default function VariantsManager({ options, variants, onChange }: Variant
       };
     });
     setLocalVariants(newVariants);
+    notifyParent(newOptions, newVariants);
   };
 
   const handleVariantChange = (id: string, field: 'inventory' | 'price', value: string) => {
-    setLocalVariants(vars => vars.map(v => {
+    const newVariants = localVariants.map(v => {
       if (v.id === id) {
         const numVal = parseInt(value) || 0;
         return { ...v, [field]: value === '' ? undefined : numVal };
       }
       return v;
-    }));
+    });
+    setLocalVariants(newVariants);
+    notifyParent(localOptions, newVariants);
   };
 
   return (
@@ -194,7 +201,7 @@ export default function VariantsManager({ options, variants, onChange }: Variant
                       key={preset}
                       type="button"
                       onClick={() => handleAddValue(option.id, preset)}
-                      className="px-2 py-1 text-xs bg-slate-800 text-slate-400 rounded hover:bg-amber-500/20 hover:text-amber-500 transition-colors border border-slate-700 hover:border-amber-500/30"
+                      className="px-2 py-1 text-xs bg-slate-800 text-slate-400 rounded hover:bg-[#FCEEF2]0/20 hover:text-amber-500 transition-colors border border-slate-700 hover:border-amber-500/30"
                     >
                       + {preset}
                     </button>
@@ -212,7 +219,7 @@ export default function VariantsManager({ options, variants, onChange }: Variant
                       key={preset}
                       type="button"
                       onClick={() => handleAddValue(option.id, preset)}
-                      className="px-2 py-1 text-xs bg-slate-800 text-slate-400 rounded hover:bg-amber-500/20 hover:text-amber-500 transition-colors border border-slate-700 hover:border-amber-500/30"
+                      className="px-2 py-1 text-xs bg-slate-800 text-slate-400 rounded hover:bg-[#FCEEF2]0/20 hover:text-amber-500 transition-colors border border-slate-700 hover:border-amber-500/30"
                     >
                       + {preset}
                     </button>
@@ -250,7 +257,7 @@ export default function VariantsManager({ options, variants, onChange }: Variant
                     handleAddValue(option.id, input.value);
                     input.value = '';
                   }}
-                  className="p-1.5 bg-slate-800 text-slate-300 rounded-lg hover:text-amber-500 hover:bg-amber-500/10 border border-slate-700 hover:border-amber-500/30 transition-colors"
+                  className="p-1.5 bg-slate-800 text-slate-300 rounded-lg hover:text-amber-500 hover:bg-[#FCEEF2]0/10 border border-slate-700 hover:border-amber-500/30 transition-colors"
                   title="Нэмэх"
                 >
                   <Plus className="w-4 h-4" />

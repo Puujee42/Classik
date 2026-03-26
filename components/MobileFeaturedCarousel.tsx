@@ -197,7 +197,7 @@ export default function MobileFeaturedCarousel({ products }: MobileFeaturedCarou
                             <Link href={`/product/${product.id || product._id}`} draggable={false} className="relative block">
                                 <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
                                     <Image
-                                        src={product.image || '/soyol-logo.png'}
+                                        src={product.image || '/soyol-logo-new.png'}
                                         alt={product.name}
                                         fill
                                         className="object-contain group-hover:scale-105 transition-transform duration-500 p-4"
@@ -229,7 +229,7 @@ export default function MobileFeaturedCarousel({ products }: MobileFeaturedCarou
                             <div className="p-3 flex-1 flex flex-col justify-between">
                                 <div className="space-y-1">
                                     <Link href={`/product/${product.id || product._id}`} draggable={false}>
-                                        <h3 className="text-sm font-bold text-slate-900 line-clamp-2 group-hover:text-orange-600 transition-colors h-10 overflow-hidden leading-snug">
+                                        <h3 className="text-sm font-bold text-slate-900 line-clamp-2 group-hover:text-[#E06B8B] transition-colors h-10 overflow-hidden leading-snug">
                                             {product.name}
                                         </h3>
                                     </Link>
@@ -242,7 +242,7 @@ export default function MobileFeaturedCarousel({ products }: MobileFeaturedCarou
                                             {formatPrice(product.price)}
                                         </span>
                                         {product.category && (
-                                            <span className="text-[9px] font-bold text-orange-500 uppercase tracking-widest bg-orange-50 px-2 py-0.5 rounded-md self-start mt-1">
+                                            <span className="text-[9px] font-bold text-[#E06B8B] uppercase tracking-widest bg-orange-50 px-2 py-0.5 rounded-md self-start mt-1">
                                                 {product.category}
                                             </span>
                                         )}
@@ -251,7 +251,7 @@ export default function MobileFeaturedCarousel({ products }: MobileFeaturedCarou
                                     {/* Quick Add Button */}
                                     <button
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToCart(product); }}
-                                        className="w-8 h-8 bg-[#FF5000] text-white rounded-full flex items-center justify-center shadow-lg shadow-orange-500/20 hover:bg-[#E64500] active:scale-95 transition-all shrink-0"
+                                        className="w-8 h-8 bg-[#E06B8B] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#E06B8B]/20 hover:bg-[#E64500] active:scale-95 transition-all shrink-0"
                                     >
                                         <ShoppingCart className="w-4 h-4" strokeWidth={2.5} />
                                     </button>

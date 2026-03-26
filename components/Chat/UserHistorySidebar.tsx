@@ -56,7 +56,7 @@ export default function UserHistorySidebar({ user, isOpen, onClose }: UserHistor
                     >
                         <div className="p-6 border-b border-white/10 flex items-center justify-between bg-slate-800/50">
                             <div className="flex items-center gap-3">
-                                <History className="w-5 h-5 text-orange-500" />
+                                <History className="w-5 h-5 text-[#E06B8B]" />
                                 <h2 className="font-bold text-white text-lg">Хэрэглэгчийн түүх</h2>
                             </div>
                             <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
@@ -68,7 +68,7 @@ export default function UserHistorySidebar({ user, isOpen, onClose }: UserHistor
                             <button
                                 onClick={() => setActiveTab('orders')}
                                 className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'orders'
-                                        ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+                                        ? 'bg-orange-500 text-white shadow-lg shadow-[#E06B8B]/20'
                                         : 'text-slate-400 hover:bg-white/5'
                                     }`}
                             >
@@ -78,7 +78,7 @@ export default function UserHistorySidebar({ user, isOpen, onClose }: UserHistor
                             <button
                                 onClick={() => setActiveTab('calls')}
                                 className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'calls'
-                                        ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+                                        ? 'bg-orange-500 text-white shadow-lg shadow-[#E06B8B]/20'
                                         : 'text-slate-400 hover:bg-white/5'
                                     }`}
                             >
@@ -118,7 +118,7 @@ export default function UserHistorySidebar({ user, isOpen, onClose }: UserHistor
                                             </div>
                                             <div className="pt-2 border-t border-white/5 flex justify-between items-center">
                                                 <span className="text-xs text-slate-400 font-medium">Нийт:</span>
-                                                <span className="text-sm font-black text-orange-500">{formatPrice(order.totalPrice)}</span>
+                                                <span className="text-sm font-black text-[#E06B8B]">{formatPrice(order.totalPrice)}</span>
                                             </div>
                                         </div>
                                     ))

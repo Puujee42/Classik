@@ -448,7 +448,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
     toast.custom((tInst) => (
       <div className={`${tInst.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-white shadow-xl rounded-2xl pointer-events-auto flex ring-1 ring-black/5 p-4`}>
         <div className="flex items-start">
-          <CheckCircle2 className="h-8 w-8 text-[#FF500]" />
+          <CheckCircle2 className="h-8 w-8 text-[#E06B8B]" />
           <div className="ml-3">
             <p className="font-bold text-slate-900" style={{ fontFamily: 'Sora, sans-serif' }}>Сагсанд орлоо</p>
             <p className="mt-1 text-sm text-slate-500">{product.name}</p>
@@ -537,7 +537,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                   </div>
                   <div>
                     <p className="font-bold text-slate-900 text-sm leading-tight line-clamp-1 max-w-xs">{product.name}</p>
-                    <p className="font-sora font-bold text-[#FF500] text-sm leading-none mt-0.5">{formatPrice(displayPrice * quantity)}</p>
+                    <p className="font-sora font-bold text-[#E06B8B] text-sm leading-none mt-0.5">{formatPrice(displayPrice * quantity)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -546,7 +546,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                     Сагсанд нэмэх
                   </motion.button>
                   <motion.button whileTap={{ scale: 0.95 }} onClick={handleBuyNow}
-                    className="px-5 py-2.5 rounded-2xl bg-[#FF5000] text-white font-bold text-sm shadow-lg shadow-orange-500/25 hover:bg-[#E64500] transition-colors">
+                    className="px-5 py-2.5 rounded-2xl bg-[#E06B8B] text-white font-bold text-sm shadow-lg shadow-[#E06B8B]/25 hover:bg-[#E64500] transition-colors">
                     Шууд авах
                   </motion.button>
                 </div>
@@ -590,14 +590,14 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                   {images.length > 1 && (<>
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveImageIndex(p => Math.max(0, p - 1)); }}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-slate-100 text-slate-600 hover:text-[#FF500] disabled:opacity-30"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-slate-100 text-slate-600 hover:text-[#E06B8B] disabled:opacity-30"
                       disabled={activeImageIndex === 0}
                     >
                       <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveImageIndex(p => Math.min(images.length - 1, p + 1)); }}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-slate-100 text-slate-600 hover:text-[#FF500] disabled:opacity-30"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-slate-100 text-slate-600 hover:text-[#E06B8B] disabled:opacity-30"
                       disabled={activeImageIndex === images.length - 1}
                     >
                       <ChevronRight className="w-5 h-5" />
@@ -627,7 +627,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                   {/* Dots */}
                   <div className="absolute bottom-5 left-0 right-0 flex justify-center gap-2 z-10">
                     {images.map((_, i) => (
-                      <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${activeImageIndex === i ? 'w-6 bg-[#FF5000]' : 'w-2 bg-slate-300'}`} />
+                      <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${activeImageIndex === i ? 'w-6 bg-[#E06B8B]' : 'w-2 bg-slate-300'}`} />
                     ))}
                   </div>
                   {/* Count badge */}
@@ -638,19 +638,8 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
 
                 {/* Badges */}
                 <div className="absolute top-5 left-5 flex flex-col gap-2 z-10 select-none">
-                  {product.stockStatus === 'in-stock' ? (
-                    <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 border border-emerald-100 rounded-2xl shadow-sm">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">БЭЛЭН</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 border border-amber-100 rounded-2xl shadow-sm">
-                      <Clock className="w-3 h-3 text-amber-500" />
-                      <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest">ЗАХИАЛГААР</span>
-                    </div>
-                  )}
                   {discount > 0 && (
-                    <div className="px-3 py-1.5 bg-[#FF5000] text-white rounded-2xl shadow-lg shadow-orange-500/20 w-fit">
+                    <div className="px-3 py-1.5 bg-[#E06B8B] text-white rounded-2xl shadow-lg shadow-[#E06B8B]/20 w-fit">
                       <span className="text-[10px] font-black uppercase tracking-widest">-{discount}% Off</span>
                     </div>
                   )}
@@ -680,7 +669,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                       className="relative shrink-0"
                     >
                       <div className={`w-20 h-20 rounded-2xl overflow-hidden bg-white border-2 transition-all duration-200 ${activeImageIndex === i
-                        ? 'border-[#FF5000] shadow-[0_0_0_4px_rgba(255,80,0,0.1)]'
+                        ? 'border-[#E06B8B] shadow-[0_0_0_4px_rgba(224,107,139,0.1)]'
                         : 'border-slate-100 opacity-60 hover:opacity-100 hover:border-slate-200'
                         }`}>
                         <div className="w-full h-full relative p-1.5">
@@ -717,7 +706,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                 <div
                   ref={orb.ref}
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-3xl rounded-full"
-                  style={{ width: 180, height: 180, background: 'radial-gradient(circle, rgba(255,80,0,0.15) 0%, transparent 70%)' }}
+                  style={{ width: 180, height: 180, background: 'radial-gradient(circle, rgba(224,107,139,0.15) 0%, transparent 70%)' }}
                 />
               </div>
 
@@ -738,7 +727,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                           {formatPrice(product.originalPrice)}
                         </span>
                       ) : (
-                        <span className="text-[28px] md:text-[34px] font-bold text-[#FF500] leading-none tracking-tight font-sora">
+                        <span className="text-[28px] md:text-[34px] font-bold text-[#E06B8B] leading-none tracking-tight font-sora">
                           {formatPrice(displayPrice * quantity)}
                         </span>
                       )}
@@ -750,11 +739,8 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                     <span className="text-gray-500 text-sm min-w-[60px] pb-1.5">Хямдрал</span>
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2">
-                        <span className="text-[28px] md:text-[34px] font-bold text-[#FF500] leading-none tracking-tight font-sora">
+                        <span className="text-[28px] md:text-[34px] font-bold text-[#E06B8B] leading-none tracking-tight font-sora">
                           {formatPrice(displayPrice * quantity)}
-                        </span>
-                        <span className="bg-[#FF500] text-white text-[10px] px-1.5 py-0.5 rounded-sm font-bold tracking-wider">
-                          {product.stockStatus === 'pre-order' ? 'ЗАХИАЛГААР' : 'БЭЛЭН'}
                         </span>
                       </div>
                       {quantity > 1 && (
@@ -771,9 +757,9 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                   {/* Delivery */}
                   <div className="flex items-start">
                     <span className="text-gray-500 min-w-[70px] mt-0.5">Хүргэлт</span>
-                    <div className="flex flex-col gap-1 text-gray-900">
+                    <div className="flex flex-col">
                       <span className="font-medium">
-                        {product.stockStatus === 'in-stock' ? '1 хоногт хүргэнэ' : '7 хоногт хүргэнэ'}
+                        1 хоногт хүргэнэ
                       </span>
                       <span className="text-xs text-gray-400">Монгол даяар хүргэнэ</span>
                     </div>
@@ -804,8 +790,8 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                                   key={val}
                                   onClick={() => setSelectedOptions(p => ({ ...p, [option.name]: val }))}
                                   className={`transition-all border ${isSelected
-                                    ? 'border-[#FF5000] border-2 px-3 py-1 bg-white text-gray-900'
-                                    : 'border-gray-300 bg-white text-gray-900 px-3 py-1 hover:border-[#FF5000]'
+                                    ? 'border-[#E06B8B] border-2 px-3 py-1 bg-white text-gray-900'
+                                    : 'border-gray-300 bg-white text-gray-900 px-3 py-1 hover:border-[#E06B8B]'
                                     } ${hasImage ? 'rounded-sm flex items-center gap-2 h-9' : 'rounded-sm h-8'}`}
                                 >
                                   {hasImage && (
@@ -870,7 +856,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                   <button
                     onClick={handleBuyNow}
                     disabled={!canAddToCart}
-                    className="flex-1 bg-[#FFE4D0] text-[#FF500] py-3.5 rounded-sm font-bold text-[15px] hover:bg-[#FFD4B8] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="flex-1 bg-[#FFE4D0] text-[#E06B8B] py-3.5 rounded-sm font-bold text-[15px] hover:bg-[#FFD4B8] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     Шууд авах
                   </button>
@@ -905,7 +891,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
 
           {/* ── RELATED ───────────────────────────────────────────────────── */}
           <div className="mt-8 md:mt-24 px-4 md:px-0">
-            <h2 className="font-sora font-bold text-xl md:text-3xl text-slate-900 mb-5 md:mb-8 border-l-4 border-[#FF5000] pl-4">
+            <h2 className="font-sora font-bold text-xl md:text-3xl text-slate-900 mb-5 md:mb-8 border-l-4 border-[#E06B8B] pl-4">
               Төстэй бараа
             </h2>
             <RelatedProducts products={product.relatedProducts || []} />
@@ -979,7 +965,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
               Нийт үнэ
             </span>
-            <span className="font-sora font-extrabold text-[18px] text-[#FF500] leading-none truncate">
+            <span className="font-sora font-extrabold text-[18px] text-[#E06B8B] leading-none truncate">
               {formatPrice(displayPrice * quantity)}
             </span>
             {quantity > 1 && (
@@ -1003,7 +989,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
           <motion.button
             whileTap={{ scale: 0.93 }}
             onClick={handleBuyNow}
-            className="flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-2xl bg-[#FF5000] text-white font-bold text-sm shadow-lg shadow-orange-500/30 active:bg-[#E64500] transition-colors shrink-0"
+            className="flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-2xl bg-[#E06B8B] text-white font-bold text-sm shadow-lg shadow-[#E06B8B]/30 active:bg-[#E64500] transition-colors shrink-0"
           >
             Авах
             <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
@@ -1024,7 +1010,7 @@ function ProductInfoSections({ product }: { product: any }) {
       {/* Description Section */}
       <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100 font-dm">
         <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
-          <FileText className="w-6 h-6 text-[#FF5000]" />
+          <FileText className="w-6 h-6 text-[#E06B8B]" />
           Тайлбар
         </h3>
         <div className="prose prose-sm md:prose-base text-slate-600 max-w-none">
@@ -1037,7 +1023,7 @@ function ProductInfoSections({ product }: { product: any }) {
       {/* Specs Section */}
       <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100 font-dm">
         <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
-          <List className="w-6 h-6 text-[#FF5000]" />
+          <List className="w-6 h-6 text-[#E06B8B]" />
           Үзүүлэлт
         </h3>
         <div className="divide-y divide-slate-50 border border-slate-100 rounded-2xl overflow-hidden">
@@ -1057,7 +1043,7 @@ function ProductInfoSections({ product }: { product: any }) {
       {/* Reviews Section */}
       <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100 font-dm">
         <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
-          <Star className="w-6 h-6 text-[#FF5000]" fill="currentColor" />
+          <Star className="w-6 h-6 text-[#E06B8B]" fill="currentColor" />
           Үнэлгээ {product.reviewCount ? `(${product.reviewCount})` : ''}
         </h3>
         <div className="py-2">

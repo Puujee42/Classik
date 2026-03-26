@@ -105,7 +105,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <div key={item.id} className="py-6 flex gap-4 group">
                       <div className="relative w-20 h-24 flex-shrink-0 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100">
                         <Image
-                          src={item.image || '/soyol-logo.png'}
+                          src={item.image || '/soyol-logo-new.png'}
                           alt={item.name}
                           fill
                           className="object-contain p-2"
@@ -123,7 +123,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                           )}
 
                           <div className="flex flex-col mt-1">
-                            <span className="font-sora font-bold text-[#FF5000] text-sm">
+                            <span className="font-sora font-bold text-[#E06B8B] text-sm">
                               {formatPrice(item.price * item.quantity)}
                             </span>
                             {item.quantity > 1 && (
@@ -170,7 +170,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               <div className="p-6 bg-slate-50 border-t border-slate-100 space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500 font-bold text-sm uppercase tracking-wider">Нийт дүн</span>
-                  <span className="text-2xl font-bold text-orange-500">
+                  <span className="text-2xl font-bold text-[#E06B8B]">
                     {formatPrice(totalPrice)}
                   </span>
                 </div>
@@ -186,7 +186,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <motion.button
                       whileHover={{ y: -4 }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full py-4 bg-[#FF5722] text-white rounded-xl font-black text-sm shadow-lg shadow-orange-500/20 
+                      className="w-full py-4 bg-[#FF5722] text-white rounded-xl font-black text-sm shadow-lg shadow-[#E06B8B]/20 
                       flex items-center justify-center gap-2 tracking-widest uppercase transition-all"
                     >
                       Төлбөр төлөх

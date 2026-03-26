@@ -64,14 +64,14 @@ export default function TrackOrderPage() {
                 onChange={e => setPhone(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSearch()}
                 placeholder="77181818"
-                className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium outline-none focus:border-[#FF5000] focus:ring-2 focus:ring-[#FF5000]/10 transition-all"
+                className="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium outline-none focus:border-[#D47A93] focus:ring-2 focus:ring-[#D47A93]/10 transition-all"
               />
             </div>
             <motion.button
               onClick={handleSearch}
               whileTap={{ scale: 0.97 }}
               disabled={loading}
-              className="px-5 py-3.5 bg-[#FF5000] text-white font-bold rounded-2xl shadow-lg shadow-orange-500/25 disabled:opacity-60 flex items-center gap-2 text-sm"
+              className="px-5 py-3.5 bg-[#D47A93] text-white font-bold rounded-2xl shadow-lg shadow-orange-500/25 disabled:opacity-60 flex items-center gap-2 text-sm"
             >
               {loading ? <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" /> : <Search className="w-4 h-4" />}
               Хайх
@@ -105,7 +105,7 @@ export default function TrackOrderPage() {
                               <Icon className="w-3 h-3" />{cfg.label}
                             </span>
                           </div>
-                          <p className="text-lg font-black text-[#FF5000]">{formatPrice(order.total || order.totalPrice || 0)}</p>
+                          <p className="text-lg font-black text-[#D47A93]">{formatPrice(order.total || order.totalPrice || 0)}</p>
                           <p className="text-xs text-slate-400 mt-1">{new Date(order.createdAt).toLocaleDateString('mn-MN')}</p>
                         </motion.div>
                       </Link>

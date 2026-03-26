@@ -2,11 +2,10 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowLeft, Video, MessageCircle } from 'lucide-react';
+import { X, ArrowLeft, MessageCircle } from 'lucide-react';
 import ChatWindow from '@/components/Chat/ChatWindow';
 import AIChatWindow from '@/components/Chat/AIChatWindow';
 import AdminSelector from '@/components/Chat/AdminSelector';
-import VideoCall from '@/components/VideoCall';
 import { useUser } from '@/context/AuthContext';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -42,27 +41,18 @@ export default function ChatWidget({ isOpen, onClose }: ChatWidgetProps) {
     const effectiveUser = user || { id: guestId, name: 'Зочин' };
 
     const [selectedAdmin, setSelectedAdmin] = useState<AdminUser | null>(null);
-    const [viewMode, setViewMode] = useState<'menu' | 'chat_selection' | 'video_selection' | 'chat' | 'video_call' | 'ai_chat'>('menu');
+    const [viewMode, setViewMode] = useState<'menu' | 'chat_selection' | 'chat' | 'ai_chat'>('menu');
 
     const handleSelectAdmin = (admin: AdminUser) => {
         setSelectedAdmin(admin);
-        // If we were in video selection, we should probably start a video call here
-        // For now, let's just go to chat, but we need to implement the video logic
-        if (viewMode === 'video_selection') {
-            setViewMode('video_call');
-        } else {
-            setViewMode('chat');
-        }
+        setViewMode('chat');
     };
 
     const handleBack = () => {
         if (viewMode === 'chat') {
             setViewMode('chat_selection');
             setSelectedAdmin(null);
-        } else if (viewMode === 'video_call') {
-            setViewMode('video_selection');
-            setSelectedAdmin(null);
-        } else if (viewMode === 'chat_selection' || viewMode === 'video_selection' || viewMode === 'ai_chat') {
+        } else if (viewMode === 'chat_selection' || viewMode === 'ai_chat') {
             setViewMode('menu');
         }
     };
@@ -91,8 +81,7 @@ export default function ChatWidget({ isOpen, onClose }: ChatWidgetProps) {
                             <h3 className="font-bold text-white text-lg">
                                 {viewMode === 'menu' ? t('chat', 'greeting') :
                                     viewMode === 'chat' && selectedAdmin ? (selectedAdmin.name || 'Chat') :
-                                        viewMode === 'ai_chat' ? t('chat', 'aiAssistant') :
-                                            viewMode === 'video_selection' ? t('chat', 'selectVideoOperator') : t('chat', 'selectOperator')}
+                                        viewMode === 'ai_chat' ? t('chat', 'aiAssistant') : t('chat', 'selectOperator')}
                             </h3>
                         </div>
                         <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
@@ -125,7 +114,7 @@ export default function ChatWidget({ isOpen, onClose }: ChatWidgetProps) {
                                     onClick={() => setViewMode('chat_selection')}
                                     className="flex items-center gap-4 p-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-white/5 transition-all group text-left"
                                 >
-                                    <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center group-hover:bg-[#FF5000] transition-colors">
+                                    <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center group-hover:bg-[#E06B8B] transition-colors">
                                         <MessageCircle className="w-6 h-6 text-blue-500 group-hover:text-white" strokeWidth={1.2} />
                                     </div>
                                     <div>
@@ -133,46 +122,21 @@ export default function ChatWidget({ isOpen, onClose }: ChatWidgetProps) {
                                         <p className="text-sm text-slate-400">{t('chat', 'chatWithOperator')}</p>
                                     </div>
                                 </button>
-
-                                <button
-                                    onClick={() => setViewMode('video_selection')}
-                                    className="flex items-center gap-4 p-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-white/5 transition-all group text-left"
-                                >
-                                    <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center group-hover:bg-[#FF5000] transition-colors">
-                                        <Video className="w-6 h-6 text-orange-500 group-hover:text-white" strokeWidth={1.2} />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-white text-lg">{t('chat', 'videoCall')}</h4>
-                                        <p className="text-sm text-slate-400">{t('chat', 'joinByCode')}</p>
-                                    </div>
-                                </button>
                             </div>
                         ) : viewMode === 'chat' && selectedAdmin ? (
                             <ChatWindow
                                 otherUser={selectedAdmin}
                                 guestId={guestId}
-                                onStartCall={() => {
-                                    setViewMode('video_call');
-                                }}
                                 onBack={handleBack}
                             />
                         ) : viewMode === 'ai_chat' ? (
                             <AIChatWindow onBack={handleBack} />
-                        ) : viewMode === 'video_call' && selectedAdmin ? (
-                            <div className="h-full overflow-y-auto bg-white">
-                                <VideoCall
-                                    prefilledRoom={`call-${effectiveUser.id}-${selectedAdmin._id}`}
-                                    onBack={handleBack}
-                                />
-                            </div>
                         ) : (
-                            // Admin Selection View (Shared for Chat and Video for now)
+                            // Admin Selection View
                             <div className="h-full overflow-y-auto">
                                 <div className="p-4">
                                     <p className="text-slate-400 text-sm mb-4">
-                                        {viewMode === 'video_selection'
-                                            ? t('chat', 'selectVideoOperator')
-                                            : t('chat', 'selectOperator')}
+                                        {t('chat', 'selectOperator')}
                                     </p>
                                     <AdminSelector onSelect={handleSelectAdmin} compact={true} />
                                 </div>

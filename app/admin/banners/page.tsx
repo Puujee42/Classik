@@ -141,7 +141,7 @@ export default function BannerAdminPage() {
                 </div>
                 <button
                     onClick={() => setIsAdding(true)}
-                    className="flex items-center gap-2 bg-[#FF5000] text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-orange-500/20 active:scale-95 transition-all"
+                    className="flex items-center gap-2 bg-[#D47A93] text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-orange-500/20 active:scale-95 transition-all"
                 >
                     <Plus className="w-5 h-5" />
                     Беннер нэмэх
@@ -161,7 +161,7 @@ export default function BannerAdminPage() {
                             <div>
                                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Зураг оруулах <span className="text-red-500">*</span></label>
                                 <CldUploadWidget
-                                    uploadPreset="ml_default"
+                                    uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"}
                                     onSuccess={(result) => {
                                         if (typeof result.info === 'object' && 'secure_url' in result.info) {
                                             setNewBanner({ ...newBanner, image: result.info.secure_url });

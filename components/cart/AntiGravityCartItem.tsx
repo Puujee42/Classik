@@ -66,7 +66,7 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
             animate={removing ? { opacity: 0, x: -100, scale: 0.8 } : { opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, x: -50 }}
             className={`relative mb-3 overflow-hidden rounded-[24px] border transition-all duration-500 ${item.selected
-                ? 'bg-white border-orange-200 shadow-[0_12px_30px_rgba(255,80,0,0.06)]'
+                ? 'bg-white border-orange-200 shadow-[0_12px_30px_rgba(224,107,139,0.06)]'
                 : 'bg-white border-gray-100 shadow-sm'
                 }`}
         >
@@ -104,7 +104,7 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
                     <button
                         onClick={() => toggleItemSelection(item.cartItemId)}
                         className={`w-5 h-5 rounded flex items-center justify-center transition-all ${item.selected
-                            ? 'bg-[#FF5000] border-[#FF5000] text-white shadow-sm'
+                            ? 'bg-[#E06B8B] border-[#E06B8B] text-white shadow-sm'
                             : 'border-gray-200 bg-white'
                             }`}
                     >
@@ -115,7 +115,7 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
                 {/* Product Image */}
                 <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-gray-50 shrink-0 border border-gray-50 px-1">
                     <Image
-                        src={imgError ? '/soyol-logo.png' : (item.image || '/soyol-logo.png')}
+                        src={imgError ? '/soyol-logo-new.png' : (item.image || '/soyol-logo-new.png')}
                         onError={() => setImgError(true)}
                         alt={item.name}
                         fill
@@ -127,7 +127,7 @@ export default function AntiGravityCartItem({ item }: AntiGravityCartItemProps) 
                 <div className="flex-1 min-w-0 flex flex-col justify-between self-stretch py-0.5">
                     <div className="flex justify-between items-start gap-2">
                         <div className="min-w-0 flex-1">
-                            <Link href={`/product/${item.id}`} className="hover:text-[#FF5000] transition-colors">
+                            <Link href={`/product/${item.id}`} className="hover:text-[#E06B8B] transition-colors">
                                 <h3 className="font-bold text-slate-900 text-[15px] leading-tight truncate">{item.name}</h3>
                             </Link>
 

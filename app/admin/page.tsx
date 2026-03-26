@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import Link from 'next/link';
 import { ShoppingCart, TrendingUp, Package, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useVibe } from '@/context/VibeContext';
 import StatCard from '@/components/admin/StatCard';
 import { formatPrice } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -13,6 +14,7 @@ const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export default function AdminDashboardPage() {
   const { user } = useAuth();
+  const { currentVibe } = useVibe();
 
   // Fetch dashboard data
   const { data: ordersData, error: ordersError } = useSWR('/api/admin/orders?limit=5', fetcher, { refreshInterval: 15000 });
@@ -75,7 +77,7 @@ export default function AdminDashboardPage() {
           title="Идэвхтэй бараа"
           value={loadingProducts ? '...' : products.length}
           icon={Package}
-          color="amber"
+          color="accent"
           href="/admin/products"
         />
         <StatCard
@@ -93,7 +95,7 @@ export default function AdminDashboardPage() {
         <div className="xl:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col shadow-xl">
           <div className="p-6 border-b border-slate-800 flex items-center justify-between">
             <h2 className="text-lg font-bold text-white">Сүүлийн захиалгууд</h2>
-            <Link href="/admin/orders" className="text-sm text-amber-500 hover:text-amber-400 flex items-center gap-1 font-medium transition-colors">
+            <Link href="/admin/orders" className="text-sm hover:opacity-80 flex items-center gap-1 font-medium transition-colors" style={{ color: currentVibe.accent }}>
               Бүх захиалга <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -110,7 +112,7 @@ export default function AdminDashboardPage() {
               <tbody>
                 {loadingOrders ? (
                   <tr>
-                    <td colSpan={4} className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin text-amber-500 mx-auto" /></td>
+                    <td colSpan={4} className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto" style={{ color: currentVibe.accent }} /></td>
                   </tr>
                 ) : orders.length === 0 ? (
                   <tr>
@@ -121,7 +123,7 @@ export default function AdminDashboardPage() {
                     <tr key={order._id} className="hover:bg-slate-800/50 transition-colors border-b border-slate-800/50 last:border-0">
                       <td className="p-4 text-sm font-medium text-white">{order._id.substring(0, 8).toUpperCase()}</td>
                       <td className="p-4 text-sm text-slate-400">{new Date(order.createdAt).toLocaleDateString()}</td>
-                      <td className="p-4 text-sm font-bold text-amber-400">{formatPrice(order.total || order.totalPrice || 0)}</td>
+                      <td className="p-4 text-sm font-bold" style={{ color: currentVibe.accent }}>{formatPrice(order.total || order.totalPrice || 0)}</td>
                       <td className="p-4">
                         {order.status === 'pending' && <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/20">Хүлээгдэж байна</span>}
                         {order.status === 'confirmed' && <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/20">Баталгаажсан</span>}

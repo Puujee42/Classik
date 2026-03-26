@@ -1,15 +1,32 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Playfair_Display, Lato, Great_Vibes } from 'next/font/google';
 import LuxuryNavbar from '@components/LuxuryNavbar';
 import Footer from '@components/Footer';
 import ClientLayout from './ClientLayout';
 import { SITE_CONFIG } from '@lib/constants';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-const inter = Inter({
-  subsets: ['latin', 'cyrillic'],
+import CherryBlossoms from '@/components/ui/CherryBlossoms';
+import MagicCursor from '@/components/ui/MagicCursor';
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-playfair',
+});
+
+const lato = Lato({
+  weight: ['300', '400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-lato',
+});
+
+const greatVibes = Great_Vibes({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-great-vibes',
 });
 
 export const viewport: Viewport = {
@@ -17,21 +34,21 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#FF7900',
+  themeColor: '#FCEEF2',
   viewportFit: 'cover',
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://soyol.mn'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://classik.mn'),
   title: {
-    default: `${SITE_CONFIG.name} - ${SITE_CONFIG.description}`,
-    template: `%s | ${SITE_CONFIG.name}`,
+    default: `Classik - Premium Luxury Skincare Boutique`,
+    template: `%s | Classik`,
   },
-  description: 'Олон улсын чанартай бүтээгдэхүүнийг бөөний үнээр. Хурдан хүргэлт, баталгаат чанар, найдвартай үйлчилгээ.',
-  keywords: ['video shop', 'Mongolia', 'бөөний үнэ', 'онлайн худалдаа', 'хурдан хүргэлт', 'электрон бараа', 'гар утас', 'компьютер'],
-  authors: [{ name: 'Soyol Video Shop' }],
-  creator: 'Soyol Video Shop',
-  publisher: 'Soyol Video Shop',
+  description: 'Premium skincare boutique featuring highly feminine, elegant, and spring-inspired formulations for radiant skin.',
+  keywords: ['skincare', 'beauty', 'classik', 'premium skincare', 'glow', 'feminine skincare'],
+  authors: [{ name: 'Classik' }],
+  creator: 'Classik',
+  publisher: 'Classik',
   manifest: '/manifest.json',
   robots: {
     index: true,
@@ -47,10 +64,10 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'mn_MN',
-    url: 'https://soyol.mn',
+    url: 'https://classik.mn',
     siteName: SITE_CONFIG.name,
     title: `${SITE_CONFIG.name} - ${SITE_CONFIG.description}`,
-    description: 'Олон улсын чанартай бүтээгдэхүүнийг бөөний үнээр',
+    description: 'Дээд зэргийн арьс арчилгааны бүтээгдэхүүн',
     images: [
       {
         url: '/og-image.png',
@@ -77,13 +94,15 @@ export default function RootLayout({
 
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
-      <html lang="mn" className={inter.variable}>
+      <html lang="en" className={`${playfair.variable} ${lato.variable} ${greatVibes.variable} font-sans`}>
         <head>
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-          <meta name="apple-mobile-web-app-title" content={SITE_CONFIG.name} />
+          <meta name="apple-mobile-web-app-title" content="Classik" />
         </head>
-        <body className={`${inter.className} min-h-screen bg-white antialiased`}>
+        <body className={`${lato.variable} ${playfair.variable} ${greatVibes.variable} min-h-screen bg-[#FAF9F6] text-[#333333] antialiased bg-[radial-gradient(circle_at_15%_50%,rgba(252,238,242,0.8),transparent_25%),radial-gradient(circle_at_85%_30%,rgba(224,107,139,0.05),transparent_25%)] font-sans`}>
+          <CherryBlossoms />
+          <MagicCursor />
           <ClientLayout>
             <LuxuryNavbar />
             <main className="min-h-screen pb-16 md:pb-0 relative z-0">{children}</main>

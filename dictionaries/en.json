@@ -27,7 +27,6 @@
     "language": "Language",
     "menu": "Menu",
     "adminPanel": "Admin Panel",
-    "videoCall": "Video Call",
     "messages": "Messages",
     "email": "Email",
     "admin": "Admin",
@@ -37,17 +36,14 @@
     "greeting": "How can we help you?",
     "sendMessage": "Send Message",
     "chatWithOperator": "Chat with Operator",
-    "videoCall": "Video Call",
-    "joinByCode": "Join by Room Code",
     "selectOperator": "Select Chat Operator",
-    "selectVideoOperator": "Select Video Operator",
-    "aiAssistant": "Soyol AI Assistant",
+    "aiAssistant": "Classik AI Assistant",
     "askAi": "Ask AI Assistant",
     "typeMessage": "Type a message...",
     "findingSupport": "Finding support...",
     "noAgents": "No agents available",
     "aiThinking": "Thinking...",
-    "welcomeAi": "Hello! I am Soyol Video Shop's AI Assistant. How can I help you today?"
+    "welcomeAi": "Hello! I am Classik Store's AI Assistant. How can I help you today?"
   },
   "cart": {
     "title": "Your Cart",

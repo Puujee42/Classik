@@ -50,7 +50,7 @@ const SearchDropdown = ({
           <div className="max-h-[400px] overflow-y-auto scrollbar-hide">
             {isLoading ? (
               <div className="flex items-center justify-center gap-3 py-10 text-gray-500">
-                <span className="inline-block w-5 h-5 border-2 border-[#FF5000] border-t-transparent rounded-full animate-spin" />
+                <span className="inline-block w-5 h-5 border-2 border-[#E06B8B] border-t-transparent rounded-full animate-spin" />
                 <span className="text-sm font-medium">Түр хүлээнэ үү...</span>
               </div>
             ) : results.length === 0 ? (
@@ -72,7 +72,7 @@ const SearchDropdown = ({
                   >
                     <div className="w-12 h-12 rounded-lg bg-gray-50 overflow-hidden flex-shrink-0 relative border border-gray-100/50">
                       <Image
-                        src={(product.images && product.images.length > 0) ? product.images[0] : (product.image || '/soyol-logo.png')}
+                        src={(product.images && product.images.length > 0) ? product.images[0] : (product.image || '/soyol-logo-new.png')}
                         alt={product.name}
                         fill
                         className="object-cover"
@@ -83,7 +83,7 @@ const SearchDropdown = ({
                       <span className="font-medium text-sm text-gray-900 line-clamp-2 leading-snug">
                         {product.name}
                       </span>
-                      <span className="text-[#FF5000] font-bold text-sm mt-1">
+                      <span className="text-[#E06B8B] font-bold text-sm mt-1">
                         {formatPrice(product.price)}
                       </span>
                     </div>

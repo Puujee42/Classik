@@ -162,13 +162,13 @@ function AdvancedSearchContent({ onSearch }: AdvancedSearchProps) {
             <div className="mt-4 p-6 bg-white border-2 border-gray-200 rounded-xl">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <Filter className="w-5 h-5 text-orange-600" />
+                  <Filter className="w-5 h-5 text-[#E06B8B]" />
                   Нарийвчилсан шүүлтүүр
                 </h3>
                 {activeFiltersCount > 0 && (
                   <button
                     onClick={clearFilters}
-                    className="text-sm text-orange-600 hover:underline font-bold"
+                    className="text-sm text-[#E06B8B] hover:underline font-bold"
                   >
                     Бүгдийг арилгах
                   </button>
@@ -179,7 +179,7 @@ function AdvancedSearchContent({ onSearch }: AdvancedSearchProps) {
                 {/* Category Filter */}
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-orange-600" />
+                    <Tag className="w-4 h-4 text-[#E06B8B]" />
                     Ангилал
                   </label>
                   <select
@@ -199,7 +199,7 @@ function AdvancedSearchContent({ onSearch }: AdvancedSearchProps) {
                 {/* Price Range */}
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-orange-600" />
+                    <DollarSign className="w-4 h-4 text-[#E06B8B]" />
                     Үнийн хязгаар
                   </label>
                   <div className="flex gap-2">
@@ -224,7 +224,7 @@ function AdvancedSearchContent({ onSearch }: AdvancedSearchProps) {
                 {/* Rating Filter */}
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
-                    <Star className="w-4 h-4 text-orange-600" />
+                    <Star className="w-4 h-4 text-[#E06B8B]" />
                     Үнэлгээ
                   </label>
                   <select
@@ -242,7 +242,7 @@ function AdvancedSearchContent({ onSearch }: AdvancedSearchProps) {
                 {/* Sort By */}
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
-                    <ChevronDown className="w-4 h-4 text-orange-600" />
+                    <ChevronDown className="w-4 h-4 text-[#E06B8B]" />
                     Эрэмбэлэх
                   </label>
                   <select
@@ -267,10 +267,10 @@ function AdvancedSearchContent({ onSearch }: AdvancedSearchProps) {
                   id="inStock"
                   checked={inStock}
                   onChange={(e) => setInStock(e.target.checked)}
-                  className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                  className="w-4 h-4 text-[#E06B8B] border-gray-300 rounded focus:ring-orange-500"
                 />
                 <label htmlFor="inStock" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <Package className="w-4 h-4 text-orange-600" />
+                  <Package className="w-4 h-4 text-[#E06B8B]" />
                   Зөвхөн нөөцтэй бараа
                 </label>
               </div>

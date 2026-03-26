@@ -27,7 +27,6 @@
     "language": "Хэл",
     "menu": "Цэс",
     "adminPanel": "Админ панел",
-    "videoCall": "Видео дуудлага",
     "messages": "Зурвас",
     "email": "И-мэйл",
     "admin": "Админ",
@@ -37,17 +36,14 @@
     "greeting": "Танд яаж туслах вэ?",
     "sendMessage": "Зурвас бичих",
     "chatWithOperator": "Оператортой чатлах",
-    "videoCall": "Видео дуудлага",
-    "joinByCode": "Өрөөний кодоор холбогдох",
     "selectOperator": "Чатлах оператор сонгох",
-    "selectVideoOperator": "Видео оператор сонгох",
-    "aiAssistant": "Soyol AI Туслах",
+    "aiAssistant": "Classik AI Туслах",
     "askAi": "Хиймэл оюун ухаанаас асуух",
     "typeMessage": "Зурвас бичих...",
     "findingSupport": "Оператор хайж байна...",
     "noAgents": "Оператор олдсонгүй",
     "aiThinking": "Бодож байна...",
-    "welcomeAi": "Сайн байна уу? Би Soyol Video Shop-ийн хиймэл оюун ухаант туслах байна. Танд юугаар туслах вэ?"
+    "welcomeAi": "Сайн байна уу? Би Classik Store-ийн хиймэл оюун ухаант туслах байна. Танд юугаар туслах вэ?"
   },
   "cart": {
     "title": "Таны сагс",
@@ -108,7 +104,7 @@
     "tenPlusPieces": "10+ ширхэг"
   },
   "footer": {
-    "title": "Soyol Video Shop",
+    "title": "Classik Store",
     "description": "Чанартай бүтээгдэхүүн, найдвартай хүргэлт, мэргэжлийн үйлчилгээ",
     "about": "Бидний тухай",
     "trackOrder": "Захиалга хянах",
@@ -139,7 +135,7 @@
     "returns": "Буцаалт & Нөхөн төлбөр",
     "shippingInfo": "Хүргэлтийн мэдээлэл",
     "contactUs": "Холбоо барих",
-    "copyright": "© 2026 Soyol Video Shop. Бүх эрх хуулиар хамгаалагдсан."
+    "copyright": "© 2026 Classik Store. Бүх эрх хуулиар хамгаалагдсан."
   },
   "featureSection": {
     "shopCollection": "Цуглуулга үзэх",

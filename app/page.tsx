@@ -1,324 +1,500 @@
 'use client';
 
 import Link from 'next/link';
-import { Sparkles, Package, Clock, ArrowUpDown, SlidersHorizontal, X, Tag } from 'lucide-react';
-
+import Image from 'next/image';
+import { Sparkles, SlidersHorizontal, X, ShoppingBag, Sun, Leaf, Gem, ChevronLeft, ChevronRight } from 'lucide-react';
 import PremiumProductGrid from '@/components/PremiumProductGrid';
-import BannerSlider from '@/components/BannerSlider';
-import SpecialProductsCarousel from '@/components/SpecialProductsCarousel';
-import MobileFeaturedCarousel from '@/components/MobileFeaturedCarousel';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import useSWR from 'swr';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useProducts } from '@/lib/hooks/useProducts';
 import { type Product } from '@/models/Product';
-import MobileHero from '@/components/MobileHero';
 import MobileProductGrid from '@/components/MobileProductGrid';
 import InfiniteScrollTrigger from '@/components/InfiniteScrollTrigger';
+import FloatingIngredients from '@/components/FloatingIngredients';
+import { useVibe, vibeConfigs, type VibeType } from '@/context/VibeContext';
 
-type FilterType = 'all' | 'Бэлэн' | 'Захиалга';
 type SortType = 'newest' | 'price-low' | 'price-high' | 'name-az';
+const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export default function HomePage() {
   const { currency, convertPrice } = useLanguage();
   const { t } = useTranslation();
-  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [sortBy, setSortBy] = useState<SortType>('name-az');
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
   const [showPriceFilter, setShowPriceFilter] = useState(false);
 
-  // Convert UI filter to API stockStatus
-  const stockStatus = activeFilter === 'Бэлэн' ? 'in-stock' : activeFilter === 'Захиалга' ? 'pre-order' : undefined;
+  // Use global vibe context
+  const { vibe, setVibe, currentVibe } = useVibe();
+
+  // Banner carousel
+  const { data: bannersData } = useSWR('/api/banners', fetcher, { refreshInterval: 60000 });
+  const banners = bannersData?.banners || [];
+  const [bannerIndex, setBannerIndex] = useState(0);
+
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const timer = setInterval(() => {
+      setBannerIndex(prev => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [banners.length]);
 
   const { products: allProducts, isLoading: loading, isLoadingMore, isReachingEnd, size, setSize, error } = useProducts({
-    stockStatus,
     minPrice: minPrice || undefined,
     maxPrice: maxPrice || undefined
   });
 
-  // Fetch featured products separately for carousels to keep them consistent across tabs
-  const { products: featuredProducts, isLoading: loadingFeatured } = useProducts({ featured: true });
-
-  // Client-side mapping is now simplified since the server handles the core filtering
   let filteredProducts = [...allProducts];
 
-  // If there are other client-side specific sections (like 'Шинэ' which might not be a stock status)
-  // we can still keep this fallback, but for 'Бэлэн' and 'Захиалга' it's already handled by the API.
-  if (activeFilter !== 'all' && activeFilter !== 'Бэлэн' && activeFilter !== 'Захиалга') {
-    filteredProducts = allProducts.filter((p: Product) => p.sections?.includes(activeFilter as string));
-  }
-
-  // Apply price filter
   const minPriceNum = minPrice ? parseFloat(minPrice) : 0;
   const maxPriceNum = maxPrice ? parseFloat(maxPrice) : Infinity;
-
   if (minPrice || maxPrice) {
-    filteredProducts = filteredProducts.filter(p =>
-      p.price >= minPriceNum && p.price <= maxPriceNum
-    );
+    filteredProducts = filteredProducts.filter(p => p.price >= minPriceNum && p.price <= maxPriceNum);
   }
 
-  // Sort by selected option (newest, price, name). Same list for all/ready/preorder tabs.
-  let sortedProducts: Product[];
-  const sortFunction = (a: Product, b: Product) => {
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
-      case 'price-low':
-        return a.price - b.price;
-      case 'price-high':
-        return b.price - a.price;
-      case 'name-az':
-        return a.name.localeCompare(b.name);
+      case 'price-low': return a.price - b.price;
+      case 'price-high': return b.price - a.price;
+      case 'name-az': return a.name.localeCompare(b.name);
       case 'newest':
-      default:
-        return (new Date(b.createdAt || 0).getTime()) - (new Date(a.createdAt || 0).getTime());
+      default: return (new Date(b.createdAt || 0).getTime()) - (new Date(a.createdAt || 0).getTime());
     }
-  };
+  });
 
-  if (activeFilter === 'all') {
-    sortedProducts = [...filteredProducts].sort(sortFunction);
-  } else {
-    sortedProducts = [...filteredProducts].sort(sortFunction);
-  }
-
-  // Get min and max prices for the current filter (converted to current currency)
   const prices = filteredProducts.map(p => convertPrice(p.price));
   const suggestedMin = prices.length > 0 ? Math.floor(Math.min(...prices) / (currency === 'USD' ? 10 : 1000)) * (currency === 'USD' ? 10 : 1000) : 0;
   const suggestedMax = prices.length > 0 ? Math.ceil(Math.max(...prices) / (currency === 'USD' ? 10 : 1000)) * (currency === 'USD' ? 10 : 1000) : (currency === 'USD' ? 1000 : 1000000);
 
   return (
-    <div className="min-h-screen bg-slate-50/30 relative selection:bg-orange-500 selection:text-white pb-20 lg:pb-0">
-      {/* Aesthetic Mobile Background */}
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden lg:opacity-70">
-        <div className="absolute top-[-20%] left-[-20%] w-[70%] h-[70%] rounded-full bg-orange-200/20 blur-[80px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-amber-200/20 blur-[60px]" />
-      </div>
+    <div className={`min-h-screen bg-[#FAF9F6] relative selection:text-white pb-20 lg:pb-0 overflow-hidden transition-colors duration-700`}
+      style={{ ['--selection-bg' as string]: currentVibe.accent }}
+    >
 
-      {/* MOBILE HERO */}
-      <div className="lg:hidden">
-        <MobileHero />
-      </div>
+      {/* ═══════════════ SECTION 1: HERO ═══════════════ */}
+      <section className="relative z-10 pt-4 pb-10 lg:pt-16 lg:pb-28 px-5 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-6 lg:gap-20">
 
-      {/* Mobile Featured Products Carousel - Only on Mobile */}
-      <div className="lg:hidden">
-        {!loadingFeatured && featuredProducts.length > 0 && (
-          <MobileFeaturedCarousel products={featuredProducts as any} />
-        )}
-      </div>
-
-      {/* Hero Section with Filter Tabs */}
-      <section
-        className="pt-0 pb-4 sm:pt-0 sm:pb-8 relative z-10"
-      >
-        <div className="max-w-7xl mx-auto px-1 sm:px-4 md:px-6 lg:px-8">
-
-          {/* Banner Slider - Always Visible on Desktop, Hidden on Mobile as we have MobileHero */}
-          <div className="mb-12 hidden lg:block">
-            <BannerSlider />
-          </div>
-
-          {/* Special Products Carousel */}
-          {!loadingFeatured && featuredProducts.length > 0 && (
-            <SpecialProductsCarousel products={featuredProducts as any} />
-          )}
-
-          {/* Filter & Sort Bar */}
-          <div
-            className="flex items-center justify-between gap-4 mb-6 px-3 lg:px-0 flex-wrap sticky top-[56px] lg:static z-30 bg-white/80 backdrop-blur-md lg:bg-transparent py-2 lg:py-0 rounded-2xl lg:rounded-none"
-            style={{ top: 'calc(56px + env(safe-area-inset-top))' }}
+          {/* Left: Text */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="flex-1 text-center lg:text-left w-full"
           >
-            <div className="flex items-center gap-2 lg:gap-3 flex-wrap overflow-x-auto scrollbar-hide pb-1 lg:pb-0">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveFilter('all')}
-                className={`px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl font-bold text-xs lg:text-sm transition-all duration-300 whitespace-nowrap ${activeFilter === 'all'
-                  ? 'bg-[#FF5000] text-white shadow-lg shadow-orange-500/30'
-                  : 'bg-white/50 text-gray-600 hover:bg-white border border-gray-100'
-                  }`}
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="uppercase tracking-[0.25em] text-[10px] sm:text-xs font-bold mb-3 lg:mb-6"
+              style={{ color: currentVibe.accent }}
+            >
+              ✦ Classik Store ✦
+            </motion.p>
+
+            <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-[#333] leading-[1.15] mb-4 lg:mb-6 tracking-tight">
+              Таны Арьс Арчилгааны <br />
+              <motion.span
+                key={vibe}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="font-script text-4xl sm:text-6xl md:text-7xl lg:text-8xl bg-clip-text text-transparent bg-gradient-to-r bg-[length:200%_auto] animate-gradient"
+                style={{
+                  backgroundImage: vibe === 'calm'
+                    ? 'linear-gradient(to right, #7CB9A8, #5AAFA0, #3B9E8F)'
+                    : vibe === 'radiant'
+                      ? 'linear-gradient(to right, #D4AF37, #C5A059, #E8C547)'
+                      : 'linear-gradient(to right, #E06B8B, #C55B7A, #D4AF37)',
+                }}
               >
-                <div className="flex items-center gap-1.5 lg:gap-2">
-                  <Sparkles className="w-3 h-3 lg:w-3.5 lg:h-3.5" strokeWidth={1.2} />
-                  <span>Бүгд</span>
-                </div>
+                {vibe === 'calm' ? 'Тайван Гоо' : vibe === 'radiant' ? 'Алтан Гэрэл' : 'Байгалийн Гоо'}
+              </motion.span>
+            </h1>
+
+            <p className="text-[#666] text-sm sm:text-lg md:text-xl font-light leading-relaxed max-w-lg mx-auto lg:mx-0 mb-5 lg:mb-8 px-2 sm:px-0">
+              Зөөлөн, гэрэлтсэн арьс арчилгаа. Манай дээд зэрэглэлийн бүтээгдэхүүнүүд байгалийн ургамлын хүчийг орчин үеийн шинжлэх ухаантай хослуулсан.
+            </p>
+
+            {/* ✨ Mood/Vibe Selector ✨ */}
+            <div className="mb-6 lg:mb-10">
+              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] text-[#999] font-bold block mb-2 lg:mb-0 lg:inline lg:mr-3">Төрх сонгох</span>
+              <div className="flex items-center justify-center lg:justify-start gap-2 overflow-x-auto scrollbar-hide pb-1">
+                {(Object.keys(vibeConfigs) as VibeType[]).map((v) => {
+                  const config = vibeConfigs[v];
+                  const isActive = vibe === v;
+                  const Icon = config.icon;
+                  return (
+                    <motion.button
+                      key={v}
+                      whileTap={{ scale: 0.92 }}
+                      onClick={() => setVibe(v)}
+                      className={`relative px-3.5 sm:px-4 py-2 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.08em] sm:tracking-[0.1em] transition-all duration-300 flex items-center gap-1 sm:gap-1.5 shrink-0 ${isActive
+                          ? 'text-white shadow-lg'
+                          : 'bg-white border border-gray-200 text-[#666]'
+                        }`}
+                      style={isActive ? {
+                        backgroundColor: config.accent,
+                        boxShadow: `0 6px 20px ${config.glow}`,
+                      } : {}}
+                    >
+                      <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" strokeWidth={2} />
+                      {config.label}
+                      {isActive && (
+                        <motion.div
+                          layoutId="vibeIndicator"
+                          className="absolute inset-0 rounded-full"
+                          style={{ border: `2px solid ${config.accent}`, opacity: 0.3 }}
+                          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                        />
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start px-2 sm:px-0">
+              <motion.a
+                href="#featured"
+                whileTap={{ scale: 0.97 }}
+                className="px-8 sm:px-10 py-3.5 sm:py-4 text-xs sm:text-sm uppercase tracking-[0.15em] sm:tracking-[0.2em] text-center inline-block rounded-full text-white font-bold transition-all"
+                style={{ backgroundColor: currentVibe.accent, boxShadow: `0 4px 14px ${currentVibe.glow}` }}
+              >
+                Цуглуулга үзэх
+              </motion.a>
+              <motion.a
+                href="#philosophy"
+                whileTap={{ scale: 0.97 }}
+                className="px-8 sm:px-10 py-3.5 sm:py-4 rounded-full border border-[#D4AF37]/30 text-[#333] text-xs sm:text-sm uppercase tracking-[0.15em] sm:tracking-[0.2em] text-center hover:border-[#D4AF37] hover:bg-[#D4AF37]/5 transition-all"
+              >
+                Бидний тухай
+              </motion.a>
+            </div>
+          </motion.div>
+
+          {/* Right: Hero Banner Carousel */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            className="flex-1 relative w-full max-w-xl lg:max-w-none"
+          >
+            {/* Decorative rings */}
+            <motion.div
+              className="absolute -top-8 -right-8 w-48 h-48 rounded-full border hidden lg:block transition-colors duration-700"
+              style={{ borderColor: `${currentVibe.accent}20` }}
+            />
+            <motion.div
+              className="absolute -bottom-6 -left-6 w-32 h-32 rounded-full border hidden lg:block transition-colors duration-700"
+              style={{ borderColor: `${currentVibe.accent}15` }}
+            />
+
+            <div className="relative h-[240px] sm:h-[380px] lg:h-[560px] rounded-2xl sm:rounded-[2rem] overflow-hidden group">
+              {/* Overlay gradient */}
+              <div className="absolute inset-0 z-10 pointer-events-none transition-all duration-700"
+                style={{
+                  background: `linear-gradient(135deg, ${currentVibe.bg}30 0%, transparent 50%, ${currentVibe.accent}10 100%)`,
+                }}
+              />
+
+              {/* Banner images */}
+              <AnimatePresence mode="wait">
+                {banners.length > 0 ? (
+                  <motion.div
+                    key={bannerIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="w-full h-full relative"
+                  >
+                    {banners[bannerIndex]?.link ? (
+                      <Link href={banners[bannerIndex].link} className="block w-full h-full">
+                        <img
+                          src={banners[bannerIndex].image}
+                          alt={banners[bannerIndex].title || 'Banner'}
+                          className="w-full h-full object-cover"
+                        />
+                      </Link>
+                    ) : (
+                      <img
+                        src={banners[bannerIndex]?.image}
+                        alt={banners[bannerIndex]?.title || 'Banner'}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    animate={{ scale: [1, 1.03, 1] }}
+                    transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+                    className="w-full h-full relative"
+                  >
+                    <Image
+                      src="/hero_bg_1774502855596.png"
+                      alt="Classik Store — Luxury Skincare"
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Carousel controls */}
+              {banners.length > 1 && (
+                <>
+                  {/* Prev/Next arrows */}
+                  <button
+                    onClick={() => setBannerIndex(prev => (prev - 1 + banners.length) % banners.length)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/70 backdrop-blur-sm flex items-center justify-center text-[#333] opacity-0 group-hover:opacity-100 transition-all hover:bg-white shadow-lg"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setBannerIndex(prev => (prev + 1) % banners.length)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/70 backdrop-blur-sm flex items-center justify-center text-[#333] opacity-0 group-hover:opacity-100 transition-all hover:bg-white shadow-lg"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+
+                  {/* Dot indicators */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                    {banners.map((_: any, i: number) => (
+                      <button
+                        key={i}
+                        onClick={() => setBannerIndex(i)}
+                        className="w-2.5 h-2.5 rounded-full transition-all duration-300"
+                        style={{
+                          backgroundColor: i === bannerIndex ? currentVibe.accent : 'rgba(255,255,255,0.5)',
+                          transform: i === bannerIndex ? 'scale(1.3)' : 'scale(1)',
+                          boxShadow: i === bannerIndex ? `0 0 8px ${currentVibe.glow}` : 'none',
+                        }}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* Banner title badge */}
+              {banners.length > 0 && banners[bannerIndex]?.title && (
+                <motion.div
+                  key={`title-${bannerIndex}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute bottom-6 left-6 z-20 bg-white/90 backdrop-blur-md rounded-2xl px-5 py-3 shadow-lg border border-[#D4AF37]/10"
+                >
+                  <p className="text-sm font-bold text-[#333]">{banners[bannerIndex].title}</p>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════ SECTION 2: FEATURED PRODUCTS ═══════════════ */}
+      <section id="featured" className="relative z-10 py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Section Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="text-center mb-16"
+          >
+            <p className="uppercase tracking-[0.3em] text-xs font-bold mb-4" style={{ color: '#D4AF37' }}>Танд зориулсан</p>
+            <h2 className="font-serif text-4xl md:text-5xl text-[#333] mb-4">
+              Онцлох <span className="font-script text-5xl md:text-6xl" style={{ color: currentVibe.accent }}>Бүтээгдэхүүн</span>
+            </h2>
+            <div className="w-20 h-[1px] mx-auto mt-4" style={{ background: `linear-gradient(to right, transparent, ${currentVibe.accent}, transparent)` }} />
+          </motion.div>
+
+          {/* Filter Bar */}
+          <div className="flex items-center justify-between gap-4 mb-8 px-1 lg:px-0 flex-wrap">
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="px-6 py-2.5 rounded-full text-white font-bold text-xs uppercase tracking-[0.15em] transition-all"
+              style={{ backgroundColor: currentVibe.accent, boxShadow: `0 8px 20px ${currentVibe.glow}` }}
+            >
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5" strokeWidth={2} />
+                <span>Бүх бараа</span>
+              </div>
+            </motion.button>
+
+            <div className="relative">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setShowPriceFilter(!showPriceFilter)}
+                className={`flex items-center gap-2 px-5 py-2.5 text-xs font-bold uppercase tracking-[0.1em] rounded-full transition-all border`}
+                style={(showPriceFilter || minPrice || maxPrice) ? {
+                  backgroundColor: currentVibe.accent,
+                  color: 'white',
+                  borderColor: currentVibe.accent,
+                  boxShadow: `0 8px 20px ${currentVibe.glow}`,
+                } : {
+                  backgroundColor: 'white',
+                  color: '#333',
+                  borderColor: 'rgba(212,175,55,0.2)',
+                }}
+              >
+                <SlidersHorizontal className="w-4 h-4" strokeWidth={2} />
+                <span>{t('filters', 'price')}</span>
               </motion.button>
 
-              {['Бэлэн', 'Захиалга'].map((section) => {
-                const Icon = section === 'Бэлэн' ? Package
-                  : section === 'Захиалга' ? Clock
-                    : Tag;
-                const isActive = activeFilter === section;
-
-                return (
-                  <motion.button
-                    key={section}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setActiveFilter(section as any)}
-                    className={`px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl font-bold text-xs lg:text-sm transition-all duration-300 whitespace-nowrap ${isActive
-                      ? 'bg-[#FF5000] text-white shadow-lg shadow-orange-500/30'
-                      : 'bg-white/50 text-gray-600 hover:bg-white border border-gray-100'
-                      }`}
+              <AnimatePresence>
+                {showPriceFilter && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute right-0 top-full mt-3 w-72 bg-white rounded-2xl border border-[#D4AF37]/10 p-5 z-50"
+                    style={{ boxShadow: `0 20px 50px ${currentVibe.glow.replace('0.3', '0.12')}` }}
                   >
-                    <div className="flex items-center gap-1.5 lg:gap-2">
-                      <Icon className="w-3 h-3 lg:w-3.5 lg:h-3.5" strokeWidth={1.2} />
-                      <span>{section}</span>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-xs font-bold text-[#333] uppercase tracking-[0.15em]">{t('filters', 'priceFilter')}</h3>
+                      <button onClick={() => setShowPriceFilter(false)} className="p-1 rounded-full transition" style={{ '--hover-bg': currentVibe.bg } as React.CSSProperties}><X className="w-4 h-4 text-[#999]" /></button>
                     </div>
-                  </motion.button>
-                );
-              })}
-            </div>
-
-            <div className="flex items-center gap-2 lg:gap-3 ml-auto">
-              <div className="flex items-center gap-2 hidden sm:flex">
-                <ArrowUpDown className="w-4 h-4 text-gray-400" strokeWidth={1.5} />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SortType)}
-                  className="px-3 py-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:border-orange-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all duration-300 cursor-pointer"
-                >
-                  <option value="name-az">{t('filters', 'nameAZ')}</option>
-                  <option value="price-low">{t('filters', 'priceLowHigh')}</option>
-                  <option value="price-high">{t('filters', 'priceHighLow')}</option>
-                </select>
-              </div>
-
-              <div className="relative">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowPriceFilter(!showPriceFilter)}
-                  className={`flex items-center gap-2 px-3 py-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm font-bold rounded-2xl transition-all duration-300 ${showPriceFilter || minPrice || maxPrice
-                    ? 'bg-[#FF5000] text-white shadow-lg shadow-orange-500/30'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:border-[#FF5000]/30'
-                    }`}
-                >
-                  <SlidersHorizontal className="w-3.5 h-3.5 lg:w-4 lg:h-4" strokeWidth={1.2} />
-                  <span className="hidden sm:inline">{t('filters', 'price')}</span>
-                  {(minPrice || maxPrice) && (
-                    <span className="ml-1 px-1.5 py-0.5 bg-white/20 rounded-full text-[10px]">1</span>
-                  )}
-                </motion.button>
-
-                <AnimatePresence>
-                  {showPriceFilter && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute right-0 top-full mt-2 w-72 lg:w-80 bg-white rounded-xl shadow-2xl shadow-orange-100/20 border border-orange-100/50 p-4 lg:p-5 z-50"
-                    >
-                      {/* Price Filter Content - Same as original but slightly more compact if needed */}
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                          <SlidersHorizontal className="w-4 h-4 text-orange-500" strokeWidth={1.5} />
-                          {t('filters', 'priceFilter')}
-                        </h3>
-                        <button
-                          onClick={() => setShowPriceFilter(false)}
-                          className="p-1 hover:bg-gray-100 rounded-full transition"
-                        >
-                          <X className="w-4 h-4 text-gray-400" strokeWidth={1.5} />
-                        </button>
-                      </div>
-
-                      <div className="space-y-4 lg:space-y-5">
-                        {/* ... (Existing Price Filter UI) ... */}
-                        <div className="flex items-center justify-between px-1">
-                          <div className="flex flex-col">
-                            <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('filters', 'minPrice')}</span>
-                            <span className="text-base lg:text-lg font-bold text-gray-900">
-                              {currency === 'USD' ? '$' : ''}{minPrice || suggestedMin.toLocaleString()}{currency === 'MNT' ? '₮' : ''}
-                            </span>
-                          </div>
-                          <div className="w-8 h-0.5 bg-gradient-to-r from-orange-400 to-orange-600 mx-2" />
-                          <div className="flex flex-col items-end">
-                            <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('filters', 'maxPrice')}</span>
-                            <span className="text-base lg:text-lg font-bold text-gray-900">
-                              {currency === 'USD' ? '$' : ''}{maxPrice || suggestedMax.toLocaleString()}{currency === 'MNT' ? '₮' : ''}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                          {/* Inputs */}
-                          <div className="relative">
-                            <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder={suggestedMin.toLocaleString()} className="w-full px-3 py-2 text-sm border rounded-lg" />
-                          </div>
-                          <div className="relative">
-                            <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder={suggestedMax.toLocaleString()} className="w-full px-3 py-2 text-sm border rounded-lg" />
-                          </div>
-                        </div>
-
-                        <div className="flex gap-2 pt-2 border-t border-gray-100">
-                          <button onClick={() => { setMinPrice(''); setMaxPrice(''); }} className="flex-1 px-3 py-2 text-xs lg:text-sm font-medium bg-gray-100 rounded-lg">Clear</button>
-                          <button onClick={() => setShowPriceFilter(false)} className="flex-1 px-3 py-2 text-xs lg:text-sm font-bold text-white bg-orange-500 rounded-lg">Apply</button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder={suggestedMin.toLocaleString()} className="w-full px-4 py-2.5 text-sm border border-[#D4AF37]/15 rounded-xl bg-[#FAF9F6]" style={{ '--focus-ring': currentVibe.accent, '--focus-border': currentVibe.accent } as React.CSSProperties} />
+                      <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder={suggestedMax.toLocaleString()} className="w-full px-4 py-2.5 text-sm border border-[#D4AF37]/15 rounded-xl bg-[#FAF9F6]" style={{ '--focus-ring': currentVibe.accent, '--focus-border': currentVibe.accent } as React.CSSProperties} />
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => { setMinPrice(''); setMaxPrice(''); }} className="flex-1 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition" style={{ color: currentVibe.accent, backgroundColor: currentVibe.bg }}>Цэвэрлэх</button>
+                      <button onClick={() => setShowPriceFilter(false)} className="flex-1 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white rounded-xl transition" style={{ backgroundColor: currentVibe.accent, boxShadow: `0 4px 14px ${currentVibe.glow}` }}>Шүүх</button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
-          {/* Products Grid */}
+          {/* Product Grid */}
           {error ? (
-            <div className="text-center py-20 px-4">
-              <p className="text-red-500">Error loading products.</p>
-            </div>
+            <div className="text-center py-32 card-classik"><p className="text-[#E06B8B] font-medium">Бараа ачаалахад алдаа гарлаа.</p></div>
           ) : loading ? (
-            <div className="grid grid-cols-2 gap-3 px-3 lg:hidden">
-              {Array(6).fill(0).map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-100/50">
-                  <div className="aspect-square bg-slate-100 animate-pulse" />
-                  <div className="p-3 space-y-2">
-                    <div className="h-3 bg-slate-100 rounded animate-pulse w-3/4" />
-                    <div className="h-3 bg-slate-100 rounded animate-pulse w-1/2" />
-                    <div className="h-5 bg-slate-100 rounded animate-pulse w-2/3" />
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+              {Array(8).fill(0).map((_, i) => (
+                <div key={i} className="card-classik p-3">
+                  <div className="aspect-square skeleton-classik" />
+                  <div className="p-3 space-y-3 mt-2">
+                    <div className="h-3 skeleton-classik-text w-3/4" />
+                    <div className="h-4 skeleton-classik-text w-1/3" />
                   </div>
                 </div>
               ))}
             </div>
           ) : sortedProducts.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-gray-500">No products found.</p>
-            </div>
+            <div className="text-center py-32 card-classik"><p className="text-[#666] text-lg">Цуглуулга бэлтгэгдэж байна. Удахгүй шинэчлэгдэнэ.</p></div>
           ) : (
             <>
-              {/* Desktop Grid - Unified with featured first */}
               <div className="hidden lg:block">
-                <PremiumProductGrid products={sortedProducts.filter(p => !p.featured)} />
+                <PremiumProductGrid products={sortedProducts} />
               </div>
-
-              {/* Mobile Grid - Regular products only (featured shown in carousel) */}
               <div className="lg:hidden">
-                <MobileProductGrid products={sortedProducts.filter(p => !p.featured)} />
+                <MobileProductGrid products={sortedProducts} />
               </div>
-
-              {/* Infinite Scroll Trigger */}
-              <InfiniteScrollTrigger
-                onLoadMore={() => setSize(size + 1)}
-                hasMore={!isReachingEnd}
-                isLoading={!!isLoadingMore}
-              />
+              <InfiniteScrollTrigger onLoadMore={() => setSize(size + 1)} hasMore={!isReachingEnd} isLoading={!!isLoadingMore} />
             </>
           )}
         </div>
       </section>
 
-      {/* Footer CTA (Desktop only or adjusted) */}
-      <section
-        className="py-10 sm:py-12 bg-gray-50 border-t border-gray-200 mb-16 lg:mb-0"
-      >
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
-            {t('footer', 'title')}
-          </h3>
-          {/* ... footer links */}
+      {/* ═══════════════ SECTION 3: FLOATING INGREDIENTS ═══════════════ */}
+      <FloatingIngredients />
+
+      {/* ═══════════════ SECTION 4: ABOUT / PHILOSOPHY ═══════════════ */}
+      <section id="philosophy" className="relative z-10 py-20 lg:py-28 overflow-hidden transition-colors duration-700" style={{ backgroundColor: currentVibe.bg }}>
+        {/* Decorative gold rings */}
+        <div className="absolute top-12 right-12 w-64 h-64 rounded-full border border-[#D4AF37]/15 hidden lg:block" />
+        <div className="absolute bottom-8 left-8 w-40 h-40 rounded-full border border-[#D4AF37]/10 hidden lg:block" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full border border-[#D4AF37]/8 hidden lg:block" style={{ animation: 'goldPulse 6s ease-in-out infinite' }} />
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <p className="uppercase tracking-[0.3em] text-xs font-bold mb-6" style={{ color: '#D4AF37' }}>Бидний Философи</p>
+
+            <h2 className="font-serif text-4xl md:text-5xl text-[#333] mb-6 leading-tight">
+              Мөнхийн Гоо Үзэсгэлэн, <br />
+              <span className="font-script text-5xl md:text-6xl" style={{ color: currentVibe.accent }}>Байгалийн Сонгодог</span>
+            </h2>
+
+            <p className="text-[#555] text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto mb-10">
+              Classik Store-д бид жинхэнэ гоо үзэсгэлэн дотор талаас ирдэг гэдэгт итгэдэг. Манай бүтээгдэхүүнүүд байгалийн хамгийн хүчирхэг ургамлуудыг хүндэтгэж,
+              эмэгтэй сэтгэлийг баясгах гоёмсог савлагаанд хийсэн. Бүх бүтээгдэхүүн нь гэрэлтсэн, итгэлтэй арьсанд зориулсан хайрын захидал юм.
+            </p>
+
+            <div className="flex flex-wrap gap-8 justify-center mb-12">
+              {[
+                { number: '100%', label: 'Дээд зэрэглэлийн найрлага' },
+                { number: '50+', label: 'Арьс арчилгааны бүтээгдэхүүн' },
+                { number: '10K+', label: 'Сэтгэл ханамжтай хэрэглэгч' },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <p className="font-serif text-3xl md:text-4xl font-bold" style={{ color: currentVibe.accent }}>{stat.number}</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-[#888] mt-1 font-bold">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+
+            <motion.a
+              href="#featured"
+              whileHover={{ y: -3, boxShadow: `0 15px 35px ${currentVibe.glow.replace('0.3', '0.4')}` }}
+              whileTap={{ scale: 0.97 }}
+              className="px-10 py-4 text-sm uppercase tracking-[0.2em] inline-block rounded-full text-white font-bold relative overflow-hidden transition-all"
+              style={{ backgroundColor: currentVibe.accent, boxShadow: `0 4px 14px ${currentVibe.glow}` }}
+            >
+              Цуглуулга харах
+            </motion.a>
+          </motion.div>
         </div>
+      </section>
+
+      {/* ═══════════════ NEWSLETTER CTA ═══════════════ */}
+      <section className="relative z-10 py-20 lg:py-24 text-center px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-xl mx-auto"
+        >
+          <p className="uppercase tracking-[0.3em] text-xs font-bold mb-4" style={{ color: '#D4AF37' }}>Бидэнтэй холбогдоорой</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-[#333] mb-3">
+            Таны <span className="font-script text-4xl md:text-5xl" style={{ color: currentVibe.accent }}>Гоо сайхан</span>
+          </h2>
+          <p className="text-[#666] font-light mb-8">Classik клубт нэгдээд онцгой арьс арчилгааны бүтээгдэхүүн, хувийн зөвлөгөө аваарай.</p>
+          <div className="relative group">
+            <input
+              type="email"
+              placeholder="Имэйл хаяг"
+              className="w-full py-4 pl-6 pr-36 rounded-full border border-[#D4AF37]/20 bg-white/80 backdrop-blur-sm transition-all text-sm"
+              style={{ '--focus-border': currentVibe.accent, '--focus-ring': `${currentVibe.accent}33` } as React.CSSProperties}
+            />
+            <motion.button
+              whileHover={{ y: -1, boxShadow: `0 8px 20px ${currentVibe.glow.replace('0.3', '0.4')}` }}
+              whileTap={{ scale: 0.97 }}
+              className="absolute right-2 top-2 bottom-2 px-8 text-white rounded-full text-xs font-bold uppercase tracking-[0.15em] transition-all"
+              style={{ backgroundColor: currentVibe.accent, boxShadow: `0 4px 14px ${currentVibe.glow}` }}
+            >
+              Бүртгүүлэх
+            </motion.button>
+          </div>
+        </motion.div>
       </section>
     </div>
   );

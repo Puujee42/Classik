@@ -189,7 +189,7 @@ export default function CategoriesPage() {
       duration: 2000,
       position: 'top-right',
       style: {
-        background: '#FF7900',
+        background: '#F0AEC1',
         color: 'white',
         fontWeight: 'bold',
         borderRadius: '12px',

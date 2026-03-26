@@ -214,7 +214,7 @@ export default function ProductInventoryTable({ products }: { products: Product[
                     onClick={() => handleToggleFeatured(product.id)}
                     disabled={togglingId === product.id}
                     className={`p-2 rounded-lg transition-all duration-200 ${featuredMap[product.id]
-                        ? 'bg-amber-50 hover:bg-amber-100 text-amber-500'
+                        ? 'bg-amber-50 hover:bg-[#FCEEF2] text-amber-500'
                         : 'bg-slate-50 hover:bg-slate-100 text-slate-300 hover:text-slate-400'
                       } disabled:opacity-50`}
                     title={featuredMap[product.id] ? 'Онцгой-оос хасах' : 'Онцгой болгох'}

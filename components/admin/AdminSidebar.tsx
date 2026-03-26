@@ -10,6 +10,7 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import useSWR from 'swr';
 import { useAuth } from '@/context/AuthContext';
+import { useVibe } from '@/context/VibeContext';
 import toast from 'react-hot-toast';
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
@@ -19,6 +20,7 @@ export default function AdminSidebar() {
     const router = useRouter();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const { user, logout } = useAuth();
+    const { currentVibe } = useVibe();
 
     // Fetch pending orders
     const { data: pendingData } = useSWR(
@@ -28,14 +30,6 @@ export default function AdminSidebar() {
     );
     const pendingCount = pendingData?.orders?.length || 0;
 
-    // Fetch unread messages
-    const { data: messagesData } = useSWR(
-        '/api/messages/unread', // Assuming this endpoint exists, or filter from all
-        fetcher,
-        { refreshInterval: 30000 }
-    );
-    const unreadMessagesCount = messagesData?.count || 0;
-
     const navItems = [
         { href: '/admin', icon: BarChart3, label: 'Хяналтын самбар', shortcut: null },
         { href: '/admin/analytics', icon: TrendingUp, label: 'Орлогын тайлан', shortcut: null },
@@ -44,7 +38,6 @@ export default function AdminSidebar() {
         { href: '/admin/banners', icon: ImageIcon, label: 'Беннер удирдлага', shortcut: 'G + B' },
         { href: '/admin/orders', icon: ShoppingCart, label: 'Захиалгууд', badge: pendingCount, badgeColor: 'bg-red-500', shortcut: 'G + O' },
         { href: '/admin/categories', icon: Layers, label: 'Ангилал', shortcut: null },
-        { href: '/admin/messages', icon: MessageCircle, label: 'Мессеж & Дуудлага', badge: unreadMessagesCount, badgeColor: 'bg-blue-500', shortcut: 'G + M' },
     ];
 
     const isActive = (href: string) => {
@@ -65,11 +58,12 @@ export default function AdminSidebar() {
         <div className="h-full flex flex-col p-6">
             {/* Logo */}
             <div className="flex items-center gap-3 mb-10">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/30">
-                    <span className="text-white font-black text-xl">S</span>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-colors duration-500"
+                    style={{ background: `linear-gradient(135deg, ${currentVibe.accent}, ${currentVibe.accent}cc)`, boxShadow: `0 8px 20px ${currentVibe.glow}` }}>
+                    <span className="text-white font-black text-xl">C</span>
                 </div>
                 <div>
-                    <h2 className="text-lg font-bold text-white leading-none">Soyol</h2>
+                    <h2 className="text-lg font-bold text-white leading-none">Classik</h2>
                     <div className="flex items-center gap-1 mt-1">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
                         <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Live</p>
@@ -93,13 +87,19 @@ export default function AdminSidebar() {
                             href={href}
                             onClick={() => setSidebarOpen(false)}
                             className={`group flex items-center justify-between px-4 py-3 rounded-xl transition-all ${active
-                                ? 'bg-amber-500/10 text-amber-400 border-l-2 border-amber-500 shadow-lg shadow-amber-500/5'
+                                ? 'border-l-2'
                                 : 'text-slate-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent'
                                 }`}
+                            style={active ? { 
+                                borderColor: currentVibe.accent, 
+                                backgroundColor: `${currentVibe.accent}15`, 
+                                color: currentVibe.accent 
+                            } : {}}
                         >
                             <div className="flex items-center gap-3">
-                                <Icon className="w-5 h-5 shrink-0" />
-                                <span className="text-sm font-bold">{label}</span>
+                                <Icon className={`w-5 h-5 transition-transform duration-300 group-hover:scale-110 ${active ? '' : 'text-slate-400 group-hover:text-white'}`} 
+                                      style={active ? { color: currentVibe.accent } : {}} />
+                                <span className={`font-medium ${active ? '' : 'group-hover:text-white transition-colors'}`}>{label}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 {shortcut && (
@@ -131,7 +131,7 @@ export default function AdminSidebar() {
                 {/* Admin Profile Details */}
                 <div className="bg-slate-900/50 rounded-xl p-3 border border-white/5 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0">
-                        <span className="text-amber-500 font-bold text-sm">
+                        <span className="font-bold text-sm transition-colors duration-500" style={{ color: currentVibe.accent }}>
                             {user?.name?.[0]?.toUpperCase() || 'A'}
                         </span>
                     </div>

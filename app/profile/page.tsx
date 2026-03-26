@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '@/context/AuthContext';
+import { useVibe } from '@/context/VibeContext';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { formatPrice } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -29,6 +30,7 @@ interface Order {
 export default function ProfilePage() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
+  const { currentVibe } = useVibe();
   const wishlistCount = useWishlistStore(state => state.getTotalItems());
   const [activeTab, setActiveTab] = useState<Tab>('overview');
 
@@ -137,8 +139,8 @@ export default function ProfilePage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF6B00]" />
+      <div className="min-h-screen bg-[#FAF9F6] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: currentVibe?.accent || '#E06B8B' }} />
       </div>
     );
   }
@@ -156,14 +158,14 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] pb-[120px] font-sans">
+    <div className="min-h-screen bg-[#FAF9F6] pb-[120px] font-sans" style={{ backgroundColor: currentVibe.bg }}>
 
       {/* ─── HEADER ─── */}
-      <div className="relative bg-gradient-to-br from-[#FF6B00] via-[#FF7700] to-[#FF8C00] pt-10 pb-16 px-4 flex flex-col items-center">
+      <div className="relative pt-10 pb-16 px-4 flex flex-col items-center" style={{ background: `linear-gradient(135deg, ${currentVibe.accent}, ${currentVibe.accent}dd)` }}>
         {/* Curved bottom */}
         <div className="absolute bottom-[-1px] left-0 w-full overflow-hidden leading-[0]">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" className="block w-full h-[32px]">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,121.37,189.9,109.83,235.84,101.55,278.49,76.65,321.39,56.44Z" fill="#F5F5F5" />
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,121.37,189.9,109.83,235.84,101.55,278.49,76.65,321.39,56.44Z" fill={currentVibe.bg} />
           </svg>
         </div>
 
@@ -173,11 +175,11 @@ export default function ProfilePage() {
             {user.imageUrl ? (
               <Image src={user.imageUrl} alt={user.name || 'User'} width={88} height={88} className="object-cover w-full h-full" />
             ) : (
-              <span className="text-[32px] font-extrabold text-[#FF6B00]">{initials}</span>
+              <span className="text-[32px] font-extrabold" style={{ color: currentVibe.accent }}>{initials}</span>
             )}
           </div>
           <button className="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-100">
-            <Camera className="w-3.5 h-3.5 text-[#FF6B00]" strokeWidth={2.5} />
+            <Camera className="w-3.5 h-3.5" style={{ color: currentVibe.accent }} strokeWidth={2.5} />
           </button>
         </div>
 
@@ -192,15 +194,15 @@ export default function ProfilePage() {
       <div className="relative z-20 px-4 -mt-6 mb-5">
         <div className="bg-white rounded-[16px] shadow-[0_4px_20px_rgba(0,0,0,0.08)] p-4 grid grid-cols-3 divide-x divide-[#F0F0F0]">
           <div className="flex flex-col items-center gap-0.5 px-2">
-            <span className="text-[22px] font-bold text-[#FF6B00]">{dataLoading ? '—' : orders.length}</span>
+            <span className="text-[22px] font-bold" style={{ color: currentVibe.accent }}>{dataLoading ? '—' : orders.length}</span>
             <span className="text-[11px] text-[#999] font-semibold">Захиалга</span>
           </div>
           <div className="flex flex-col items-center gap-0.5 px-2">
-            <span className="text-[22px] font-bold text-[#FF6B00]">{wishlistCount}</span>
+            <span className="text-[22px] font-bold" style={{ color: currentVibe.accent }}>{wishlistCount}</span>
             <span className="text-[11px] text-[#999] font-semibold">Хадгалсан</span>
           </div>
           <div className="flex flex-col items-center gap-0.5 px-2">
-            <span className="text-[22px] font-bold text-[#FF6B00]">{dataLoading ? '—' : addressCount}</span>
+            <span className="text-[22px] font-bold" style={{ color: currentVibe.accent }}>{dataLoading ? '—' : addressCount}</span>
             <span className="text-[11px] text-[#999] font-semibold">Хаяг</span>
           </div>
         </div>
@@ -218,9 +220,10 @@ export default function ProfilePage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-[10px] text-[12px] font-bold transition-all ${
                   active
-                    ? 'bg-[#FF6B00] text-white shadow-sm'
-                    : 'text-[#999] hover:text-[#FF6B00]'
+                    ? 'text-white shadow-sm'
+                    : 'text-[#999]'
                 }`}
+                style={active ? { backgroundColor: currentVibe.accent } : {}}
               >
                 <Icon className="w-3.5 h-3.5" strokeWidth={2.5} />
                 {tab.label}
@@ -240,29 +243,29 @@ export default function ProfilePage() {
             {/* Quick stats cards */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
-                <div className="w-9 h-9 bg-[#FFF0E6] rounded-[10px] flex items-center justify-center mb-3">
-                  <Package className="w-5 h-5 text-[#FF6B00]" strokeWidth={2} />
+                <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-3" style={{ backgroundColor: `${currentVibe.accent}15` }}>
+                  <Package className="w-5 h-5" style={{ color: currentVibe.accent }} strokeWidth={2} />
                 </div>
                 <p className="text-[24px] font-bold text-[#1A1A1A]">{dataLoading ? '—' : orders.length}</p>
                 <p className="text-[12px] text-[#999] font-medium mt-0.5">Нийт захиалга</p>
               </div>
               <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
-                <div className="w-9 h-9 bg-[#FFF0F5] rounded-[10px] flex items-center justify-center mb-3">
-                  <Heart className="w-5 h-5 text-[#EC4899]" strokeWidth={2} />
+                <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-3" style={{ backgroundColor: `${currentVibe.accent}15` }}>
+                  <Heart className="w-5 h-5" style={{ color: currentVibe.accent }} strokeWidth={2} />
                 </div>
                 <p className="text-[24px] font-bold text-[#1A1A1A]">{wishlistCount}</p>
                 <p className="text-[12px] text-[#999] font-medium mt-0.5">Хадгалсан бараа</p>
               </div>
               <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
-                <div className="w-9 h-9 bg-[#EEF2FF] rounded-[10px] flex items-center justify-center mb-3">
-                  <MapPin className="w-5 h-5 text-[#6366F1]" strokeWidth={2} />
+                <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-3" style={{ backgroundColor: `${currentVibe.accent}15` }}>
+                  <MapPin className="w-5 h-5" style={{ color: currentVibe.accent }} strokeWidth={2} />
                 </div>
                 <p className="text-[24px] font-bold text-[#1A1A1A]">{dataLoading ? '—' : addressCount}</p>
                 <p className="text-[12px] text-[#999] font-medium mt-0.5">Хадгалсан хаяг</p>
               </div>
               <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
-                <div className="w-9 h-9 bg-[#F0FDF4] rounded-[10px] flex items-center justify-center mb-3">
-                  <CheckCircle className="w-5 h-5 text-[#22C55E]" strokeWidth={2} />
+                <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-3" style={{ backgroundColor: `${currentVibe.accent}15` }}>
+                  <CheckCircle className="w-5 h-5" style={{ color: currentVibe.accent }} strokeWidth={2} />
                 </div>
                 <p className="text-[24px] font-bold text-[#1A1A1A]">
                   {dataLoading ? '—' : orders.filter(o => o.status === 'completed').length}
@@ -278,7 +281,8 @@ export default function ProfilePage() {
                   <h3 className="text-[14px] font-bold text-[#1A1A1A]">Сүүлийн захиалгууд</h3>
                   <button
                     onClick={() => setActiveTab('orders')}
-                    className="text-[12px] text-[#FF6B00] font-bold"
+                    className="text-[12px] font-bold"
+                    style={{ color: currentVibe.accent }}
                   >
                     Бүгдийг харах
                   </button>
@@ -309,15 +313,15 @@ export default function ProfilePage() {
             <div>
               <h2 className="text-[11px] font-bold text-[#999] uppercase tracking-wider ml-1 mb-2">Холбоосууд</h2>
               <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden">
-                <MenuLink icon={Package} iconBg="#FFF0E6" iconColor="#FF6B00" label="Миний захиалга" href="/orders" subtitle={`${orders.length} захиалга`} />
+                <MenuLink icon={Package} iconBg={`${currentVibe.accent}15`} iconColor={currentVibe.accent} label="Миний захиалга" href="/orders" subtitle={`${orders.length} захиалга`} />
                 <MenuDiv />
-                <MenuLink icon={Heart} iconBg="#FFF0F5" iconColor="#EC4899" label="Хадгалсан бараа" href="/wishlist" />
+                <MenuLink icon={Heart} iconBg={`${currentVibe.accent}15`} iconColor={currentVibe.accent} label="Хадгалсан бараа" href="/wishlist" />
                 <MenuDiv />
-                <MenuLink icon={MapPin} iconBg="#EEF2FF" iconColor="#6366F1" label="Миний хаягууд" href="/addresses" subtitle={`${addressCount} хаяг`} />
+                <MenuLink icon={MapPin} iconBg={`${currentVibe.accent}15`} iconColor={currentVibe.accent} label="Миний хаягууд" href="/addresses" subtitle={`${addressCount} хаяг`} />
                 <MenuDiv />
-                <MenuLink icon={Bell} iconBg="#F0F5FF" iconColor="#3B82F6" label="Мэдэгдэл" href="/settings/notifications" />
+                <MenuLink icon={Bell} iconBg={`${currentVibe.accent}15`} iconColor={currentVibe.accent} label="Мэдэгдэл" href="/settings/notifications" />
                 <MenuDiv />
-                <MenuLink icon={ShieldCheck} iconBg="#F5F0FF" iconColor="#8B5CF6" label="Нууцлал & Аюулгүй байдал" href="/settings/security" />
+                <MenuLink icon={ShieldCheck} iconBg={`${currentVibe.accent}15`} iconColor={currentVibe.accent} label="Нууцлал & Аюулгүй байдал" href="/settings/security" />
               </div>
             </div>
 
@@ -326,15 +330,15 @@ export default function ProfilePage() {
 
             {/* Logout */}
             <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden">
-              <button onClick={handleLogout} className="w-full flex items-center gap-4 px-4 h-[64px] active:bg-gray-50 transition-colors">
+              <button onClick={handleLogout} className="w-full flex items-center gap-4 px-4 h-[64px] active:bg-[var(--vibe-bg)] transition-colors" style={{ '--vibe-bg': currentVibe.bg } as React.CSSProperties}>
                 <div className="w-[42px] h-[42px] rounded-[10px] bg-[#FFF5F5] flex items-center justify-center">
-                  <LogOut className="w-5 h-5 text-[#FF3B30]" strokeWidth={2} />
+                  <LogOut className="w-5 h-5 text-[#E06B8B]" strokeWidth={2} />
                 </div>
-                <span className="text-[15px] font-bold text-[#FF3B30]">Гарах</span>
+                <span className="text-[15px] font-bold text-[#E06B8B]">Гарах</span>
               </button>
             </div>
 
-            <p className="text-center text-[12px] text-[#CCCCCC] font-medium">Soyol v1.0.0</p>
+            <p className="text-center text-[12px] text-[#CCCCCC] font-medium">Classik v1.0.0</p>
           </div>
         )}
 
@@ -343,16 +347,16 @@ export default function ProfilePage() {
           <div className="space-y-3">
             {dataLoading ? (
               <div className="flex justify-center py-12">
-                <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-[#FF6B00]" />
+                <div className="animate-spin rounded-full h-7 w-7 border-b-2" style={{ borderColor: currentVibe.accent }} />
               </div>
             ) : orders.length === 0 ? (
               <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] py-16 flex flex-col items-center gap-3">
-                <div className="w-16 h-16 bg-[#FFF0E6] rounded-full flex items-center justify-center">
-                  <Package className="w-8 h-8 text-[#FF6B00]" strokeWidth={1.5} />
+                <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: `${currentVibe.accent}15` }}>
+                  <Package className="w-8 h-8" style={{ color: currentVibe.accent }} strokeWidth={1.5} />
                 </div>
                 <p className="text-[15px] font-bold text-[#1A1A1A]">Захиалга байхгүй байна</p>
                 <p className="text-[13px] text-[#999]">Та дэлгүүрчилж эхэлцгээе</p>
-                <Link href="/" className="mt-2 px-6 py-2.5 bg-[#FF6B00] text-white rounded-full text-[13px] font-bold">
+                <Link href="/" className="mt-2 px-6 py-2.5 text-white rounded-full text-[13px] font-bold transition-all" style={{ backgroundColor: currentVibe.accent, boxShadow: `0 4px 14px ${currentVibe.glow}` }}>
                   Дэлгүүр үзэх
                 </Link>
               </div>
@@ -372,7 +376,7 @@ export default function ProfilePage() {
                     <p className="text-[12px] text-[#999]">
                       {new Date(order.createdAt).toLocaleDateString('mn-MN', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </p>
-                    <p className="text-[15px] font-bold text-[#FF6B00]">{formatPrice(order.totalPrice)}</p>
+                    <p className="text-[15px] font-bold" style={{ color: currentVibe.accent }}>{formatPrice(order.totalPrice)}</p>
                   </div>
                 </div>
               ))
@@ -385,8 +389,8 @@ export default function ProfilePage() {
           <div className="space-y-4">
             {/* Info card */}
             <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-4 py-4 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-[#FFF3E8] flex items-center justify-center shrink-0">
-                <Lock className="w-5 h-5 text-[#FF6B00]" />
+              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${currentVibe.accent}15` }}>
+                <Lock className="w-5 h-5" style={{ color: currentVibe.accent }} />
               </div>
               <div>
                 <p className="text-[14px] font-bold text-[#1A1A1A]">Нууцлалаа хамгаалаарай</p>
@@ -406,7 +410,7 @@ export default function ProfilePage() {
               {/* Current password */}
               <div>
                 <label className="text-[11px] font-bold text-[#999] uppercase tracking-wider ml-1 mb-2 block">Одоогийн нууц үг</label>
-                <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-4 h-[56px] flex items-center gap-3 focus-within:ring-2 focus-within:ring-[#FF6B00]/30 transition-all">
+                <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-4 h-[56px] flex items-center gap-3 focus-within:ring-2 transition-all" style={{ '--tw-ring-color': `${currentVibe.accent}40` } as React.CSSProperties}>
                   <Lock className="w-4 h-4 text-[#CCCCCC] shrink-0" strokeWidth={1.5} />
                   <input
                     type={showCurrent ? 'text' : 'password'}
@@ -425,7 +429,7 @@ export default function ProfilePage() {
               {/* New password */}
               <div>
                 <label className="text-[11px] font-bold text-[#999] uppercase tracking-wider ml-1 mb-2 block">Шинэ нууц үг</label>
-                <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-4 h-[56px] flex items-center gap-3 focus-within:ring-2 focus-within:ring-[#FF6B00]/30 transition-all">
+                <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-4 h-[56px] flex items-center gap-3 focus-within:ring-2 transition-all" style={{ '--tw-ring-color': `${currentVibe.accent}40` } as React.CSSProperties}>
                   <Lock className="w-4 h-4 text-[#CCCCCC] shrink-0" strokeWidth={1.5} />
                   <input
                     type={showNew ? 'text' : 'password'}
@@ -447,7 +451,7 @@ export default function ProfilePage() {
               {/* Confirm password */}
               <div>
                 <label className="text-[11px] font-bold text-[#999] uppercase tracking-wider ml-1 mb-2 block">Нууц үг давтах</label>
-                <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-4 h-[56px] flex items-center gap-3 focus-within:ring-2 focus-within:ring-[#FF6B00]/30 transition-all">
+                <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-4 h-[56px] flex items-center gap-3 focus-within:ring-2 transition-all" style={{ '--tw-ring-color': `${currentVibe.accent}40` } as React.CSSProperties}>
                   <Lock className="w-4 h-4 text-[#CCCCCC] shrink-0" strokeWidth={1.5} />
                   <input
                     type={showConfirm ? 'text' : 'password'}
@@ -473,7 +477,8 @@ export default function ProfilePage() {
                 <button
                   type="submit"
                   disabled={pwLoading}
-                  className="w-full h-[52px] bg-[#FF6B00] text-white font-bold text-[16px] rounded-[14px] flex items-center justify-center gap-2 transition-opacity active:opacity-80 disabled:opacity-50"
+                  className="w-full h-[52px] text-white font-bold text-[16px] rounded-[14px] flex items-center justify-center gap-2 transition-all active:opacity-80 disabled:opacity-50"
+                  style={{ backgroundColor: currentVibe.accent, boxShadow: `0 4px 14px ${currentVibe.glow}` }}
                 >
                   {pwLoading
                     ? <span className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
@@ -496,7 +501,7 @@ function GoogleIcon() {
       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
       <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
       <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
-      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z" fill="#EA4335" />
     </svg>
   );
 }

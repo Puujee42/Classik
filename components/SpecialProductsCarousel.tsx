@@ -143,7 +143,7 @@ export default function SpecialProductsCarousel({ products }: SpecialProductsCar
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                     <div className="relative">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-rose-500 flex items-center justify-center shadow-lg shadow-orange-500/25">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-rose-500 flex items-center justify-center shadow-lg shadow-[#E06B8B]/25">
                             <Flame className="w-6 h-6 text-white" />
                         </div>
                         <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse" />
@@ -164,7 +164,7 @@ export default function SpecialProductsCarousel({ products }: SpecialProductsCar
                         onClick={() => { scroll('left'); stopAutoScroll(); startAutoScroll(); }}
                         disabled={!canScrollLeft}
                         className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 ${canScrollLeft
-                            ? 'bg-white border-2 border-slate-200 text-slate-700 hover:bg-orange-50 hover:border-orange-400 hover:text-orange-600 shadow-sm hover:shadow-md'
+                            ? 'bg-white border-2 border-slate-200 text-slate-700 hover:bg-[#FCEEF2] hover:border-orange-400 hover:text-[#E06B8B] shadow-sm hover:shadow-md'
                             : 'bg-slate-100 border-2 border-slate-100 text-slate-300 cursor-default'
                             }`}
                     >
@@ -174,7 +174,7 @@ export default function SpecialProductsCarousel({ products }: SpecialProductsCar
                         onClick={() => { scroll('right'); stopAutoScroll(); startAutoScroll(); }}
                         disabled={!canScrollRight}
                         className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 ${canScrollRight
-                            ? 'bg-white border-2 border-slate-200 text-slate-700 hover:bg-orange-50 hover:border-orange-400 hover:text-orange-600 shadow-sm hover:shadow-md'
+                            ? 'bg-white border-2 border-slate-200 text-slate-700 hover:bg-[#FCEEF2] hover:border-orange-400 hover:text-[#E06B8B] shadow-sm hover:shadow-md'
                             : 'bg-slate-100 border-2 border-slate-100 text-slate-300 cursor-default'
                             }`}
                     >
@@ -208,7 +208,7 @@ export default function SpecialProductsCarousel({ products }: SpecialProductsCar
                             <Link href={`/product/${product.id || product._id}`} draggable={false}>
                                 <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
                                     <Image
-                                        src={product.image || '/soyol-logo.png'}
+                                        src={product.image || '/soyol-logo-new.png'}
                                         alt={product.name}
                                         fill
                                         draggable={false}
@@ -239,7 +239,7 @@ export default function SpecialProductsCarousel({ products }: SpecialProductsCar
                                     {/* Quick Add Button - Bigger & Bolder */}
                                     <button
                                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToCart(product); }}
-                                        className="absolute bottom-4 right-4 p-3.5 bg-white rounded-2xl shadow-xl text-orange-600 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-400 hover:bg-orange-500 hover:text-white hover:scale-110 active:scale-95"
+                                        className="absolute bottom-4 right-4 p-3.5 bg-white rounded-2xl shadow-xl text-[#E06B8B] opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-400 hover:bg-[#FCEEF2]0 hover:text-white hover:scale-110 active:scale-95"
                                     >
                                         <ShoppingCart className="w-5 h-5" strokeWidth={2.5} />
                                     </button>
@@ -256,7 +256,7 @@ export default function SpecialProductsCarousel({ products }: SpecialProductsCar
                             {/* Product Info - Bigger Text */}
                             <div className="p-5 space-y-3">
                                 <Link href={`/product/${product.id || product._id}`} draggable={false}>
-                                    <h3 className="text-base lg:text-lg font-bold text-slate-900 line-clamp-1 group-hover:text-orange-600 transition-colors duration-300">
+                                    <h3 className="text-base lg:text-lg font-bold text-slate-900 line-clamp-1 group-hover:text-[#E06B8B] transition-colors duration-300">
                                         {product.name}
                                     </h3>
                                 </Link>
@@ -267,7 +267,7 @@ export default function SpecialProductsCarousel({ products }: SpecialProductsCar
                                         {formatPrice(product.price)}
                                     </span>
                                     {product.category && (
-                                        <span className="text-[11px] font-bold text-orange-500 uppercase tracking-widest bg-orange-50 px-2.5 py-1 rounded-lg">
+                                        <span className="text-[11px] font-bold text-[#E06B8B] uppercase tracking-widest bg-orange-50 px-2.5 py-1 rounded-lg">
                                             {product.category}
                                         </span>
                                     )}

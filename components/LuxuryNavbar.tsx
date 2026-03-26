@@ -6,8 +6,8 @@ import Link from 'next/link';
 import {
   Search, User, Heart, ShoppingBag, Menu, X,
   Globe, ArrowRight, Sparkles, Tag, TrendingUp, Truck, Zap,
-  Package, LogOut, LayoutDashboard, Video, MessageCircle, LayoutGrid,
-  ChevronRight
+  Package, LogOut, LayoutDashboard, MessageCircle, LayoutGrid,
+  ChevronRight, Stars, Gift, Diamond, Flame
 } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -16,6 +16,7 @@ import { useWishlistStore } from '@/store/wishlistStore';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useDebounce } from '@/lib/hooks/useDebounce';
+import { useVibe } from '@/context/VibeContext';
 import LanguageCurrencySelector from './LanguageCurrencySelector';
 import SearchDropdown from './SearchDropdown';
 import NotificationBell from './NotificationBell';
@@ -38,6 +39,7 @@ export default function LuxuryNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isAuthenticated: isLoggedIn, isAdmin, logout } = useAuth();
+  const { vibe, currentVibe } = useVibe();
 
   const userEmail = user?.email || user?.phone || '';
   const { language, setLanguage } = useLanguage();
@@ -125,11 +127,10 @@ export default function LuxuryNavbar() {
 
   const categories = [
     { name: t('nav', 'home'), href: '/', icon: Sparkles },
-    { name: t('nav', 'newArrivals'), href: '/new-arrivals', icon: TrendingUp },
-    { name: t('nav', 'readyToShip'), href: '/ready-to-ship', icon: Truck },
-    { name: t('nav', 'preOrder'), href: '/pre-order', icon: Globe },
-    { name: t('nav', 'deals'), href: '/deals', icon: Tag },
-    { name: t('nav', 'sale'), href: '/sale', icon: Zap },
+    { name: t('nav', 'newArrivals'), href: '/new-arrivals', icon: Stars },
+    { name: t('nav', 'readyToShip'), href: '/ready-to-ship', icon: Gift },
+    { name: t('nav', 'deals'), href: '/deals', icon: Diamond },
+    { name: t('nav', 'sale'), href: '/sale', icon: Flame },
   ];
 
   const mobileNavItems = [
@@ -152,8 +153,8 @@ export default function LuxuryNavbar() {
         animate={{ y: 0 }}
         transition={{ type: 'spring', stiffness: 100 }}
         className={`hidden lg:block fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-          ? 'bg-white/80 backdrop-blur-xl border-b border-black/[0.05] shadow-sm'
-          : 'bg-white/80 backdrop-blur-xl border-b border-black/[0.02]'
+          ? 'bg-white/82 backdrop-blur-[24px] saturate-[180%] border-b border-[#D4AF37]/10 shadow-[0_4px_30px_rgba(224,107,139,0.06)]'
+          : 'bg-white/82 backdrop-blur-[24px] saturate-[180%] border-b border-[#D4AF37]/5'
           }`}
       >
         <div className="max-w-7xl mx-auto">
@@ -165,17 +166,18 @@ export default function LuxuryNavbar() {
               <Link href="/" className="flex items-center gap-2 group flex-shrink-0">
                 <motion.div className="relative flex flex-col items-start">
                   <motion.h1
-                    className="text-2xl font-black tracking-tighter leading-none text-[#FF5000]"
-                    whileHover={{ scale: 1.05, textShadow: '0 0 12px rgba(255,80,0,0.4)' }}
+                    className="font-serif text-2xl font-bold leading-none transition-colors duration-500"
+                    style={{ color: currentVibe.accent }}
+                    whileHover={{ scale: 1.05 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 10 }}
                   >
-                    Soyol
+                    Classik
                   </motion.h1>
                   <motion.span
-                    className="text-[9px] font-bold tracking-[0.2em] text-slate-400 uppercase leading-none ml-0.5 mt-0.5"
-                    whileHover={{ color: '#FF5000' }}
+                    className="text-[9px] font-sans tracking-[0.25em] text-[#D4AF37] uppercase leading-none ml-0.5 mt-1 font-bold"
+                    whileHover={{ color: currentVibe.accent }}
                   >
-                    Video Shop
+                    Арьс Арчилгаа
                   </motion.span>
                 </motion.div>
               </Link>
@@ -185,9 +187,13 @@ export default function LuxuryNavbar() {
                 <form onSubmit={handleSearch} className="relative w-full">
                   <motion.div
                     className={`relative w-full group rounded-full transition-all duration-300 ${searchFocused
-                      ? 'bg-white border-2 border-[#FF5000] shadow-md'
-                      : 'bg-[#f4f4f5] border-2 border-transparent hover:bg-gray-200/50'
+                      ? 'bg-white border-2 shadow-[0_0_0_4px]'
+                      : 'bg-[#FAF9F6] border-2 border-transparent hover:bg-[#FCEEF2]/60'
                       }`}
+                    style={searchFocused ? {
+                      borderColor: currentVibe.accent,
+                      boxShadow: `0 0 0 4px rgba(var(--vibe-accent-rgb), 0.08)`,
+                    } : {}}
                     animate={{ scale: searchFocused ? 1.02 : 1, y: searchFocused ? -2 : 0 }}
                     whileHover={{ scale: 1.02, y: -2 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
@@ -199,8 +205,8 @@ export default function LuxuryNavbar() {
                         className="pl-4"
                       >
                         <Search
-                          className={`w-6 h-6 transition-colors duration-300 ${searchFocused ? 'text-[#FF5000]' : 'text-gray-400 group-hover:text-[#FF5000]'
-                            }`}
+                          className={`w-6 h-6 transition-colors duration-300`}
+                          style={{ color: searchFocused ? currentVibe.accent : '#999' }}
                           strokeWidth={1.5}
                         />
                       </motion.div>
@@ -239,10 +245,12 @@ export default function LuxuryNavbar() {
                             router.push(`/search?q=${encodeURIComponent(trimmed)}`);
                           }
                         }}
-                        className={`mr-1.5 p-2 rounded-full transition-all duration-300 ${searchFocused || searchQuery
-                          ? 'bg-[#FF5000] text-white shadow-lg shadow-orange-500/30'
-                          : 'bg-gray-100 text-gray-400 group-hover:bg-[#FF5000] group-hover:text-white'
-                          }`}
+                        className={`mr-1.5 p-2 rounded-full transition-all duration-300`}
+                        style={{
+                          backgroundColor: (searchFocused || searchQuery) ? currentVibe.accent : currentVibe.bg,
+                          color: (searchFocused || searchQuery) ? 'white' : '#999',
+                          boxShadow: (searchFocused || searchQuery) ? `0 4px 12px ${currentVibe.glow}` : 'none',
+                        }}
                       >
                         <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
                       </motion.button>
@@ -280,13 +288,13 @@ export default function LuxuryNavbar() {
                         {user?.imageUrl ? (
                           <img src={user.imageUrl} alt="" className="w-8 h-8 rounded-xl object-cover border border-gray-100" />
                         ) : (
-                          <div className="w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center">
-                            <span className="text-orange-500 font-bold text-xs">
+                          <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: currentVibe.bg }}>
+                            <span className="font-bold text-xs" style={{ color: currentVibe.accent }}>
                               {(user?.name?.[0] || user?.phone?.[0] || 'U').toUpperCase()}
                             </span>
                           </div>
                         )}
-                        <span className="hidden sm:inline text-sm font-semibold text-gray-700 group-hover:text-[#FF5000] max-w-[120px] truncate">
+                        <span className="hidden sm:inline text-sm font-semibold text-gray-700 max-w-[120px] truncate" style={{ '--hover-color': currentVibe.accent } as React.CSSProperties}>
                           {user?.name || user?.phone || t('nav', 'profile')}
                         </span>
                       </motion.button>
@@ -303,22 +311,22 @@ export default function LuxuryNavbar() {
                               <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">{t('nav', 'email')}</p>
                               <p className="text-sm text-gray-900 truncate mt-0.5">{userEmail || '—'}</p>
                               {isAdmin && (
-                                <span className="inline-block mt-1.5 px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 text-xs font-medium">
+                                <span className="inline-block mt-1.5 px-2 py-0.5 rounded-md text-xs font-medium" style={{ backgroundColor: currentVibe.bg, color: '#D4AF37' }}>
                                   {t('nav', 'admin')}
                                 </span>
                               )}
                             </div>
                             <div className="py-1">
-                              <Link href="/profile" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors border-b border-gray-50">
+                              <Link href="/profile" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:text-[var(--vibe-accent)] transition-colors border-b border-gray-50" style={{ '--hover-bg': currentVibe.bg } as React.CSSProperties}>
                                 <User className="w-4 h-4 text-gray-500" strokeWidth={1.2} />
                                 Миний профайл
                               </Link>
-                              <Link href="/orders" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                              <Link href="/orders" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:text-[var(--vibe-accent)] transition-colors">
                                 <Package className="w-4 h-4 text-gray-500" strokeWidth={1.2} />
                                 {t('nav', 'myOrders')}
                               </Link>
                               {isAdmin && (
-                                <Link href="/admin" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                <Link href="/admin" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:text-[#D4AF37] transition-colors">
                                   <LayoutDashboard className="w-4 h-4 text-gray-500" strokeWidth={1.2} />
                                   {t('nav', 'adminPanel')}
                                 </Link>
@@ -334,8 +342,8 @@ export default function LuxuryNavbar() {
                     </>
                   ) : (
                     <Link href="/sign-in" className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors group">
-                      <User className="w-6 h-6 text-gray-600 group-hover:text-orange-500" strokeWidth={1.5} />
-                      <span className="text-sm font-medium text-gray-600 group-hover:text-orange-500">{t('nav', 'signIn')}</span>
+                      <User className="w-6 h-6 text-gray-600" style={{ '--hover-color': currentVibe.accent } as React.CSSProperties} strokeWidth={1.5} />
+                      <span className="text-sm font-medium text-gray-600">{t('nav', 'signIn')}</span>
                     </Link>
                   )}
                 </div>
@@ -351,15 +359,16 @@ export default function LuxuryNavbar() {
                     className="relative p-2 hover:bg-gray-50 rounded-2xl transition-all group cursor-pointer border border-transparent hover:border-gray-100"
                   >
                     <Heart
-                      className={`w-6 h-6 transition-colors ${mounted && wishlistItemsCount > 0 ? 'text-[#FF5000] fill-orange-50/50' : 'text-gray-600 group-hover:text-[#FF5000]'
-                        }`}
+                      className="w-6 h-6 transition-colors"
+                      style={{ color: mounted && wishlistItemsCount > 0 ? currentVibe.accent : '#4b5563' }}
                       strokeWidth={1.5}
                     />
                     {mounted && wishlistItemsCount > 0 && (
                       <motion.span
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-white shadow-sm"
+                        className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full border-2 border-white shadow-sm"
+                        style={{ backgroundColor: currentVibe.accent }}
                       />
                     )}
                   </motion.div>
@@ -372,15 +381,16 @@ export default function LuxuryNavbar() {
                     className="relative p-2 hover:bg-gray-50 rounded-2xl transition-all group cursor-pointer border border-transparent hover:border-gray-100"
                   >
                     <ShoppingBag
-                      className={`w-6 h-6 transition-colors ${mounted && cartItemsCount > 0 ? 'text-[#FF5000]' : 'text-gray-600 group-hover:text-[#FF5000]'
-                        }`}
+                      className="w-6 h-6 transition-colors"
+                      style={{ color: mounted && cartItemsCount > 0 ? currentVibe.accent : '#4b5563' }}
                       strokeWidth={1.5}
                     />
                     {mounted && cartItemsCount > 0 && (
                       <motion.span
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-[#FF5000] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-sm"
+                        className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-sm"
+                        style={{ backgroundColor: currentVibe.accent }}
                       >
                         {cartItemsCount}
                       </motion.span>
@@ -395,7 +405,7 @@ export default function LuxuryNavbar() {
         </div>
 
         {/* Desktop Category Nav Row */}
-        <div className="border-t border-gray-100/50">
+        <div className="border-t border-[#D4AF37]/8">
           <div className="px-4 sm:px-6 lg:px-8">
             <nav className="flex items-center justify-center gap-1">
               {categories.map((category) => {
@@ -409,21 +419,20 @@ export default function LuxuryNavbar() {
                       whileTap={{ scale: 0.95 }}
                       transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                     >
-                      <div className={`flex items-center gap-2 transition-all duration-300 ${isActive
-                        ? 'text-orange-600'
-                        : 'text-gray-600 hover:text-orange-500'
-                        }`}>
+                      <div className={`flex items-center gap-2 transition-all duration-300`}
+                        style={{ color: isActive ? currentVibe.accent : '#666' }}>
                         <Icon
-                          className={`w-4 h-4 transition-colors duration-300 ${isActive ? 'text-orange-600' : 'group-hover:text-orange-500'
-                            }`}
+                          className="w-4 h-4 transition-colors duration-300"
+                          style={{ color: isActive ? currentVibe.accent : undefined }}
                           strokeWidth={1.2}
                         />
-                        <span className="text-sm font-medium tracking-wider">{category.name}</span>
+                        <span className="text-xs font-bold uppercase tracking-[0.15em]">{category.name}</span>
                       </div>
                       {isActive && (
                         <motion.div
                           layoutId="activeTab"
-                          className="absolute bottom-[-1px] left-0 right-0 h-0.5 bg-orange-500 rounded-full"
+                          className="absolute bottom-[-1px] left-0 right-0 h-[2px] rounded-full"
+                          style={{ background: `linear-gradient(90deg, ${currentVibe.accent}, #D4AF37)` }}
                           transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                         />
                       )}
@@ -438,13 +447,13 @@ export default function LuxuryNavbar() {
 
       {/* ── MOBILE HEADER ─────────────────────────────────────────────────── */}
       <header
-        className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-100"
+        className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white/88 backdrop-blur-[24px] saturate-[180%] border-b border-[#D4AF37]/10"
         style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
         <div className="flex items-center justify-between px-5 h-14">
           <Link href="/" className="flex flex-col items-start select-none">
-            <span className="text-xl font-black tracking-tighter text-[#FF5000] leading-none">Soyol</span>
-            <span className="text-[7px] font-bold tracking-[0.2em] text-slate-400 uppercase leading-none mt-0.5">Video Shop</span>
+            <span className="font-serif text-xl font-bold leading-none transition-colors duration-500" style={{ color: currentVibe.accent }}>Classik</span>
+            <span className="text-[7px] font-sans tracking-[0.25em] text-[#D4AF37] uppercase leading-none mt-0.5 font-bold">Арьс Арчилгаа</span>
           </Link>
           <div className="flex items-center gap-1.5">
             <Link href="/search" className="p-2 text-slate-500 active:scale-90 transition-transform">
@@ -457,7 +466,7 @@ export default function LuxuryNavbar() {
               >
                 <Heart className="w-6 h-6" strokeWidth={1.5} />
                 {mounted && wishlistItemsCount > 0 && (
-                  <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-white shadow-sm" />
+                  <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: currentVibe.accent }} />
                 )}
               </motion.div>
             </Link>
@@ -508,26 +517,28 @@ export default function LuxuryNavbar() {
                   <Link
                     href="/profile"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 active:bg-orange-50 active:border-orange-200 transition-colors"
+                    className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 active:border-opacity-20 transition-colors"
+                    style={{ '--active-bg': currentVibe.bg, '--active-border': currentVibe.accent } as React.CSSProperties}
                   >
-                    <div className="w-12 h-12 rounded-full bg-[#FF5000]/10 flex items-center justify-center shrink-0 border border-[#FF5000]/20">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 border" style={{ backgroundColor: `${currentVibe.accent}15`, borderColor: `${currentVibe.accent}30` }}>
                       {user?.imageUrl ? (
                         <img src={user.imageUrl} alt="" className="w-12 h-12 rounded-full object-cover" />
                       ) : (
-                        <span className="text-[#FF5000] font-bold text-lg">{(user?.name?.[0] || user?.phone?.[0] || 'U').toUpperCase()}</span>
+                        <span className="font-bold text-lg" style={{ color: currentVibe.accent }}>{(user?.name?.[0] || user?.phone?.[0] || 'U').toUpperCase()}</span>
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-bold text-slate-900 truncate">{user?.name || 'Хэрэглэгч'}</p>
                       <p className="text-sm font-medium text-slate-500 truncate">{user?.phone || user?.email || '—'}</p>
-                      <p className="text-xs text-[#FF5000] font-semibold mt-0.5">Профайл харах →</p>
+                      <p className="text-xs font-semibold mt-0.5" style={{ color: currentVibe.accent }}>Профайл харах →</p>
                     </div>
                   </Link>
                 ) : (
                   <Link
                     href="/sign-in"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center w-full py-4 rounded-2xl bg-[#FF5000] text-white font-bold text-sm shadow-lg shadow-orange-500/25 active:scale-[0.98] transition-all"
+                    className="flex items-center justify-center w-full py-4 rounded-2xl text-white font-bold text-sm active:scale-[0.98] transition-all"
+                    style={{ backgroundColor: currentVibe.accent, boxShadow: `0 8px 20px ${currentVibe.glow}` }}
                   >
                     {t('nav', 'signIn')}
                   </Link>
@@ -546,11 +557,11 @@ export default function LuxuryNavbar() {
                         onClick={() => setMobileMenuOpen(false)}
                         className={`flex items-center gap-4 py-4 border-b border-slate-50 transition-colors active:bg-slate-50`}
                       >
-                        <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-[#FF5000]' : 'text-slate-400'}`} strokeWidth={isActive ? 2 : 1.5} />
-                        <span className={`font-semibold text-[15px] flex-1 ${isActive ? 'text-[#FF5000]' : 'text-slate-800'}`}>
+                        <Icon className="w-5 h-5 shrink-0" style={{ color: isActive ? currentVibe.accent : '#94a3b8' }} strokeWidth={isActive ? 2 : 1.5} />
+                        <span className="font-semibold text-[15px] flex-1" style={{ color: isActive ? currentVibe.accent : '#1e293b' }}>
                           {cat.name}
                         </span>
-                        <ChevronRight className={`w-4 h-4 ${isActive ? 'text-[#FF5000]' : 'text-slate-300'}`} strokeWidth={2} />
+                        <ChevronRight className="w-4 h-4" style={{ color: isActive ? currentVibe.accent : '#cbd5e1' }} strokeWidth={2} />
                       </Link>
                     );
                   })}
@@ -580,7 +591,7 @@ export default function LuxuryNavbar() {
         )}
       </AnimatePresence>
 
-      {/* ── MOBILE BOTTOM NAV — Tab Bar ───────────────────────────────────── */}
+      {/* ── MOBILE BOTTOM NAV — Signature Tab Bar ──────────────────────── */}
       <div
         className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] pointer-events-none"
         style={{
@@ -588,28 +599,67 @@ export default function LuxuryNavbar() {
         }}
       >
         <div
-          className="bg-white/95 border-t border-slate-100 backdrop-blur-[20px] pointer-events-auto"
+          className="pointer-events-auto border-t border-[#D4AF37]/10"
           style={{
-            WebkitBackdropFilter: 'blur(20px)'
+            background: 'rgba(255, 255, 255, 0.92)',
+            backdropFilter: 'blur(24px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+            boxShadow: `0 -4px 30px ${currentVibe.glow.replace('0.3', '0.06')}`,
           }}
         >
-          <div className="flex items-stretch h-14">
+          <div className="flex items-stretch h-16">
             {mobileNavItems.map(item => {
               const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
               const Icon = item.icon;
               return (
-                <Link key={item.name} href={item.href} className="flex-1 flex flex-col items-center justify-center group active:scale-95 transition-transform">
+                <Link key={item.name} href={item.href} className="flex-1 flex flex-col items-center justify-center group active:scale-90 transition-transform relative">
+                  {/* Active indicator - signature vibe-colored dot */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="mobileActiveTab"
+                      className="absolute -top-[1px] w-8 h-[3px] rounded-full"
+                      style={{ background: `linear-gradient(90deg, ${currentVibe.accent}, #D4AF37)` }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    />
+                  )}
                   <div className="relative">
-                    <Icon className={`w-6 h-6 ${isActive ? 'text-[#FF5000]' : 'text-slate-400'}`} strokeWidth={isActive ? 2.2 : 1.8} />
+                    <motion.div
+                      animate={isActive ? { y: -2, scale: 1.1 } : { y: 0, scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                    >
+                      <Icon
+                        className="w-[22px] h-[22px] transition-colors duration-200"
+                        style={{ color: isActive ? currentVibe.accent : '#AAAAAA' }}
+                        strokeWidth={isActive ? 2.4 : 1.6}
+                      />
+                    </motion.div>
                     {mounted && item.count !== undefined && item.count > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#FF5000] text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -top-2 -right-2.5 min-w-[18px] h-[18px] px-1 text-white text-[8px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm"
+                        style={{ background: `linear-gradient(135deg, ${currentVibe.accent}, ${currentVibe.accent}cc)` }}
+                      >
                         {item.count > 9 ? '9+' : item.count}
-                      </span>
+                      </motion.span>
                     )}
                   </div>
-                  <span className={`text-[10px] font-bold mt-1 ${isActive ? 'text-[#FF5000]' : 'text-slate-400'}`}>
+                  <motion.span
+                    animate={isActive ? { y: -1 } : { y: 0 }}
+                    className="text-[10px] font-bold mt-1 tracking-wide transition-colors duration-200"
+                    style={{ color: isActive ? currentVibe.accent : '#AAAAAA' }}
+                  >
                     {item.name}
-                  </span>
+                  </motion.span>
+                  {/* Active glow behind icon */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="mobileTabGlow"
+                      className="absolute top-1/2 -translate-y-1/2 w-10 h-10 rounded-full"
+                      style={{ background: `radial-gradient(circle, ${currentVibe.glow.replace('0.3', '0.1')} 0%, transparent 70%)` }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    />
+                  )}
                 </Link>
               );
             })}

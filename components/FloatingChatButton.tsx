@@ -83,7 +83,7 @@ export default function FloatingChatButton() {
                             onClick={toggleChat}
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
-                            className={`flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-colors focus:outline-none focus:ring-4 focus:ring-orange-300 ${isOpen ? 'bg-slate-800 text-white' : 'bg-[#FF7900] text-white hover:bg-[#e66d00]'
+                            className={`flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-colors focus:outline-none focus:ring-4 focus:ring-orange-300 ${isOpen ? 'bg-slate-800 text-white' : 'bg-[#E06B8B] text-white hover:bg-[#e66d00]'
                                 }`}
                             aria-label={isOpen ? "Close chat" : "Chat with support"}
                         >

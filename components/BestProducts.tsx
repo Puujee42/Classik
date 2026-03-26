@@ -74,7 +74,7 @@ export default function BestProducts({ products }: BestProductsProps) {
     return (
         <section className="relative w-full max-w-[1500px] mx-auto mb-16 mt-8 px-4">
             {/* Main Slider Container */}
-            <div className="relative h-[500px] sm:h-[600px] w-full bg-[#f8f9fa] overflow-hidden rounded-3xl shadow-2xl shadow-orange-500/5 group border border-white/50">
+            <div className="relative h-[500px] sm:h-[600px] w-full bg-[#f8f9fa] overflow-hidden rounded-3xl shadow-2xl shadow-[#E06B8B]/5 group border border-white/50">
 
                 <AnimatePresence initial={false} mode="popLayout" custom={direction}>
                     <motion.div
@@ -117,7 +117,7 @@ export default function BestProducts({ products }: BestProductsProps) {
                                     className="flex items-center gap-3 mb-6"
                                 >
                                     {/* Category Tag */}
-                                    <span className="px-3 py-1 bg-orange-100/80 backdrop-blur-sm text-orange-600 text-xs font-bold uppercase tracking-widest rounded-full border border-orange-200/50">
+                                    <span className="px-3 py-1 bg-[#FCEEF2]/80 backdrop-blur-sm text-[#E06B8B] text-xs font-bold uppercase tracking-widest rounded-full border border-orange-200/50">
                                         {activeProduct.category}
                                     </span>
                                     {/* Rating with Glass effect */}
@@ -146,10 +146,10 @@ export default function BestProducts({ products }: BestProductsProps) {
                                     className="flex flex-wrap items-center gap-4 mb-10"
                                 >
                                     <div className="flex items-baseline gap-1.5">
-                                        <span className="text-6xl font-bold text-orange-500 tracking-tighter">
+                                        <span className="text-6xl font-bold text-[#E06B8B] tracking-tighter">
                                             {activeProduct.price.toLocaleString()}
                                         </span>
-                                        <span className="text-4xl font-bold text-orange-500 align-baseline">
+                                        <span className="text-4xl font-bold text-[#E06B8B] align-baseline">
                                             ₮
                                         </span>
                                     </div>
@@ -173,7 +173,7 @@ export default function BestProducts({ products }: BestProductsProps) {
                                     className="flex flex-wrap gap-4"
                                 >
                                     <Link href={`/product/${activeProduct.id}`}>
-                                        <button className="group relative px-8 py-4 bg-gradient-to-r from-[#FF5000] to-[#FF8000] text-white rounded-2xl font-bold text-lg shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                                        <button className="group relative px-8 py-4 bg-gradient-to-r from-[#E06B8B] to-[#FF8000] text-white rounded-2xl font-bold text-lg shadow-xl shadow-[#E06B8B]/30 hover:shadow-[#E06B8B]/50 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                                             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                                             <span className="relative flex items-center gap-3">
                                                 Shop Collection
@@ -182,7 +182,7 @@ export default function BestProducts({ products }: BestProductsProps) {
                                         </button>
                                     </Link>
 
-                                    <button className="px-8 py-4 bg-white/80 backdrop-blur-sm text-slate-700 border border-white/50 rounded-2xl font-bold text-lg shadow-lg shadow-slate-200/50 hover:bg-white hover:text-orange-600 transition-all duration-300">
+                                    <button className="px-8 py-4 bg-white/80 backdrop-blur-sm text-slate-700 border border-white/50 rounded-2xl font-bold text-lg shadow-lg shadow-slate-200/50 hover:bg-white hover:text-[#E06B8B] transition-all duration-300">
                                         View Details
                                     </button>
                                 </motion.div>
@@ -203,7 +203,7 @@ export default function BestProducts({ products }: BestProductsProps) {
                                 setSlideIndex(index);
                             }}
                             className={`h-1.5 rounded-full transition-all duration-500 ${index === slideIndex
-                                    ? 'w-12 bg-orange-500 shadow-lg shadow-orange-500/50'
+                                    ? 'w-12 bg-orange-500 shadow-lg shadow-[#E06B8B]/50'
                                     : 'w-3 bg-slate-300 hover:bg-slate-400'
                                 }`}
                             aria-label={`Go to slide ${index + 1}`}
@@ -215,13 +215,13 @@ export default function BestProducts({ products }: BestProductsProps) {
                 <div className="absolute bottom-8 right-8 sm:right-12 z-30 flex gap-3">
                     <button
                         onClick={() => paginate(-1)}
-                        className="w-12 h-12 rounded-full flex items-center justify-center bg-white/80 backdrop-blur-md border border-white/60 text-slate-700 shadow-lg shadow-slate-200/50 hover:bg-white hover:text-orange-600 hover:scale-110 active:scale-95 transition-all duration-300 group"
+                        className="w-12 h-12 rounded-full flex items-center justify-center bg-white/80 backdrop-blur-md border border-white/60 text-slate-700 shadow-lg shadow-slate-200/50 hover:bg-white hover:text-[#E06B8B] hover:scale-110 active:scale-95 transition-all duration-300 group"
                     >
                         <ChevronLeft className="w-6 h-6 relative right-0.5 group-hover:-translate-x-0.5 transition-transform" />
                     </button>
                     <button
                         onClick={() => paginate(1)}
-                        className="w-12 h-12 rounded-full flex items-center justify-center bg-white/80 backdrop-blur-md border border-white/60 text-slate-700 shadow-lg shadow-slate-200/50 hover:bg-white hover:text-orange-600 hover:scale-110 active:scale-95 transition-all duration-300 group"
+                        className="w-12 h-12 rounded-full flex items-center justify-center bg-white/80 backdrop-blur-md border border-white/60 text-slate-700 shadow-lg shadow-slate-200/50 hover:bg-white hover:text-[#E06B8B] hover:scale-110 active:scale-95 transition-all duration-300 group"
                     >
                         <ChevronRight className="w-6 h-6 relative left-0.5 group-hover:translate-x-0.5 transition-transform" />
                     </button>

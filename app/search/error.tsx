@@ -18,8 +18,8 @@ export default function SearchError({
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 pt-24">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center">
-        <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Search className="w-8 h-8 text-orange-600" strokeWidth={1.5} />
+        <div className="w-16 h-16 bg-[#FCEEF2] rounded-full flex items-center justify-center mx-auto mb-6">
+          <Search className="w-8 h-8 text-[#E06B8B]" strokeWidth={1.5} />
         </div>
         <h1 className="text-xl font-bold text-gray-900 mb-2">Хайлт амжилтгүй боллоо</h1>
         <p className="text-gray-600 text-sm mb-6">
@@ -35,7 +35,7 @@ export default function SearchError({
           </button>
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-orange-500 hover:text-orange-500 transition"
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-orange-500 hover:text-[#E06B8B] transition"
           >
             <Home className="w-4 h-4" />
             Нүүр хуудас

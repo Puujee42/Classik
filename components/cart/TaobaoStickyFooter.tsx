@@ -48,7 +48,7 @@ export default function TaobaoStickyFooter() {
                                 className="flex items-center gap-2 group px-2 py-1 -ml-2 rounded-full hover:bg-gray-50 transition-colors"
                             >
                                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${allSelected
-                                    ? 'bg-[#FF5000] border-[#FF5000] shadow-sm'
+                                    ? 'bg-[#E06B8B] border-[#E06B8B] shadow-sm'
                                     : 'border-gray-200 bg-white'
                                     }`}>
                                     {allSelected && <Check className="w-3 h-3 text-white" strokeWidth={4} />}
@@ -82,7 +82,7 @@ export default function TaobaoStickyFooter() {
                                     <motion.span className="text-2xl font-bold text-gray-900 tracking-tight">
                                         {displayPrice}
                                     </motion.span>
-                                    <span className="text-base font-bold text-[#FF5000]">₮</span>
+                                    <span className="text-base font-bold text-[#E06B8B]">₮</span>
                                 </div>
                             </div>
 
@@ -100,7 +100,7 @@ export default function TaobaoStickyFooter() {
                                     }`}
                             >
                                 Захиалах
-                                <ChevronRight className="w-5 h-5 text-orange-500" strokeWidth={3} />
+                                <ChevronRight className="w-5 h-5 text-[#E06B8B]" strokeWidth={3} />
                             </motion.button>
                         </div>
                     </div>

@@ -30,7 +30,7 @@ export default function ProductBadge({
     } else if (isFeatured) {
         badgeLabel = 'ОНЦГОЙ';
         badgeIcon = '✨';
-        badgeStyle = 'from-orange-500/90 to-red-500/90 border-orange-400/40 shadow-orange-500/30';
+        badgeStyle = 'from-orange-500/90 to-red-500/90 border-orange-400/40 shadow-[#E06B8B]/30';
     } else {
         return null; // No badge
     }

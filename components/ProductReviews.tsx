@@ -159,7 +159,7 @@ export default function ProductReviews({ productId }: { productId: string }) {
       ) : (
         <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl text-center">
           <p className="text-sm text-gray-500 font-medium">
-            Үнэлгээ үлдээхийн тулд <a href="/sign-in" className="text-orange-500 font-bold hover:underline">Нэвтрэх</a> шаардлагатай.
+            Үнэлгээ үлдээхийн тулд <a href="/sign-in" className="text-[#E06B8B] font-bold hover:underline">Нэвтрэх</a> шаардлагатай.
           </p>
         </div>
       )}

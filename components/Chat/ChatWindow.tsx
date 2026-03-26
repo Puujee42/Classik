@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Video, Phone, ArrowLeft, History } from 'lucide-react';
+import { Send, ArrowLeft, History } from 'lucide-react';
 import { Message } from '@/models/Message';
 import Image from 'next/image';
 import useSWR from 'swr';
@@ -25,7 +25,6 @@ interface User {
 interface ChatWindowProps {
     otherUser: User;
     guestId?: string;
-    onStartCall: () => void;
     onBack: () => void;
 }
 
@@ -34,7 +33,7 @@ const fetcher = ([url, guestId]: [string, string | undefined]) =>
         headers: guestId ? { 'x-guest-id': guestId } : {}
     }).then((res) => res.json());
 
-export default function ChatWindow({ otherUser, guestId, onStartCall, onBack }: ChatWindowProps) {
+export default function ChatWindow({ otherUser, guestId, onBack }: ChatWindowProps) {
     const { user } = useUser();
     const { t } = useTranslation();
     const [newMessage, setNewMessage] = useState('');
@@ -112,77 +111,33 @@ export default function ChatWindow({ otherUser, guestId, onStartCall, onBack }: 
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setIsHistoryOpen(true)}
-                        className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-[#FF5000] transition-colors border border-white/5"
+                        className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-[#E06B8B] transition-colors border border-white/5"
                         title="View History"
                     >
                         <History className="w-5 h-5" strokeWidth={1.2} />
-                    </button>
-                    <button
-                        onClick={onStartCall}
-                        className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 transition-colors border border-white/5"
-                        title="Start Video Call"
-                    >
-                        <Video className="w-5 h-5" strokeWidth={1.2} />
-                    </button>
-                    <button className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 transition-colors border border-white/5">
-                        <Phone className="w-5 h-5" strokeWidth={1.2} />
                     </button>
                 </div>
             </div>
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {/* Large Video Call Action for Admins */}
-                {otherUser.role !== 'admin' && (
-                    <motion.div 
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mb-6"
-                    >
-                        <button
-                            onClick={onStartCall}
-                            className="w-full py-4 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-orange-500/20 flex items-center justify-center gap-3 group hover:scale-[1.02] transition-all active:scale-95 border border-white/10"
-                        >
-                            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:animate-pulse">
-                                <Video className="w-4 h-4 fill-white" />
-                            </div>
-                            <span>📹 {otherUser.name || 'Хэрэглэгч'}-тэй видео дуудлага эхлүүлэх</span>
-                        </button>
-                    </motion.div>
-                )}
-
                 {Array.isArray(messages) && messages.map((msg) => {
                     const effectiveUserId = user?.id || guestId;
                     const isMe = msg.senderId === effectiveUserId;
                     const isInvite = msg.type === 'call_invite';
                     const isCall = msg.type === 'call_started' || msg.type === 'call_ended';
 
-                    if (isCall) {
-                        return (
-                            <div key={msg._id?.toString()} className="flex justify-center my-4">
-                                <div className="bg-slate-800/50 text-slate-400 text-xs px-4 py-1 rounded-full flex items-center gap-2">
-                                    <Video className="w-3 h-3" />
-                                    <span>
-                                        {msg.type === 'call_started' ? `Видео дуудлага эхэлсэн` : `Видео дуудлага дууссан`} •
-                                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
-                                </div>
-                            </div>
-                        );
-                    }
+                    if (isCall) return null;
 
                     return (
                         <div key={msg._id?.toString()} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                             <div className={`max-w-[80%] rounded-2xl px-4 py-2 shadow-sm ${isMe
-                                ? 'bg-[#FF5000] text-white rounded-tr-none'
+                                ? 'bg-[#E06B8B] text-white rounded-tr-none'
                                 : 'bg-slate-800 text-slate-200 rounded-tl-none border border-white/5'
                                 }`}>
                                 {isInvite ? (
                                     <div className="flex flex-col gap-2">
-                                        <p className="font-bold">📞 Видео дуудлага хийх хүсэлт</p>
-                                        <button className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-bold transition-all active:scale-95">
-                                            Холбогдох
-                                        </button>
+                                        <p className="font-bold">📞 Видео дуудлага хийх хүсэлт (Идэвхгүй)</p>
                                     </div>
                                 ) : (
                                     <p className="text-sm leading-relaxed">{msg.content}</p>
@@ -205,12 +160,12 @@ export default function ChatWindow({ otherUser, guestId, onStartCall, onBack }: 
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder={t('chat', 'typeMessage')}
-                        className="flex-1 bg-slate-800 border-none rounded-2xl px-4 py-3 text-white placeholder-slate-500 focus:ring-1 focus:ring-[#FF5000]/50 text-sm outline-none"
+                        className="flex-1 bg-slate-800 border-none rounded-2xl px-4 py-3 text-white placeholder-slate-500 focus:ring-1 focus:ring-[#E06B8B]/50 text-sm outline-none"
                     />
                     <button
                         type="submit"
                         disabled={!newMessage.trim() || sending}
-                        className="p-3 bg-[#FF5000] hover:bg-[#E64500] text-white rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20 active:scale-95"
+                        className="p-3 bg-[#E06B8B] hover:bg-[#E64500] text-white rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#E06B8B]/20 active:scale-95"
                     >
                         <Send className="w-5 h-5" strokeWidth={1.2} />
                     </button>

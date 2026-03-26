@@ -204,7 +204,7 @@ export default function AddProductForm() {
               placeholder="20"
             />
           </div>
-          <div className="sm:col-span-2 text-xs font-bold text-orange-600">
+          <div className="sm:col-span-2 text-xs font-bold text-[#E06B8B]">
             Үнэ: {formData.price}₮ (Автоматаар тооцоологдсон)
           </div>
         </div>
@@ -293,7 +293,7 @@ export default function AddProductForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full bg-gradient-to-r from-[#FF8C00] to-[#FFA500] text-white font-medium py-3 px-6 rounded-xl hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full bg-gradient-to-r from-[#FF8C00] to-[#FFA500] text-white font-medium py-3 px-6 rounded-xl hover:shadow-lg hover:shadow-[#E06B8B]/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {isPending ? (
           <>

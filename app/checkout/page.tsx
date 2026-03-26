@@ -236,7 +236,7 @@ export default function CheckoutPage() {
       toast.success('Захиалга амжилттай бүртгэгдлээ!', {
         duration: 3000,
         position: 'top-center',
-        style: { background: '#FF7900', color: 'white', fontWeight: 'bold', borderRadius: '12px', padding: '16px' },
+        style: { background: '#F0AEC1', color: 'white', fontWeight: 'bold', borderRadius: '12px', padding: '16px' },
       });
 
       clearCart();

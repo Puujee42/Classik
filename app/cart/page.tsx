@@ -59,7 +59,7 @@ export default function CartPage() {
                         <motion.button
                             whileHover={{ scale: 1.02, y: -2 }}
                             whileTap={{ scale: 0.98 }}
-                            className="w-full h-[60px] bg-gradient-to-br from-[#FF5000] to-[#E64500] text-white rounded-[18px] font-black text-[16px] uppercase tracking-[0.1em] shadow-xl shadow-orange-500/25 flex items-center justify-center gap-3 active:shadow-none transition-all"
+                            className="w-full h-[60px] bg-gradient-to-br from-[#D47A93] to-[#E64500] text-white rounded-[18px] font-black text-[16px] uppercase tracking-[0.1em] shadow-xl shadow-orange-500/25 flex items-center justify-center gap-3 active:shadow-none transition-all"
                         >
                             {t('cart', 'continueShopping')}
                             <ArrowRight className="w-5 h-5" strokeWidth={3} />
@@ -105,11 +105,11 @@ export default function CartPage() {
                                                 className="bg-white rounded-[28px] p-4 border border-slate-100 shadow-sm flex flex-col gap-3 h-full cursor-pointer hover:shadow-xl hover:shadow-black/5 transition-all"
                                             >
                                                 <div className="w-full aspect-square bg-slate-50 rounded-2xl relative overflow-hidden">
-                                                    <Image src={p.image || '/soyol-logo.png'} alt={p.name} fill className="object-contain p-3" />
+                                                    <Image src={p.image || '/soyol-logo-new.png'} alt={p.name} fill className="object-contain p-3" />
                                                 </div>
                                                 <div className="space-y-1">
                                                     <p className="text-[13px] font-bold text-slate-800 line-clamp-1">{p.name}</p>
-                                                    <p className="text-sm font-black text-[#FF5000]">
+                                                    <p className="text-sm font-black text-[#D47A93]">
                                                         {p.price.toLocaleString()}₮
                                                     </p>
                                                 </div>
@@ -223,10 +223,10 @@ export default function CartPage() {
                                         className="aspect-[3/4] bg-white rounded-[32px] border border-slate-100/50 shadow-sm flex flex-col p-4 gap-3 cursor-pointer h-full"
                                     >
                                         <div className="flex-1 relative rounded-2xl overflow-hidden bg-slate-50">
-                                            <Image src={p.image || '/soyol-logo.png'} alt={p.name} fill className="object-contain p-2" />
+                                            <Image src={p.image || '/soyol-logo-new.png'} alt={p.name} fill className="object-contain p-2" />
                                         </div>
                                         <p className="text-xs font-bold text-slate-800 truncate">{p.name}</p>
-                                        <p className="text-sm font-black text-[#FF5000]">
+                                        <p className="text-sm font-black text-[#D47A93]">
                                             {p.price.toLocaleString()}₮
                                         </p>
                                     </motion.div>

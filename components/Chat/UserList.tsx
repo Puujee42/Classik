@@ -38,7 +38,7 @@ export default function UserList({ users, selectedUser, onSelectUser }: UserList
             <div className="p-6 border-b border-white/5 bg-slate-900/80 backdrop-blur-xl">
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
-                        <UserIcon className="w-5 h-5 text-orange-500" />
+                        <UserIcon className="w-5 h-5 text-[#E06B8B]" />
                         Зурвас
                     </h2>
                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] bg-white/5 px-2 py-1 rounded-md">
@@ -46,7 +46,7 @@ export default function UserList({ users, selectedUser, onSelectUser }: UserList
                     </span>
                 </div>
                 <div className="relative group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-orange-500 transition-colors" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-[#E06B8B] transition-colors" />
                     <input
                         type="text"
                         placeholder="Хайх..."

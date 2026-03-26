@@ -585,7 +585,7 @@ export default function AdminOrdersPage() {
                                         {selectedOrder.items.map((item, idx) => (
                                             <div key={idx} className="flex gap-4 p-3 rounded-xl bg-slate-950 border border-slate-800">
                                                 <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-slate-900 shrink-0">
-                                                    <Image src={item.image || '/soyol-logo.png'} alt={item.name || 'Бараа'} fill className="object-contain p-1" />
+                                                    <Image src={item.image || '/soyol-logo-new.png'} alt={item.name || 'Бараа'} fill className="object-contain p-1" />
                                                 </div>
                                                 <div className="flex-1 min-w-0 flex flex-col justify-center">
                                                     <p className="text-sm font-bold text-white line-clamp-1 mb-1">{item.name}</p>

@@ -69,7 +69,8 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
         if (!formData.category && categories.length > 0) {
             setFormData(prev => ({ ...prev, category: categories[0].id }));
         }
-    }, [categories, formData.category]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [categories]);
 
     // Handle Sale Price Auto-calculation
     const showDiscountFields = formData.sections.includes('Хямдрал');
@@ -79,12 +80,16 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
             const dp = parseFloat(formData.discountPercent);
             if (!isNaN(op) && !isNaN(dp)) {
                 const salePrice = Math.round((op * (1 - dp / 100)) / 10) * 10;
-                if (String(salePrice) !== formData.price) {
-                    setFormData(prev => ({ ...prev, price: String(salePrice) }));
-                }
+                setFormData(prev => {
+                    if (String(salePrice) !== prev.price) {
+                        return { ...prev, price: String(salePrice) };
+                    }
+                    return prev;
+                });
             }
         }
-    }, [formData.originalPrice, formData.discountPercent, showDiscountFields, formData.price]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formData.originalPrice, formData.discountPercent, showDiscountFields]);
 
     const handleChange = (field: string, value: any) => {
         setFormData(prev => ({
@@ -295,31 +300,31 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
                                         </div>
                                     )}
 
-                                    {!formData.image && (
-                                        <CldUploadWidget
-                                            uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"}
-                                            onSuccess={(result: any) => {
-                                                const url = result?.info?.secure_url;
-                                                if (url) {
-                                                    setFormData(prev => ({ ...prev, image: url }));
-                                                }
-                                            }}
-                                        >
-                                            {({ open }) => (
+                                    <CldUploadWidget
+                                        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"}
+                                        onSuccess={(result: any) => {
+                                            const url = result?.info?.secure_url;
+                                            if (url) {
+                                                setFormData(prev => ({ ...prev, image: url }));
+                                            }
+                                        }}
+                                    >
+                                        {({ open }) => (
+                                            !formData.image ? (
                                                 <button
                                                     type="button"
                                                     onClick={() => open()}
-                                                    className="w-full py-12 bg-slate-950 border-2 border-dashed border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-3 text-slate-500 hover:text-amber-500 hover:border-amber-500/50 hover:bg-amber-500/5 transition-all group"
+                                                    className="w-full py-12 bg-slate-950 border-2 border-dashed border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-3 text-slate-500 hover:text-amber-500 hover:border-amber-500/50 transition-all group"
                                                 >
-                                                    <div className="p-4 bg-slate-900 rounded-full group-hover:bg-amber-500/10 transition-colors">
+                                                    <div className="p-4 bg-slate-900 rounded-full transition-colors">
                                                         <ImageIcon className="w-8 h-8" />
                                                     </div>
                                                     <span className="font-bold">Зураг сонгох</span>
                                                     <span className="text-[10px] uppercase tracking-widest opacity-60">Үндсэн зураг заавал байх шаардлагатай</span>
                                                 </button>
-                                            )}
-                                        </CldUploadWidget>
-                                    )}
+                                            ) : <span className="hidden" />
+                                        )}
+                                    </CldUploadWidget>
                                 </div>
                             </div>
 
@@ -347,20 +352,20 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
                                     ))}
                                 </div>
 
-                                {(formData.images || []).length < 8 && (
-                                    <CldUploadWidget
-                                        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"}
-                                        onSuccess={(result: any) => {
-                                            const url = result?.info?.secure_url;
-                                            if (url) {
-                                                setFormData(prev => ({
-                                                    ...prev,
-                                                    images: [...(prev.images || []), url]
-                                                }));
-                                            }
-                                        }}
-                                    >
-                                        {({ open }) => (
+                                <CldUploadWidget
+                                    uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"}
+                                    onSuccess={(result: any) => {
+                                        const url = result?.info?.secure_url;
+                                        if (url) {
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                images: [...(prev.images || []), url]
+                                            }));
+                                        }
+                                    }}
+                                >
+                                    {({ open }) => (
+                                        (formData.images || []).length < 8 ? (
                                             <button
                                                 type="button"
                                                 onClick={() => open()}
@@ -369,9 +374,9 @@ export default function ProductForm({ initialData, onSubmit, isSubmitting }: Pro
                                                 <Plus className="w-4 h-4" />
                                                 Зураг нэмэх
                                             </button>
-                                        )}
-                                    </CldUploadWidget>
-                                )}
+                                        ) : <span className="hidden" />
+                                    )}
+                                </CldUploadWidget>
                             </div>
                         </div>
                     )}

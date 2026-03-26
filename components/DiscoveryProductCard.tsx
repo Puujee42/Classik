@@ -42,7 +42,7 @@ export default function DiscoveryProductCard({
               if (!combined.includes(img)) combined.push(img);
           });
       }
-      return combined.length > 0 ? combined : ['/soyol-logo.png'];
+      return combined.length > 0 ? combined : ['/soyol-logo-new.png'];
   })();
 
   const hasMultiple = allImages.length > 1;
@@ -132,7 +132,7 @@ export default function DiscoveryProductCard({
                   fill
                   className="object-contain p-4"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  onError={(e) => { (e.target as HTMLImageElement).src = '/soyol-logo.png'; }}
+                  onError={(e) => { (e.target as HTMLImageElement).src = '/soyol-logo-new.png'; }}
                 />
               </div>
             ))}
@@ -149,7 +149,7 @@ export default function DiscoveryProductCard({
               fill
               className="object-contain p-4"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              onError={(e) => { (e.target as HTMLImageElement).src = '/soyol-logo.png'; }}
+              onError={(e) => { (e.target as HTMLImageElement).src = '/soyol-logo-new.png'; }}
             />
           </motion.div>
         )}
@@ -161,7 +161,7 @@ export default function DiscoveryProductCard({
               <button
                 key={i}
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveIdx(i); }}
-                className={`rounded-full transition-all duration-300 ${activeIdx === i ? 'w-4 h-1.5 bg-[#FF5000]' : 'w-1.5 h-1.5 bg-slate-300/80'}`}
+                className={`rounded-full transition-all duration-300 ${activeIdx === i ? 'w-4 h-1.5 bg-[#E06B8B]' : 'w-1.5 h-1.5 bg-slate-300/80'}`}
               />
             ))}
           </div>
@@ -211,7 +211,7 @@ export default function DiscoveryProductCard({
       {/* Card Content - Premium Typography */}
       <div className="p-3 flex-1 flex flex-col justify-between">
         <div className="space-y-1">
-          <h3 className="text-sm font-medium text-zinc-900 line-clamp-2 leading-snug group-hover:text-orange-600 transition-colors h-10 overflow-hidden">
+          <h3 className="text-sm font-medium text-zinc-900 line-clamp-2 leading-snug group-hover:text-[#E06B8B] transition-colors h-10 overflow-hidden">
             {product.name}
           </h3>
           <div className="flex items-center justify-between">
@@ -243,7 +243,7 @@ export default function DiscoveryProductCard({
             onClick={handleQuickAdd}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="w-8 h-8 md:w-9 md:h-9 bg-[#FF5000] text-white rounded-full flex items-center justify-center shadow-lg shadow-orange-500/20 hover:bg-[#E64500] transition-all"
+            className="w-8 h-8 md:w-9 md:h-9 bg-[#E06B8B] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#E06B8B]/20 hover:bg-[#E64500] transition-all"
           >
             <ShoppingCartIcon className="w-4 h-4" strokeWidth={2.5} />
           </motion.button>

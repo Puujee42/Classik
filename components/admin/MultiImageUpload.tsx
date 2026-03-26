@@ -46,7 +46,7 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
                                     <button
                                         type="button"
                                         onClick={() => setAsPrimary(url)}
-                                        className="p-2 bg-slate-800 rounded-lg text-white hover:bg-amber-500 transition shadow-lg"
+                                        className="p-2 bg-slate-800 rounded-lg text-white hover:bg-[#FCEEF2]0 transition shadow-lg"
                                         title="Үндсэн зураг болгох"
                                     >
                                         <Star className="h-4 w-4" />

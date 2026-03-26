@@ -4,10 +4,10 @@
  */
 
 export const SITE_CONFIG = {
-  name: 'Soyol Video Shop',
-  description: 'Бүх бараа бөөний үнээр',
+  name: 'Classik Store',
+  description: 'Дээд зэрэглэлийн арьс арчилгаа',
   phone: '77-181818',
-  email: 'info@soyol.mn',
+  email: 'info@classik.mn',
 } as const;
 
 export const NAV_LINKS = [

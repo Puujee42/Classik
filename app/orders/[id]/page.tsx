@@ -31,7 +31,7 @@ export default function OrderDetailPage() {
 
     if (isLoading) return (
         <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-[#FF5000]" />
+            <Loader2 className="w-8 h-8 animate-spin text-[#D47A93]" />
         </div>
     );
 
@@ -39,7 +39,7 @@ export default function OrderDetailPage() {
         <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center gap-4">
             <Package className="w-12 h-12 text-slate-200" />
             <p className="font-bold text-slate-500">Захиалга олдсонгүй</p>
-            <Link href="/orders" className="text-[#FF5000] font-bold text-sm">Буцах</Link>
+            <Link href="/orders" className="text-[#D47A93] font-bold text-sm">Буцах</Link>
         </div>
     );
 
@@ -82,12 +82,12 @@ export default function OrderDetailPage() {
                                 const StepIcon = step.icon;
                                 return (
                                     <div key={step.key} className="flex flex-col items-center gap-2 flex-1 relative">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${done || active ? 'bg-[#FF5000] border-[#FF5000]' : 'bg-slate-50 border-slate-200'}`}>
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${done || active ? 'bg-[#D47A93] border-[#D47A93]' : 'bg-slate-50 border-slate-200'}`}>
                                             <StepIcon className={`w-5 h-5 ${done || active ? 'text-white' : 'text-slate-400'}`} />
                                         </div>
-                                        <span className={`text-[10px] font-bold text-center ${done || active ? 'text-[#FF5000]' : 'text-slate-400'}`}>{step.label}</span>
+                                        <span className={`text-[10px] font-bold text-center ${done || active ? 'text-[#D47A93]' : 'text-slate-400'}`}>{step.label}</span>
                                         {i < STEPS.length - 1 && (
-                                            <div className={`absolute top-5 left-1/2 w-full h-0.5 -z-10 ${done ? 'bg-[#FF5000]' : 'bg-slate-200'}`} />
+                                            <div className={`absolute top-5 left-1/2 w-full h-0.5 -z-10 ${done ? 'bg-[#D47A93]' : 'bg-slate-200'}`} />
                                         )}
                                     </div>
                                 );
@@ -108,12 +108,12 @@ export default function OrderDetailPage() {
                                 <p className="font-bold text-slate-900 text-sm line-clamp-2">{item.name}</p>
                                 <p className="text-xs text-slate-400 mt-1">{item.quantity}ш × {formatPrice(item.price)}</p>
                             </div>
-                            <p className="font-black text-[#FF5000] text-sm shrink-0">{formatPrice(item.price * item.quantity)}</p>
+                            <p className="font-black text-[#D47A93] text-sm shrink-0">{formatPrice(item.price * item.quantity)}</p>
                         </div>
                     ))}
                     <div className="border-t border-slate-100 pt-3 flex justify-between">
                         <span className="font-bold text-slate-500 text-sm">Нийт дүн</span>
-                        <span className="font-black text-[#FF5000] text-lg">{formatPrice(order.total || order.totalPrice || 0)}</span>
+                        <span className="font-black text-[#D47A93] text-lg">{formatPrice(order.total || order.totalPrice || 0)}</span>
                     </div>
                 </div>
 
