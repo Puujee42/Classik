@@ -102,7 +102,6 @@ export default function RootLayout({
         </head>
         <body className={`${lato.variable} ${playfair.variable} ${greatVibes.variable} min-h-screen bg-[#FAF9F6] text-[#333333] antialiased bg-[radial-gradient(circle_at_15%_50%,rgba(252,238,242,0.8),transparent_25%),radial-gradient(circle_at_85%_30%,rgba(224,107,139,0.05),transparent_25%)] font-sans`}>
           <CherryBlossoms />
-          <MagicCursor />
           <ClientLayout>
             <LuxuryNavbar />
             <main className="min-h-screen pb-16 md:pb-0 relative z-0">{children}</main>

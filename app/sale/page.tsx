@@ -20,13 +20,13 @@ interface Product {
   discount?: number;
 }
 
-type FilterType = 'all' | 'ready' | 'preorder';
+type FilterType = 'all' | 'ready';
 type SortType = 'newest' | 'price-low' | 'price-high' | 'name-az';
 
 export default function SalePage() {
   const { t } = useTranslation();
   const { currency, convertPrice } = useLanguage();
-  
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,15 +62,15 @@ export default function SalePage() {
   const readyProducts = products.filter(p => p.stockStatus === 'in-stock');
   const preOrderProducts = products.filter(p => p.stockStatus === 'pre-order');
 
-  let filteredProducts = activeFilter === 'all' 
+  let filteredProducts = activeFilter === 'all'
     ? [...readyProducts, ...preOrderProducts]
     : activeFilter === 'ready'
-    ? readyProducts
-    : preOrderProducts;
+      ? readyProducts
+      : preOrderProducts;
 
   const minPriceNum = minPrice ? parseFloat(minPrice) : 0;
   const maxPriceNum = maxPrice ? parseFloat(maxPrice) : Infinity;
-  
+
   if (minPrice || maxPrice) {
     filteredProducts = filteredProducts.filter(p => {
       const convertedPrice = convertPrice(p.price);
@@ -79,7 +79,7 @@ export default function SalePage() {
   }
 
   let sortedProducts: Product[];
-  
+
   if (activeFilter === 'all') {
     const sortFunction = (a: Product, b: Product) => {
       switch (sortBy) {
@@ -141,11 +141,10 @@ export default function SalePage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setActiveFilter('all')}
-              className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 ${
-                activeFilter === 'all'
+              className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 ${activeFilter === 'all'
                   ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md shadow-orange-500/30'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+                }`}
             >
               <div className="flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5" />
@@ -157,11 +156,10 @@ export default function SalePage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setActiveFilter('ready')}
-              className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 ${
-                activeFilter === 'ready'
+              className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 ${activeFilter === 'ready'
                   ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md shadow-red-500/30'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+                }`}
             >
               <div className="flex items-center gap-2">
                 <Package className="w-3.5 h-3.5" />
@@ -169,21 +167,7 @@ export default function SalePage() {
               </div>
             </motion.button>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveFilter('preorder')}
-              className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 ${
-                activeFilter === 'preorder'
-                  ? 'bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-md shadow-gray-500/30'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Clock className="w-3.5 h-3.5" />
-                <span>{t('filters', 'preorder')}</span>
-              </div>
-            </motion.button>
+
           </div>
 
           <div className="flex items-center gap-3">
@@ -206,16 +190,15 @@ export default function SalePage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowPriceFilter(!showPriceFilter)}
-                className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
-                  showPriceFilter || minPrice || maxPrice
+                className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${showPriceFilter || minPrice || maxPrice
                     ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md shadow-red-500/30'
                     : 'bg-white text-gray-700 border border-gray-200 hover:border-red-300'
-                }`}
+                  }`}
               >
                 <SlidersHorizontal className="w-4 h-4" strokeWidth={1.5} />
                 <span>{t('filters', 'price')}</span>
               </motion.button>
-              
+
               {/* Price Filter Dropdown */}
               <AnimatePresence>
                 {showPriceFilter && (

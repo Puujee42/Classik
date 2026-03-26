@@ -134,8 +134,8 @@ export default function HomePage() {
                       whileTap={{ scale: 0.92 }}
                       onClick={() => setVibe(v)}
                       className={`relative px-3.5 sm:px-4 py-2 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.08em] sm:tracking-[0.1em] transition-all duration-300 flex items-center gap-1 sm:gap-1.5 shrink-0 ${isActive
-                          ? 'text-white shadow-lg'
-                          : 'bg-white border border-gray-200 text-[#666]'
+                        ? 'text-white shadow-lg'
+                        : 'bg-white border border-gray-200 text-[#666]'
                         }`}
                       style={isActive ? {
                         backgroundColor: config.accent,
@@ -410,8 +410,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════ SECTION 3: FLOATING INGREDIENTS ═══════════════ */}
-      <FloatingIngredients />
 
       {/* ═══════════════ SECTION 4: ABOUT / PHILOSOPHY ═══════════════ */}
       <section id="philosophy" className="relative z-10 py-20 lg:py-28 overflow-hidden transition-colors duration-700" style={{ backgroundColor: currentVibe.bg }}>
