@@ -94,3 +94,4 @@ Open [http://localhost:3000](http://localhost:3000). Health check: [http://local
 - **Database:** If you see “Can’t reach database server” or P1001, restore the Supabase project if paused and use the **AWS pooler** URLs above. Test with `/api/health/db`.
 - **Prisma:** After changing `schema.prisma` or `.env` DB URLs, run `npx prisma generate`. Use `db push` for dev; use Migrate for production when appropriate.
 - **Images:** Product images use `next/image`; configure `images.remotePatterns` in `next.config.js` for external domains.
+# Classik
