@@ -156,7 +156,7 @@ function SignInContent() {
                 className="w-full py-4 bg-[#E06B8B] text-white rounded-full font-bold text-sm uppercase tracking-[0.15em] shadow-[0_8px_25px_rgba(224,107,139,0.3)] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
-                  <>Sign In <ArrowRight className="w-4 h-4" /></>
+                  <>Нэвтрэх <ArrowRight className="w-4 h-4" /></>
                 )}
               </motion.button>
             </form>
