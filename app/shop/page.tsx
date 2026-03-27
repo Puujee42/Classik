@@ -22,7 +22,7 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen bg-[#FCFBFA] relative selection:text-white pb-20 lg:pb-0" style={{ ['--selection-bg' as string]: currentVibe.accent }}>
-      
+
       {/* Hero Header */}
       <section className="relative z-10 pt-16 pb-10 lg:pt-24 lg:pb-16 px-4 max-w-7xl mx-auto text-center">
         <motion.div
@@ -31,10 +31,10 @@ export default function ShopPage() {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl text-[#333] mb-4">
-            Our <span className="font-script text-5xl sm:text-6xl md:text-7xl" style={{ color: currentVibe.accent }}>Collections</span>
+            Бидний <span className="font-script text-5xl sm:text-6xl md:text-7xl" style={{ color: currentVibe.accent }}>Бүтээгдэхүүн</span>
           </h1>
           <p className="text-[#666] font-light max-w-xl mx-auto text-sm sm:text-base tracking-wide">
-            Pure, organic, and crafted for your skin's unique journey.
+            Таны арьсны онцлогт зориулж, байгалийн цэвэр орц найрлагаар бүтээгдсэн бүтээгдэхүүнүүд.
           </p>
         </motion.div>
       </section>
@@ -49,11 +49,10 @@ export default function ShopPage() {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`snap-center shrink-0 px-6 py-2.5 rounded-full text-[13px] font-medium transition-all duration-300 ${
-                    isActive 
-                      ? 'text-white shadow-md' 
-                      : 'text-gray-500 bg-white hover:bg-gray-50 border border-gray-100/50'
-                  }`}
+                  className={`snap-center shrink-0 px-6 py-2.5 rounded-full text-[13px] font-medium transition-all duration-300 ${isActive
+                    ? 'text-white shadow-md'
+                    : 'text-gray-500 bg-white hover:bg-gray-50 border border-gray-100/50'
+                    }`}
                   style={{
                     backgroundColor: isActive ? currentVibe.accent : undefined,
                     boxShadow: isActive ? `0 4px 14px ${currentVibe.glow}` : undefined

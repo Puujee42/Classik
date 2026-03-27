@@ -103,13 +103,22 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
         <>
             <motion.div
                 whileTap={{ scale: 0.98 }}
-                className="group relative bg-white rounded-[20px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 will-change-transform"
+                className="group h-full flex flex-col relative transition-all duration-300"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
                 onTouchCancel={handleTouchEnd}
             >
                 <Link href={`/product/${product.id}`} className="block h-full" onClick={(e) => { if (isDragging.current || quickViewOpen) e.preventDefault(); }}>
-                    <div className="relative aspect-[4/5] overflow-hidden bg-[#FAF9F8]">
+                    <div className="relative aspect-square overflow-hidden bg-[#F5F5F5] rounded-xl mb-2.5">
+                        
+                        {/* Discount Badge */}
+                        {product.discountPercent && product.discountPercent > 0 && (
+                            <div className="absolute top-2 left-2 z-20 px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#E27289' }}>
+                                <span className="text-[9px] font-bold text-white flex items-center gap-0.5">
+                                    -{product.discountPercent}%
+                                </span>
+                            </div>
+                        )}
                         {/* Image Slider */}
                         {hasMultiple ? (
                             <motion.div
@@ -169,52 +178,35 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
                             </button>
 
                             {/* Quick View Button */}
-                            <button
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    setQuickViewOpen(true);
-                                }}
-                                // FORCED SIZING
-                                className="group/btn p-0 flex-none w-[28px] h-[28px] min-w-[28px] min-h-[28px] rounded-full bg-white/95 shadow-sm flex items-center justify-center border border-black/5 transition-all hover:bg-white active:scale-90"
-                            >
-                                <Eye
-                                    className="w-[14px] h-[14px] text-slate-500 group-hover/btn:text-black transition-colors duration-300"
-                                    strokeWidth={1.5}
-                                />
-                            </button>
+
                         </div>
                     </div>
 
-                    <div className="p-3 pb-4">
-                        <h3 className="text-[11px] font-bold text-[#E27289] uppercase tracking-wider truncate mb-1 opacity-90 hover:opacity-100 transition-opacity">
+                    <div className="flex flex-col flex-1 px-0.5">
+                        <h3 className="text-[12px] font-bold text-[#333] truncate mb-1 leading-tight">
                             {product.name}
                         </h3>
 
-                        {/* Bottom alignment with Price and Floating Cart */}
-                        <div className="flex items-end justify-between relative mt-2">
-                            <div className="flex flex-col">
+                        {/* Stars */}
+                        <div className="flex items-center gap-0.5 mb-1.5">
+                            {[1, 2, 3, 4, 5].map(star => (
+                                <svg key={star} className="w-2.5 h-2.5 text-gray-200" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                            ))}
+                        </div>
+
+                        <div className="mt-auto flex items-center justify-between">
+                            <div className="flex items-baseline gap-1.5">
+                                <span className="text-[14px] font-bold leading-none text-[#E27289]">
+                                    {formattedPrice.replace(/[^\d.,]/g, '')}₮
+                                </span>
                                 {product.originalPrice && product.originalPrice > product.price && (
-                                    <span className="text-[10px] text-gray-400 line-through leading-none mb-0.5">
+                                    <span className="text-[10px] text-gray-400 line-through leading-none">
                                         {Math.round(product.originalPrice).toLocaleString()}₮
                                     </span>
                                 )}
-                                <div className="flex items-baseline pr-8">
-                                    <span className="text-[12px] font-bold text-[#E27289] mr-0.5">₮</span>
-                                    <span className="text-[14px] font-bold text-[#E27289] tracking-tight leading-none">
-                                        {formattedPrice.replace(/[^\d.,]/g, '')}
-                                    </span>
-                                </div>
                             </div>
-
-                            {/* Floating Cart Button */}
-                            <button
-                                ref={cartBtnRef}
-                                onClick={handleAddToCart}
-                                className="w-7 h-7 rounded-full bg-[#E27289] shadow-[0_4px_12px_rgba(226,114,137,0.3)] flex items-center justify-center absolute -right-1 -bottom-1 active:scale-95 transition-transform"
-                            >
-                                <ShoppingCart className="w-3.5 h-3.5 text-white" strokeWidth={2} />
-                            </button>
                         </div>
                     </div>
                 </Link>

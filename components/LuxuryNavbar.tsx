@@ -138,8 +138,7 @@ export default function LuxuryNavbar() {
 
   const mobileNavItems = [
     { name: t('nav', 'home'), href: '/', icon: Sparkles },
-    { name: t('nav', 'categories') || 'Категори', href: '/categories', icon: LayoutGrid },
-    { name: t('nav', 'search'), href: '/search', icon: Search },
+    { name: (t('nav', 'Дэлгүүр' as any) || 'Дэлгүүр') as string, href: '/shop', icon: LayoutGrid },
     { name: t('nav', 'cart'), href: '/cart', icon: ShoppingBag, count: cartItemsCount },
     { name: t('nav', 'profile'), href: isLoggedIn ? '/profile' : '/sign-in', icon: User },
   ];

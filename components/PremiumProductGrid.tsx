@@ -41,50 +41,22 @@ const containerVariants: Variants = {
 };
 
 function PremiumProductGrid({ products, featuredProducts }: PremiumProductGridProps) {
-  // Separate featured and regular products
-  const featured = featuredProducts || products.filter(p => p.featured);
-  const regular = products.filter(p => !p.featured);
-
   return (
-    <>
-      {/* Featured Products Section */}
-      {featured.length > 0 && (
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 px-4 md:px-8 mb-8"
-        >
-          {featured.map((product) => (
-            <PremiumProductCard
-              key={product.id}
-              product={product}
-              isFeatured={true}
-            />
-          ))}
-        </motion.div>
-      )}
-
-      {/* Regular Products Section */}
-      {regular.length > 0 && (
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 px-4 md:px-8"
-        >
-          {regular.map((product) => (
-            <PremiumProductCard
-              key={product.id}
-              product={product}
-              isFeatured={false}
-            />
-          ))}
-        </motion.div>
-      )}
-    </>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
+      className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8 px-4 md:px-8"
+    >
+      {products.map((product) => (
+        <PremiumProductCard
+          key={product.id}
+          product={product}
+          isFeatured={product.featured || false}
+        />
+      ))}
+    </motion.div>
   );
 }
 

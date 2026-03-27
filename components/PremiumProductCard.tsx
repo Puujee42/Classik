@@ -4,13 +4,14 @@ import { useState, useRef, useCallback } from 'react';
 import { motion, Variants, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Heart, ArrowRight, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
+import { Heart, ArrowRight, ChevronLeft, ChevronRight, Eye, ShoppingCart } from 'lucide-react';
 import { useWishlistStore } from '@/store/wishlistStore';
 import toast from 'react-hot-toast';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import ProductBadge from '@/components/ProductBadge';
 import QuickViewDrawer from '@/components/QuickViewDrawer';
+import { useVibe } from '@/context/VibeContext';
 
 interface Product {
     id: string;
@@ -54,6 +55,7 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
     const [activeIdx, setActiveIdx] = useState(0);
     const isDragging = useRef(false);
     const [quickViewOpen, setQuickViewOpen] = useState(false);
+    const { currentVibe } = useVibe();
 
     const isWishlisted = isInWishlist(product.id);
 
@@ -79,10 +81,10 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
                 whileTap={{ scale: 0.98 }}
             >
                 <Link href={`/product/${product.id}`} className="block h-full" onClick={(e) => { if (isDragging.current || quickViewOpen) e.preventDefault(); }}>
-                    <div className="bg-white rounded-[20px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 h-full flex flex-col relative overflow-hidden group">
+                    <div className="h-full flex flex-col relative group">
 
                         {/* Image Section */}
-                        <div className="relative aspect-[4/5] overflow-hidden bg-[#FAF9F8]">
+                        <div className="relative aspect-square overflow-hidden bg-[#F5F5F5] rounded-2xl mb-3">
                             {/* Badges */}
                             <div className="absolute top-3 left-3 z-10 flex flex-col gap-2 items-start">
                                 <ProductBadge
@@ -91,8 +93,8 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
                                     className="z-10"
                                 />
                                 {product.discountPercent && product.discountPercent > 0 && (
-                                    <div className="px-2.5 py-1 bg-[#FF3B30] rounded-lg shadow-lg shadow-red-500/20">
-                                        <span className="text-[11px] font-black text-white">
+                                    <div className="px-2 py-0.5 rounded-full" style={{ backgroundColor: currentVibe.accent }}>
+                                        <span className="text-[10px] font-bold text-white flex items-center gap-1">
                                             -{product.discountPercent}%
                                         </span>
                                     </div>
@@ -123,17 +125,33 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
                                 </motion.button>
 
                                 {/* Quick View button - appears on hover */}
-                                <motion.button
-                                    whileTap={{ scale: 0.8 }}
+
+                            </div>
+
+                            {/* Hover Add to Cart */}
+                            <div className="absolute bottom-3 left-3 right-3 translate-y-12 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 z-30">
+                                <button
                                     onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
-                                        setQuickViewOpen(true);
+                                        import('@/store/cartStore').then(({ useCartStore }) => {
+                                            useCartStore.getState().addItem({
+                                                id: product.id,
+                                                name: product.name,
+                                                price: product.price,
+                                                image: product.image || '',
+                                                stockStatus: (product.stockStatus as any) || 'in-stock',
+                                                category: product.category || '',
+                                            });
+                                            import('react-hot-toast').then(({ default: toast }) => toast.success('Сагсанд нэмлээ'));
+                                        });
                                     }}
-                                    className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/80 backdrop-blur-md shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 hover:scale-110 transition-all duration-300"
+                                    className="w-full py-2.5 rounded-xl text-white text-[13px] font-bold flex items-center justify-center gap-2 shadow-sm"
+                                    style={{ backgroundColor: currentVibe.accent }}
                                 >
-                                    <Eye className="w-3.5 h-3.5 sm:w-[18px] sm:h-[18px] text-gray-400" strokeWidth={1.5} />
-                                </motion.button>
+                                    <ShoppingCart className="w-4 h-4" />
+                                    Сагсанд хийх
+                                </button>
                             </div>
 
                             {/* Image Slider */}
@@ -199,38 +217,29 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
                         </div>
 
                         {/* Content Section */}
-                        <div className="p-4 sm:p-5 flex flex-col flex-1">
-                            <h3 className="text-[11px] font-bold text-[#E27289] uppercase tracking-wider truncate mb-1 opacity-90 hover:opacity-100 transition-opacity">
+                        <div className="flex flex-col flex-1 px-1">
+                            <h3 className="text-[13px] sm:text-[14px] font-bold text-[#333] truncate mb-1">
                                 {product.name}
                             </h3>
 
-                            <div className="mt-2 flex items-baseline gap-1">
-                                {product.originalPrice && product.originalPrice > product.price ? (
-                                    <div className="flex flex-col">
-                                        <span className="text-[11px] text-gray-400 line-through leading-none mb-1">
-                                            {Math.round(product.originalPrice).toLocaleString()}₮
-                                        </span>
-                                        <div className="flex items-baseline">
-                                            <span className="text-[12px] font-bold text-[#E27289] mr-0.5">₮</span>
-                                            <span className="text-[22px] font-bold tracking-tight text-[#E27289] leading-none">
-                                                {formatPriceWithCurrency(product.price).replace(/[^\d.,]/g, '')}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-baseline">
-                                        <span className="text-[12px] font-bold text-[#E27289] mr-0.5">₮</span>
-                                        <span className="text-[22px] font-bold tracking-tight text-[#E27289] leading-none">
-                                            {formatPriceWithCurrency(product.price).replace(/[^\d.,]/g, '')}
-                                        </span>
-                                    </div>
-                                )}
+                            {/* Stars */}
+                            <div className="flex items-center gap-0.5 mb-2">
+                                {[1,2,3,4,5].map(star => (
+                                    <svg key={star} className="w-3 h-3 text-gray-200" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                ))}
                             </div>
 
-                            <div className="w-full mt-5">
-                                <div className="w-full py-[10px] rounded-full bg-[#FFF4F6] text-[#E27289] text-[11px] uppercase tracking-[0.15em] font-bold flex items-center justify-center transition-colors hover:bg-[#FFE5EB]">
-                                    VIEW DETAILS
-                                </div>
+                            <div className="mt-auto flex items-baseline gap-2">
+                                <span className="text-[15px] sm:text-[16px] font-bold leading-none" style={{ color: currentVibe.accent }}>
+                                    {formatPriceWithCurrency(product.price).replace(/[^\d.,]/g, '')}₮
+                                </span>
+                                {product.originalPrice && product.originalPrice > product.price && (
+                                    <span className="text-[11px] sm:text-[12px] text-gray-400 line-through leading-none">
+                                        {Math.round(product.originalPrice).toLocaleString()}₮
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>

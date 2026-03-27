@@ -44,9 +44,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-lato)', 'Montserrat', 'sans-serif'],
+        sans: ['var(--font-montserrat)', 'Montserrat', 'sans-serif'],
         serif: ['var(--font-playfair)', 'Cinzel', 'serif'],
-        script: ['var(--font-great-vibes)', 'cursive'],
+        script: ['var(--font-script)', 'cursive'],
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
