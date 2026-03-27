@@ -23,9 +23,9 @@ interface HorizontalProductScrollProps {
 
 export default function HorizontalProductScroll({
   products,
-  title = 'Шилдэг Бүтээгдэхүүн',
-  subtitle = 'Хамгийн их таалагддаг',
-  viewAllHref = '#featured',
+  title = 'Шинээр Нэмэгдсэн',
+  subtitle = 'ТАНД ЗОРИУЛСАН',
+  viewAllHref = '/new-arrivals',
 }: HorizontalProductScrollProps) {
   const { convertPrice, currency } = useLanguage();
   const { currentVibe } = useVibe();
@@ -36,34 +36,33 @@ export default function HorizontalProductScroll({
   if (products.length === 0) return null;
 
   return (
-    <section className="py-8 lg:py-12">
+    <section className="bg-[#FCFBFA] py-12 lg:py-16 overflow-hidden">
       {/* Section Header */}
-      <div className="flex items-end justify-between px-5 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-5">
+      <div className="flex items-end justify-between px-4 md:px-8 max-w-7xl mx-auto mb-8">
         <div>
           <p
-            className="uppercase tracking-[0.2em] text-[10px] font-bold mb-1"
+            className="text-[10px] tracking-[0.2em] font-bold uppercase mb-2"
             style={{ color: '#D4AF37' }}
           >
             {subtitle}
           </p>
-          <h2 className="font-serif text-xl sm:text-2xl text-[#333]">
+          <h2 className="font-serif text-3xl text-gray-800 leading-none">
             {title}
           </h2>
         </div>
         <Link
           href={viewAllHref}
-          className="flex items-center gap-1 text-xs font-bold uppercase tracking-[0.1em] shrink-0 pb-0.5 transition-colors"
-          style={{ color: currentVibe.accent }}
+          className="flex items-center gap-1.5 text-xs font-medium tracking-wider uppercase shrink-0 pb-1 transition-all hover:opacity-80 group text-gray-500"
         >
-          Бүгдийг
-          <ChevronRight className="w-3.5 h-3.5" />
+          <span>Бүгдийг</span>
+          <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" style={{ color: currentVibe.accent || '#D4AF37' }} />
         </Link>
       </div>
 
-      {/* Horizontal Scroll Container */}
+      {/* Horizontal Scroll Container (Left Padding Trick) */}
       <div
         ref={scrollRef}
-        className="flex gap-3 overflow-x-auto scrollbar-hide px-5 sm:px-6 lg:px-8 pb-2 snap-x snap-mandatory scroll-smooth"
+        className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide w-full pb-12 pt-4 snap-x snap-mandatory scroll-smooth pl-4 md:pl-8 lg:pl-[max(32px,calc((100vw-1280px)/2+32px))] pr-4 md:pr-8"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {products.slice(0, 10).map((product, index) => (
@@ -81,23 +80,29 @@ export default function HorizontalProductScroll({
           />
         ))}
 
-        {/* "See All" tail card */}
-        <Link
-          href={viewAllHref}
-          className="snap-start shrink-0 w-[140px] sm:w-[160px] flex flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all group"
-          style={{ borderColor: `${currentVibe.accent}30` }}
+        {/* Full-height "See All" tail card */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: Math.min(10, products.length) * 0.05, duration: 0.4 }}
+          className="snap-start shrink-0 w-[180px] sm:w-[220px]"
         >
-          <motion.div
-            whileTap={{ scale: 0.9 }}
-            className="w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-colors"
-            style={{ backgroundColor: currentVibe.bg }}
+          <Link
+            href={viewAllHref}
+            className="block cursor-pointer group h-full"
           >
-            <ChevronRight className="w-5 h-5" style={{ color: currentVibe.accent }} />
-          </motion.div>
-          <span className="text-xs font-bold" style={{ color: currentVibe.accent }}>
-            Бүгдийг үзэх
-          </span>
-        </Link>
+            <div className="bg-[#FDFBF7] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] transition-all duration-500 ease-out hover:-translate-y-1.5 h-full flex flex-col items-center justify-center border border-[#D4AF37]/5 px-4 min-h-[320px] sm:min-h-[380px]">
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center mb-5 bg-white shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-transform duration-500 ease-out group-hover:translate-x-2"
+              >
+                <ChevronRight className="w-6 h-6" style={{ color: currentVibe.accent || '#D4AF37' }} />
+              </div>
+              <span className="text-[12px] font-bold text-gray-800 tracking-wider text-center uppercase">
+                Бүгдийг үзэх
+              </span>
+            </div>
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
@@ -152,9 +157,9 @@ function HorizontalCard({
       if (cartBtnRef.current) {
         const rect = cartBtnRef.current.getBoundingClientRect();
         confetti({
-          particleCount: 12,
-          spread: 40,
-          startVelocity: 12,
+          particleCount: 15,
+          spread: 45,
+          startVelocity: 15,
           origin: {
             x: (rect.left + rect.width / 2) / window.innerWidth,
             y: (rect.top + rect.height / 2) / window.innerHeight,
@@ -172,7 +177,7 @@ function HorizontalCard({
       toast.success('Сагсанд нэмлээ', {
         style: {
           borderRadius: '14px',
-          background: 'linear-gradient(135deg, #E06B8B, #C55B7A)',
+          background: 'linear-gradient(135deg, #F8B4C4, #E06B8B)',
           color: '#fff',
           fontWeight: 700,
           fontSize: '13px',
@@ -188,27 +193,29 @@ function HorizontalCard({
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.4 }}
-      className="snap-start shrink-0 w-[160px] sm:w-[180px]"
+      transition={{ delay: index * 0.05, duration: 0.5 }}
+      // Slightly wider cards on desktop
+      className="snap-start shrink-0 w-[180px] sm:w-[220px]"
     >
-      <Link href={`/product/${product.id}`} className="block">
-        <div className="bg-white rounded-2xl overflow-hidden shadow-[0_2px_16px_rgba(224,107,139,0.06)] border border-[#D4AF37]/8 transition-all active:scale-[0.97]">
-          {/* Image */}
-          <div className="relative aspect-[4/5] overflow-hidden bg-[#FAF9F6]">
+      <Link href={`/product/${product.id}`} className="block h-full cursor-pointer">
+        <div className="bg-white rounded-[20px] sm:rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] transition-all duration-500 ease-out hover:-translate-y-1.5 h-full flex flex-col group relative overflow-hidden">
+          {/* Image Container */}
+          <div className="relative aspect-[3/4] sm:aspect-[4/5] bg-[#F8F8F8] flex-shrink-0 overflow-hidden">
             <Image
               src={mainImage}
               alt={product.name}
               fill
-              sizes="180px"
-              className="object-cover"
+              sizes="(max-width: 640px) 180px, 220px"
+              className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             />
-            {/* Rose gradient overlay */}
-            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white/30 to-transparent pointer-events-none" />
+            
+            {/* Soft gradient overlay for mobile text legibility if needed, but we chose bottom block */}
+            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#F8F8F8]/50 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
 
             {/* Wishlist */}
-            {/* Wishlist */}
             <motion.button
-              whileTap={{ scale: 0.8 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -220,52 +227,52 @@ function HorizontalCard({
                   toast.success('💖', { duration: 800 });
                 }
               }}
-              // p-0, m-0, min-w, min-h нэмж хүчээр жижиг болгох
-              className="absolute top-2 right-2 z-10 w-[26px] h-[26px] min-w-[26px] min-h-[26px] p-0 m-0 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md"
+              className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-sm transition-all"
             >
               <Heart
-                className={`w-3.5 h-3.5 transition-all ${isWishlisted ? 'fill-red-500 text-red-500 scale-110' : 'text-gray-400'
-                  }`}
+                className={`w-4 h-4 transition-all ${isWishlisted ? 'fill-[#E06B8B] text-[#E06B8B]' : 'text-gray-400'}`}
+                strokeWidth={isWishlisted ? 0 : 1.5}
               />
             </motion.button>
+            
             {/* Discount badge */}
             {product.discountPercent && product.discountPercent > 0 && (
-              <div className="absolute top-2 left-2 z-10 px-1.5 py-0.5 bg-[#FF3B30] rounded-lg shadow-sm">
-                <span className="text-[9px] font-black text-white">-{product.discountPercent}%</span>
+              <div className="absolute top-3 left-3 z-10 px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full shadow-[0_4px_10px_rgb(0,0,0,0.05)]">
+                <span className="text-[10px] font-bold tracking-wider" style={{ color: currentVibe.accent || '#E06B8B' }}>-{product.discountPercent}%</span>
               </div>
             )}
           </div>
 
-          {/* Info */}
-          <div className="p-2.5">
-            <h3 className="text-[12px] font-semibold text-[#333] line-clamp-2 leading-snug min-h-[32px] tracking-tight">
+          {/* Info Block (Bottom Anchored) */}
+          <div className="p-4 flex flex-col flex-1 bg-white">
+            <h3 className="text-sm font-medium text-gray-800 line-clamp-2 mt-1 leading-snug tracking-tight flex-grow">
               {product.name}
             </h3>
-            <div className="flex items-center justify-between gap-1.5 mt-1.5">
+            
+            {/* Desktop: Price + Circular Cart Button */}
+            <div className="hidden sm:flex items-center justify-between mt-4">
               <div className="flex items-baseline min-w-0">
-                <span className="text-[14px] font-black tracking-tight truncate mr-1" style={{ color: currentVibe.accent }}>
+                <span className="text-[16px] font-bold tracking-tight truncate mr-0.5" style={{ color: currentVibe.accent || '#E06B8B' }}>
                   {formattedPrice}
                 </span>
                 {currency !== 'USD' && (
-                  <span className="text-[9px] font-bold shrink-0" style={{ color: `${currentVibe.accent}99` }}>₮</span>
+                  <span className="text-[10px] font-bold" style={{ color: currentVibe.accent || '#E06B8B', opacity: 0.8 }}>₮</span>
                 )}
               </div>
-              {/* Add to cart (Сагслах товч) */}
+              
               <motion.button
                 ref={cartBtnRef}
-                whileTap={{ scale: 0.85 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleAddToCart}
-                // p-0, m-0, min-w, min-h нэмж хүчээр жижиг болгох
-                className="w-[30px] h-[30px] min-w-[30px] min-h-[30px] p-0 m-0 shrink-0 flex items-center justify-center rounded-full shadow-[0_3px_10px_rgba(224,107,139,0.2)] transition-all overflow-hidden relative"
-                style={{ background: 'linear-gradient(135deg, #E06B8B, #C55B7A)' }}
+                className="w-9 h-9 shrink-0 flex items-center justify-center rounded-full shadow-md transition-all overflow-hidden relative"
+                style={{ background: 'linear-gradient(135deg, #F8B4C4, #E06B8B)' }}
               >
-                <ShoppingCart className="w-3.5 h-3.5 text-white relative z-10" strokeWidth={1.5} />
-
-                {/* Shimmer glide */}
+                <ShoppingCart className="w-[18px] h-[18px] text-white relative z-10" strokeWidth={1.5} />
                 <motion.div
-                  className="absolute inset-0"
+                  className="absolute inset-0 z-0"
                   style={{
-                    background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.25) 50%, transparent 60%)',
+                    background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%)',
                     backgroundSize: '200% 100%',
                   }}
                   animate={{ backgroundPosition: ['200% 0', '-200% 0'] }}
@@ -273,6 +280,25 @@ function HorizontalCard({
                 />
               </motion.button>
             </div>
+
+            {/* Mobile: Anchored Minimalist Add to Cart */}
+            <div className="flex flex-col sm:hidden mt-3">
+              <div className="flex items-baseline mb-2 mx-auto">
+                <span className="text-[15px] font-bold tracking-tight truncate mr-0.5" style={{ color: currentVibe.accent || '#E06B8B' }}>
+                  {formattedPrice}
+                </span>
+                {currency !== 'USD' && (
+                  <span className="text-[10px] font-bold" style={{ color: currentVibe.accent || '#E06B8B', opacity: 0.8 }}>₮</span>
+                )}
+              </div>
+              <button
+                onClick={handleAddToCart}
+                className="w-full py-2.5 text-[11px] font-bold uppercase tracking-widest bg-gray-900 active:bg-black text-white rounded-xl shadow-sm transition-colors"
+              >
+                Сагсанд
+              </button>
+            </div>
+            
           </div>
         </div>
       </Link>

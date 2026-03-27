@@ -26,36 +26,22 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
     const price = convertPrice(product.price);
     const [activeIdx, setActiveIdx] = useState(0);
     const isDragging = useRef(false);
-    const [showActions, setShowActions] = useState(false);
     const [quickViewOpen, setQuickViewOpen] = useState(false);
     const longPressTimer = useRef<NodeJS.Timeout | null>(null);
     const cartBtnRef = useRef<HTMLButtonElement>(null);
 
     const isWishlisted = isInWishlist(product.id);
 
-    // Build images array
-    const allImages: string[] = (() => {
-        const combined: string[] = [];
-        if (product.image) combined.push(product.image);
-        if (product.images?.length) {
-            product.images.forEach(img => {
-                if (!combined.includes(img)) combined.push(img);
-            });
-        }
-        return combined.length > 0 ? combined : ['/placeholder.png'];
-    })();
-
+    const allImages = product.images?.length ? product.images : (product.image ? [product.image] : ['/placeholder.png']);
     const hasMultiple = allImages.length > 1;
 
     const formattedPrice = currency === 'USD'
         ? `$${price.toLocaleString()}`
         : `${formatCurrency(price)}`;
 
-    // Long press for quick view
     const handleTouchStart = useCallback(() => {
         longPressTimer.current = setTimeout(() => {
             setQuickViewOpen(true);
-            // Haptic feedback if available
             if (navigator.vibrate) navigator.vibrate(30);
         }, 500);
     }, []);
@@ -67,7 +53,6 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
         }
     }, []);
 
-    // Add to cart with confetti micro-interaction
     const handleAddToCart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -79,39 +64,35 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
             image: product.image || '',
             stockStatus: (product.stockStatus as any) || 'in-stock',
             category: product.category || '',
-            description: product.description || undefined,
         });
 
-        // Mini confetti burst from the button
         if (cartBtnRef.current) {
             const rect = cartBtnRef.current.getBoundingClientRect();
-            const x = (rect.left + rect.width / 2) / window.innerWidth;
-            const y = (rect.top + rect.height / 2) / window.innerHeight;
-
             confetti({
                 particleCount: 15,
-                spread: 50,
-                startVelocity: 15,
-                origin: { x, y },
-                colors: ['#E06B8B', '#D4AF37', '#FCEEF2', '#FFD700'],
-                ticks: 80,
+                spread: 45,
+                startVelocity: 12,
+                origin: {
+                    x: (rect.left + rect.width / 2) / window.innerWidth,
+                    y: (rect.top + rect.height / 2) / window.innerHeight,
+                },
+                colors: ['#E27289', '#FFF4F6', '#D4AF37'],
+                ticks: 60,
                 gravity: 0.8,
-                scalar: 0.7,
+                scalar: 0.5,
                 shapes: ['circle'],
                 disableForReducedMotion: true,
             });
         }
 
-        // Haptic feedback
         if (navigator.vibrate) navigator.vibrate(20);
-
         toast.success('Сагсанд нэмлээ', {
             style: {
-                borderRadius: '14px',
-                background: 'linear-gradient(135deg, #E06B8B, #C55B7A)',
+                borderRadius: '12px',
+                background: '#E27289',
                 color: '#fff',
-                fontWeight: 700,
-                fontSize: '13px',
+                fontSize: '12px',
+                fontWeight: 600,
             },
             icon: '🛍️',
             duration: 1500,
@@ -121,15 +102,14 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
     return (
         <>
             <motion.div
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                className="group relative bg-white rounded-2xl overflow-hidden shadow-[0_2px_16px_rgba(224,107,139,0.08)] border border-[#D4AF37]/8 will-change-transform"
+                whileTap={{ scale: 0.98 }}
+                className="group relative bg-white rounded-[20px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 will-change-transform"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
                 onTouchCancel={handleTouchEnd}
             >
-                <Link href={`/product/${product.id}`} className="block" onClick={(e) => { if (isDragging.current || quickViewOpen) e.preventDefault(); }}>
-                    <div className="relative aspect-square overflow-hidden bg-[#FAF9F6] rounded-t-2xl">
+                <Link href={`/product/${product.id}`} className="block h-full" onClick={(e) => { if (isDragging.current || quickViewOpen) e.preventDefault(); }}>
+                    <div className="relative aspect-[4/5] overflow-hidden bg-[#FAF9F8]">
                         {/* Image Slider */}
                         {hasMultiple ? (
                             <motion.div
@@ -138,7 +118,7 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
                                 dragElastic={0.1}
                                 onDragStart={() => { isDragging.current = true; }}
                                 onDragEnd={(_, info) => {
-                                    if (Math.abs(info.offset.x) > 50) {
+                                    if (Math.abs(info.offset.x) > 40) {
                                         if (info.offset.x < 0 && activeIdx < allImages.length - 1) setActiveIdx(p => p + 1);
                                         else if (info.offset.x > 0 && activeIdx > 0) setActiveIdx(p => p - 1);
                                     }
@@ -150,126 +130,83 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
                             >
                                 {allImages.map((img, i) => (
                                     <div key={i} className="w-full h-full shrink-0 relative">
-                                        <Image
-                                            src={img}
-                                            alt={product.name}
-                                            fill
-                                            sizes="(max-width: 768px) 50vw"
-                                            className="object-cover"
-                                        />
+                                        <Image src={img} alt={product.name} fill sizes="50vw" className="object-cover" />
                                     </div>
                                 ))}
                             </motion.div>
                         ) : (
-                            <Image
-                                src={allImages[0]}
-                                alt={product.name}
-                                fill
-                                sizes="(max-width: 768px) 50vw"
-                                className="object-cover"
-                            />
+                            <Image src={allImages[0]} alt={product.name} fill sizes="50vw" className="object-cover" />
                         )}
 
-                        {/* Signature rose gradient overlay on bottom */}
-                        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white/40 via-transparent to-transparent pointer-events-none" />
-
-                        {/* Dot Indicators */}
                         {hasMultiple && (
                             <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10">
                                 {allImages.map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveIdx(i); }}
-                                        className={`rounded-full transition-all duration-300 ${activeIdx === i ? 'w-4 h-1.5 bg-[#E06B8B]' : 'w-1.5 h-1.5 bg-white/70'}`}
-                                    />
+                                    <div key={i} className={`rounded-full transition-all duration-300 ${activeIdx === i ? 'w-3 h-1 bg-[#E27289]' : 'w-1 h-1 bg-gray-300/80'}`} />
                                 ))}
                             </div>
                         )}
 
-                        {/* Badges */}
-                        <div className="absolute top-2 left-2 z-10 flex flex-col gap-1.5 items-start">
-                            <ProductBadge
-                                sections={product.sections}
-                                isFeatured={product.featured}
-                                className="z-10 scale-90 origin-top-left"
-                            />
-                            {product.discountPercent && product.discountPercent > 0 && (
-                                <div className="px-2 py-1 bg-[#FF3B30] rounded-lg shadow-lg shadow-red-500/20">
-                                    <span className="text-[10px] font-black text-white">-{product.discountPercent}%</span>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Action buttons (Wishlist & Quick View) */}
-                        {/* Action buttons (Wishlist & Quick View) */}
-                        <div className="absolute top-2 right-2 z-20 flex flex-col gap-1.5">
-                            <motion.button
-                                whileTap={{ scale: 0.8 }}
+                        {/* Top-Right Stacked Icons (Wishlist + Quick View) */}
+                        <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 z-20 flex flex-col gap-1 sm:gap-1.5 opacity-100">
+                            <button
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
                                     if (navigator.vibrate) navigator.vibrate(15);
-                                    if (isWishlisted) {
-                                        removeFromWishlist(product.id);
-                                        toast.success('Хүслийн жагсаалтаас хаслаа', { duration: 1200 });
-                                    } else {
-                                        addToWishlist({ ...product } as any);
-                                        toast.success('Хүслийн жагсаалтад нэмлээ!', { icon: '💖', duration: 1200 });
-                                    }
+                                    if (isWishlisted) removeFromWishlist(product.id);
+                                    else addToWishlist({ ...product } as any);
                                 }}
-                                // p-0 нэмж, w-8 h-8 болгож өөрчиллөө
-                                className="w-[26px] h-[26px] min-w-[26px] min-h-[26px] p-0 m-0 shrink-0 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center"
+                                className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/80 backdrop-blur-md shadow-sm flex items-center justify-center transition-transform active:scale-90"
                             >
-                                <Heart
-                                    className={`w-3.5 h-3.5 transition-all duration-300 ${isWishlisted ? 'fill-red-500 text-red-500 scale-110' : 'text-gray-400'}`}
-                                />
-                            </motion.button>
-
-
+                                <Heart className={`w-3.5 h-3.5 sm:w-[18px] sm:h-[18px] ${isWishlisted ? 'fill-[#E27289] text-[#E27289]' : 'text-gray-400'}`} strokeWidth={isWishlisted ? 0 : 1.5} />
+                            </button>
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setQuickViewOpen(true);
+                                }}
+                                className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/80 backdrop-blur-md shadow-sm flex items-center justify-center transition-transform active:scale-90"
+                            >
+                                <Eye className="w-3.5 h-3.5 sm:w-[18px] sm:h-[18px] text-gray-400" strokeWidth={1.5} />
+                            </button>
                         </div>
                     </div>
 
-                    <div className="p-3 flex flex-col gap-1">
-                        <h3 className="text-[13px] font-semibold text-[#333] line-clamp-2 leading-snug min-h-[36px] tracking-tight">
+                    <div className="p-3 pb-4">
+                        <h3 className="text-[12px] font-medium text-gray-800 truncate mb-1.5">
                             {product.name}
                         </h3>
 
-                        <div className="flex flex-col gap-0.5 mt-1">
-                            {product.originalPrice && product.originalPrice > product.price && (
-                                <span className="text-[10px] font-medium text-[#AAA] line-through">
-                                    {Math.round(product.originalPrice).toLocaleString()}₮
-                                </span>
-                            )}
-                            <div className="flex items-center justify-between mt-1">
-                                <div className="flex items-baseline shrink min-w-0 pr-1">
-                                    <span className="text-[14px] sm:text-[15px] font-black text-[#E06B8B] tracking-tight truncate mr-0.5">
-                                        {formattedPrice}
+                        {/* Bottom alignment with Price and Floating Cart */}
+                        <div className="flex items-end justify-between relative mt-2">
+                            <div className="flex flex-col">
+                                {product.originalPrice && product.originalPrice > product.price && (
+                                    <span className="text-[10px] text-gray-400 line-through leading-none mb-0.5">
+                                        {Math.round(product.originalPrice).toLocaleString()}₮
                                     </span>
-                                    <span className="text-[9px] font-bold text-[#E06B8B]/70 shrink-0">₮</span>
+                                )}
+                                <div className="flex items-baseline pr-8">
+                                    <span className="text-[12px] font-bold text-[#E27289] mr-0.5">₮</span>
+                                    <span className="text-[14px] font-bold text-[#E27289] tracking-tight leading-none">
+                                        {formattedPrice.replace(/[^\d.,]/g, '')}
+                                    </span>
                                 </div>
-
-                                {/* Add to Cart with confetti */}
-                                {/* Add to Cart with confetti */}
-                                <motion.button
-                                    ref={cartBtnRef}
-                                    whileTap={{ scale: 0.85 }}
-                                    onClick={handleAddToCart}
-                                    // p-0 нэмж, w-8 h-8 болгож өөрчиллөө
-                                    className="w-4 h-4 p-0 shrink-0 flex items-center justify-center rounded-full shadow-[0_4px_15px_rgba(224,107,139,0.25)] active:shadow-[0_2px_6px_rgba(224,107,139,0.2)] transition-all overflow-hidden relative"
-                                    style={{
-                                        background: 'linear-gradient(135deg, #E06B8B, #C55B7A)',
-                                    }}
-                                >
-                                    <ShoppingCart className="w-4 h-4 text-white relative z-10" strokeWidth={1.5} />
-                                    {/* Shimmer glide... */}
-                                </motion.button>
                             </div>
+                            
+                            {/* Floating Cart Button */}
+                            <button
+                                ref={cartBtnRef}
+                                onClick={handleAddToCart}
+                                className="w-8 h-8 rounded-full bg-[#E27289] shadow-[0_4px_12px_rgba(226,114,137,0.3)] flex items-center justify-center absolute -right-1 -bottom-1 active:scale-95 transition-transform"
+                            >
+                                <ShoppingCart className="w-4 h-4 text-white" strokeWidth={2} />
+                            </button>
                         </div>
                     </div>
                 </Link>
             </motion.div>
 
-            {/* Quick View Drawer (bottom sheet on mobile) */}
             <QuickViewDrawer
                 product={quickViewOpen ? (product as any) : null}
                 isOpen={quickViewOpen}

@@ -54,7 +54,7 @@ function PremiumProductGrid({ products, featuredProducts }: PremiumProductGridPr
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 p-2 sm:p-4 mb-8"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 px-4 md:px-8 mb-8"
         >
           {featured.map((product) => (
             <PremiumProductCard
@@ -66,16 +66,6 @@ function PremiumProductGrid({ products, featuredProducts }: PremiumProductGridPr
         </motion.div>
       )}
 
-      {/* Section Heading Separator */}
-      {featured.length > 0 && regular.length > 0 && (
-        <div className="px-2 sm:px-4 mb-6">
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-            Бүх бүтээгдэхүүн
-          </h2>
-          <div className="h-0.5 w-16 bg-gradient-to-r from-orange-500 to-orange-300 mt-2 rounded-full"></div>
-        </div>
-      )}
-
       {/* Regular Products Section */}
       {regular.length > 0 && (
         <motion.div
@@ -83,7 +73,7 @@ function PremiumProductGrid({ products, featuredProducts }: PremiumProductGridPr
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 p-2 sm:p-4"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 px-4 md:px-8"
         >
           {regular.map((product) => (
             <PremiumProductCard

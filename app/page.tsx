@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Sparkles, SlidersHorizontal, X, ShoppingBag, Sun, Leaf, Gem, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sparkles, SlidersHorizontal, X, ShoppingBag, Sun, Leaf, Gem, ChevronLeft, ChevronRight, Heart, ShieldCheck, Truck } from 'lucide-react';
 import PremiumProductGrid from '@/components/PremiumProductGrid';
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,6 +12,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useProducts } from '@/lib/hooks/useProducts';
 import { type Product } from '@/models/Product';
 import MobileProductGrid from '@/components/MobileProductGrid';
+import HorizontalProductScroll from '@/components/HorizontalProductScroll';
 import InfiniteScrollTrigger from '@/components/InfiniteScrollTrigger';
 import FloatingIngredients from '@/components/FloatingIngredients';
 import { useVibe, vibeConfigs, type VibeType } from '@/context/VibeContext';
@@ -301,41 +302,121 @@ export default function HomePage() {
 
 
 
+      {/* ═══════════════ SECTION 3: ALL PRODUCTS GRID ═══════════════ */}
+      {!loading && !error && sortedProducts.length > 0 && (
+        <section className="relative z-10 w-full mx-auto max-w-[1400px] pt-12 pb-8">
+          
+          {/* Beautiful Feminine Header */}
+          <div className="text-center mb-10 px-4">
+            <motion.p 
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-[10px] md:text-[11px] uppercase tracking-[0.25em] font-bold mb-3"
+                style={{ color: '#D4AF37' }}
+            >
+                Цуглуулга
+            </motion.p>
+            <motion.h2 
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="font-serif text-3xl md:text-5xl text-[#333] mb-4"
+            >
+                Танд зориулсан <span className="font-script text-4xl md:text-6xl text-[#E27289] block mt-1 sm:inline sm:mt-0">Бүтээгдэхүүн</span>
+            </motion.h2>
+            <motion.div 
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="h-[1px] w-24 bg-gradient-to-r from-transparent via-[#E27289] to-transparent mx-auto"
+            />
+          </div>
+
+          {/* Mobile Grid (< 768px) */}
+          <div className="block md:hidden">
+            <MobileProductGrid products={sortedProducts} />
+          </div>
+
+          {/* Desktop/Tablet Grid (>= 768px) */}
+          <div className="hidden md:block">
+            <PremiumProductGrid products={sortedProducts} />
+          </div>
+          
+          <div className="flex justify-center mt-6 mb-16">
+            <motion.a
+                href="/shop"
+                whileHover={{ y: -3, boxShadow: `0 8px 25px rgba(226,114,137,0.3)` }}
+                whileTap={{ scale: 0.97 }}
+                className="px-10 py-4 text-[13px] uppercase tracking-[0.2em] inline-block rounded-full bg-white border border-[#E27289]/30 text-[#E27289] font-bold transition-all shadow-sm hover:bg-[#E27289] hover:text-white"
+            >
+                БҮХ БҮТЭЭГДЭХҮҮН ҮЗЭХ
+            </motion.a>
+          </div>
+        </section>
+      )}
+
+
+      {/* ═══════════════ SECTION 3.5: BRAND PILLARS ═══════════════ */}
+      <section className="relative z-10 py-10 lg:py-16 bg-white/50 border-y border-[#D4AF37]/10">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-6 md:gap-8 lg:justify-between items-center pb-2 md:pb-0">
+            {[
+              { icon: Leaf, title: '100% Органик', desc: 'Байгалийн гаралтай' },
+              { icon: Heart, title: 'Хэрэглэгчдэд зориулсан', desc: 'Зөөлөн, харшилгүй' },
+              { icon: Gem, title: 'Монгол брэнд', desc: 'Үндэсний үйлдвэрлэл' },
+              { icon: Truck, title: 'Хүргэлт 24ц', desc: 'Шуурхай, найдвартай' }
+            ].map((pillar, idx) => (
+              <div key={idx} className="flex flex-col items-center text-center min-w-[130px] snap-center group">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-sm" style={{ backgroundColor: '#FFF4F6' }}>
+                  <pillar.icon className="w-6 h-6 text-[#E27289]" strokeWidth={1.5} />
+                </div>
+                <h4 className="text-[13px] font-bold text-gray-800 mb-1">{pillar.title}</h4>
+                <p className="text-[11px] text-gray-500">{pillar.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ═══════════════ SECTION 4: ABOUT / PHILOSOPHY ═══════════════ */}
-      <section id="philosophy" className="relative z-10 py-20 lg:py-28 overflow-hidden transition-colors duration-700" style={{ backgroundColor: currentVibe.bg }}>
+      <section id="philosophy" className="relative z-10 py-16 lg:py-28 overflow-hidden transition-colors duration-700" style={{ backgroundColor: currentVibe.bg }}>
         {/* Decorative gold rings */}
         <div className="absolute top-12 right-12 w-64 h-64 rounded-full border border-[#D4AF37]/15 hidden lg:block" />
         <div className="absolute bottom-8 left-8 w-40 h-40 rounded-full border border-[#D4AF37]/10 hidden lg:block" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full border border-[#D4AF37]/8 hidden lg:block" style={{ animation: 'goldPulse 6s ease-in-out infinite' }} />
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6 lg:px-8 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <p className="uppercase tracking-[0.3em] text-xs font-bold mb-6" style={{ color: '#D4AF37' }}>Бидний Философи</p>
+            <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs font-bold mb-4 md:mb-6" style={{ color: '#D4AF37' }}>Бидний Философи</p>
 
-            <h2 className="font-serif text-4xl md:text-5xl text-[#333] mb-6 leading-tight">
+            <h2 className="font-serif text-3xl md:text-5xl text-[#333] mb-4 md:mb-6 leading-tight">
               Мөнхийн Гоо Үзэсгэлэн, <br />
-              <span className="font-script text-5xl md:text-6xl" style={{ color: currentVibe.accent }}>Байгалийн Сонгодог</span>
+              <span className="font-script text-4xl md:text-6xl" style={{ color: currentVibe.accent }}>Байгалийн Сонгодог</span>
             </h2>
 
-            <p className="text-[#555] text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto mb-10">
+            <p className="text-[#555] text-sm md:text-xl font-light leading-relaxed max-w-2xl mx-auto mb-8 md:mb-10">
               Classik Store-д бид жинхэнэ гоо үзэсгэлэн дотор талаас ирдэг гэдэгт итгэдэг. Манай бүтээгдэхүүнүүд байгалийн хамгийн хүчирхэг ургамлуудыг хүндэтгэж,
               эмэгтэй сэтгэлийг баясгах гоёмсог савлагаанд хийсэн. Бүх бүтээгдэхүүн нь гэрэлтсэн, итгэлтэй арьсанд зориулсан хайрын захидал юм.
             </p>
 
-            <div className="flex flex-wrap gap-8 justify-center mb-12">
+            {/* Stats - Horizontal Scroll on Mobile */}
+            <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-6 md:gap-8 justify-start md:justify-center mb-10 pb-4 md:pb-0 px-2 md:px-0">
               {[
                 { number: '100%', label: 'Дээд зэрэглэлийн найрлага' },
                 { number: '50+', label: 'Арьс арчилгааны бүтээгдэхүүн' },
                 { number: '10K+', label: 'Сэтгэл ханамжтай хэрэглэгч' },
               ].map((stat) => (
-                <div key={stat.label} className="text-center">
+                <div key={stat.label} className="text-center min-w-[140px] snap-center shrink-0">
                   <p className="font-serif text-3xl md:text-4xl font-bold" style={{ color: currentVibe.accent }}>{stat.number}</p>
-                  <p className="text-xs uppercase tracking-[0.2em] text-[#888] mt-1 font-bold">{stat.label}</p>
+                  <p className="text-[10px] md:text-xs uppercase tracking-[0.2em] text-[#888] mt-1 font-bold leading-tight">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -344,7 +425,7 @@ export default function HomePage() {
               href="#featured"
               whileHover={{ y: -3, boxShadow: `0 15px 35px ${currentVibe.glow.replace('0.3', '0.4')}` }}
               whileTap={{ scale: 0.97 }}
-              className="px-10 py-4 text-sm uppercase tracking-[0.2em] inline-block rounded-full text-white font-bold relative overflow-hidden transition-all"
+              className="px-8 md:px-10 py-3.5 md:py-4 text-xs tracking-[0.15em] md:text-sm md:tracking-[0.2em] uppercase inline-block rounded-full text-white font-bold relative overflow-hidden transition-all shadow-md"
               style={{ backgroundColor: currentVibe.accent, boxShadow: `0 4px 14px ${currentVibe.glow}` }}
             >
               Цуглуулга харах
@@ -354,32 +435,34 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ NEWSLETTER CTA ═══════════════ */}
-      <section className="relative z-10 py-20 lg:py-24 text-center px-4">
+      <section className="relative z-10 py-16 lg:py-24 text-center px-4 md:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="max-w-xl mx-auto"
         >
-          <p className="uppercase tracking-[0.3em] text-xs font-bold mb-4" style={{ color: '#D4AF37' }}>Бидэнтэй холбогдоорой</p>
-          <h2 className="font-serif text-3xl md:text-4xl text-[#333] mb-3">
+          <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs font-bold mb-3 md:mb-4" style={{ color: '#D4AF37' }}>БИДЭНТЭЙ ХОЛБОГДООРОЙ</p>
+          <h2 className="font-serif text-2xl md:text-4xl text-[#333] mb-3 md:mb-4">
             Таны <span className="font-script text-4xl md:text-5xl" style={{ color: currentVibe.accent }}>Гоо сайхан</span>
           </h2>
-          <p className="text-[#666] font-light mb-8">Classik клубт нэгдээд онцгой арьс арчилгааны бүтээгдэхүүн, хувийн зөвлөгөө аваарай.</p>
-          <div className="relative group">
+          <p className="text-[#666] font-light text-sm md:text-base mb-6 md:mb-8 px-2 md:px-0">
+            Classik клубт нэгдээд онцгой арьс арчилгааны нууцууд болон хувийн зөвлөгөөг цаг алдалгүй аваарай.
+          </p>
+          <div className="relative group flex flex-col md:block gap-3 md:gap-0 mt-4">
             <input
               type="email"
               placeholder="Имэйл хаяг"
-              className="w-full py-4 pl-6 pr-36 rounded-full border border-[#D4AF37]/20 bg-white/80 backdrop-blur-sm transition-all text-sm"
-              style={{ '--focus-border': currentVibe.accent, '--focus-ring': `${currentVibe.accent}33` } as React.CSSProperties}
+              className="w-full py-3.5 md:py-4 px-6 md:pr-40 rounded-full border border-[#D4AF37]/20 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-[13px] md:text-sm focus:outline-none focus:ring-2 transition-all outline-none"
+              style={{ '--focus-border': currentVibe.accent, '--focus-ring': `${currentVibe.accent}33`, outlineColor: currentVibe.accent } as React.CSSProperties}
             />
             <motion.button
               whileHover={{ y: -1, boxShadow: `0 8px 20px ${currentVibe.glow.replace('0.3', '0.4')}` }}
               whileTap={{ scale: 0.97 }}
-              className="absolute right-2 top-2 bottom-2 px-8 text-white rounded-full text-xs font-bold uppercase tracking-[0.15em] transition-all"
+              className="md:absolute md:right-2 md:top-2 md:bottom-2 w-full md:w-auto py-3.5 md:py-0 px-8 text-white rounded-full text-xs font-bold uppercase tracking-[0.15em] transition-all"
               style={{ backgroundColor: currentVibe.accent, boxShadow: `0 4px 14px ${currentVibe.glow}` }}
             >
-              Бүртгүүлэх
+              БҮРТГҮҮЛЭХ
             </motion.button>
           </div>
         </motion.div>

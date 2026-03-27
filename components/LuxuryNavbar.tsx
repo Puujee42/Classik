@@ -133,7 +133,6 @@ export default function LuxuryNavbar() {
     { name: t('nav', 'home'), href: '/', icon: Sparkles },
     { name: t('nav', 'newArrivals'), href: '/new-arrivals', icon: Stars },
     { name: t('nav', 'readyToShip'), href: '/ready-to-ship', icon: Gift },
-    { name: t('nav', 'deals'), href: '/deals', icon: Diamond },
     { name: t('nav', 'sale'), href: '/sale', icon: Flame },
   ];
 
@@ -359,7 +358,10 @@ export default function LuxuryNavbar() {
                     whileHover={{ scale: 1.2, y: -2 }}
                     whileTap={{ scale: 0.9 }}
                     animate={wishlistBump ? { x: [0, -4, 4, -4, 4, 0] } : {}}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    transition={{
+                      type: "spring", stiffness: 400, damping: 10,
+                      x: { type: "keyframes", duration: 0.4 }
+                    }}
                     className="relative p-2 hover:bg-gray-50 rounded-2xl transition-all group cursor-pointer border border-transparent hover:border-gray-100"
                   >
                     <Heart
