@@ -444,3 +444,66 @@ body {
 .skincare-blob-pulse {
   animation: softPulse 4s ease-in-out infinite;
 }
+
+/* ─── Horizontal Scroll Snap ────────────────────────────────────── */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+.snap-mandatory {
+  scroll-snap-type: x mandatory;
+}
+.snap-start {
+  scroll-snap-align: start;
+}
+
+/* ─── Brand Pillar Icons ────────────────────────────────────────── */
+.brand-pillar-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.brand-pillar-icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+  background-size: 200% 100%;
+  animation: btnShine 4s ease infinite;
+}
+
+/* ─── Horizontal Scroll Card Shadows ────────────────────────────── */
+.h-scroll-card {
+  box-shadow: 0 2px 12px rgba(224, 107, 139, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.08);
+  transition: all 0.2s ease;
+}
+.h-scroll-card:active {
+  box-shadow: 0 1px 6px rgba(224, 107, 139, 0.12);
+  transform: scale(0.97);
+}
+
+/* ─── Mobile Brand Pillars Scroll ────────────────────────────────── */
+@media (max-width: 640px) {
+  .pillars-scroll {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .pillars-scroll::-webkit-scrollbar { display: none; }
+  .pillars-scroll > * {
+    scroll-snap-align: center;
+    flex-shrink: 0;
+  }
+}
