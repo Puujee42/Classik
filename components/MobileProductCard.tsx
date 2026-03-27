@@ -200,41 +200,33 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
                             )}
                         </div>
 
-                        {/* Wishlist button */}
-                        <motion.button
-                            whileTap={{ scale: 0.8 }}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                if (navigator.vibrate) navigator.vibrate(15);
-                                if (isWishlisted) {
-                                    removeFromWishlist(product.id);
-                                    toast.success('Хүслийн жагсаалтаас хаслаа', { duration: 1200 });
-                                } else {
-                                    addToWishlist({ ...product } as any);
-                                    toast.success('Хүслийн жагсаалтад нэмлээ!', { icon: '💖', duration: 1200 });
-                                }
-                            }}
-                            className="absolute top-2 right-2 z-20 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md"
-                        >
-                            <Heart
-                                className={`w-4 h-4 transition-all duration-300 ${isWishlisted ? 'fill-red-500 text-red-500 scale-110' : 'text-gray-400'}`}
-                            />
-                        </motion.button>
+                        {/* Action buttons (Wishlist & Quick View) */}
+                        {/* Action buttons (Wishlist & Quick View) */}
+                        <div className="absolute top-2 right-2 z-20 flex flex-col gap-1.5">
+                            <motion.button
+                                whileTap={{ scale: 0.8 }}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    if (navigator.vibrate) navigator.vibrate(15);
+                                    if (isWishlisted) {
+                                        removeFromWishlist(product.id);
+                                        toast.success('Хүслийн жагсаалтаас хаслаа', { duration: 1200 });
+                                    } else {
+                                        addToWishlist({ ...product } as any);
+                                        toast.success('Хүслийн жагсаалтад нэмлээ!', { icon: '💖', duration: 1200 });
+                                    }
+                                }}
+                                // p-0 нэмж, w-8 h-8 болгож өөрчиллөө
+                                className="w-[26px] h-[26px] min-w-[26px] min-h-[26px] p-0 m-0 shrink-0 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center"
+                            >
+                                <Heart
+                                    className={`w-3.5 h-3.5 transition-all duration-300 ${isWishlisted ? 'fill-red-500 text-red-500 scale-110' : 'text-gray-400'}`}
+                                />
+                            </motion.button>
 
-                        {/* Quick View button */}
-                        <motion.button
-                            whileTap={{ scale: 0.85 }}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setQuickViewOpen(true);
-                                if (navigator.vibrate) navigator.vibrate(20);
-                            }}
-                            className="absolute bottom-8 right-2 z-20 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md border border-[#D4AF37]/15"
-                        >
-                            <Eye className="w-4 h-4 text-[#D4AF37]" />
-                        </motion.button>
+
+                        </div>
                     </div>
 
                     <div className="p-3 flex flex-col gap-1">
@@ -248,35 +240,28 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
                                     {Math.round(product.originalPrice).toLocaleString()}₮
                                 </span>
                             )}
-                            <div className="flex items-end justify-between">
-                                <div className="flex items-baseline gap-0.5">
-                                    <span className="text-lg font-black text-[#E06B8B] tracking-tight">
+                            <div className="flex items-center justify-between mt-1">
+                                <div className="flex items-baseline shrink min-w-0 pr-1">
+                                    <span className="text-[14px] sm:text-[15px] font-black text-[#E06B8B] tracking-tight truncate mr-0.5">
                                         {formattedPrice}
                                     </span>
-                                    <span className="text-[10px] font-bold text-[#E06B8B]/70 mb-0.5">₮</span>
+                                    <span className="text-[9px] font-bold text-[#E06B8B]/70 shrink-0">₮</span>
                                 </div>
 
+                                {/* Add to Cart with confetti */}
                                 {/* Add to Cart with confetti */}
                                 <motion.button
                                     ref={cartBtnRef}
                                     whileTap={{ scale: 0.85 }}
                                     onClick={handleAddToCart}
-                                    className="w-10 h-10 flex items-center justify-center rounded-2xl shadow-[0_4px_15px_rgba(224,107,139,0.25)] active:shadow-[0_2px_6px_rgba(224,107,139,0.2)] transition-all overflow-hidden relative"
+                                    // p-0 нэмж, w-8 h-8 болгож өөрчиллөө
+                                    className="w-4 h-4 p-0 shrink-0 flex items-center justify-center rounded-full shadow-[0_4px_15px_rgba(224,107,139,0.25)] active:shadow-[0_2px_6px_rgba(224,107,139,0.2)] transition-all overflow-hidden relative"
                                     style={{
                                         background: 'linear-gradient(135deg, #E06B8B, #C55B7A)',
                                     }}
                                 >
-                                    <ShoppingCart className="w-[18px] h-[18px] text-white relative z-10" strokeWidth={1.5} />
-                                    {/* Shimmer glide */}
-                                    <motion.div
-                                        className="absolute inset-0"
-                                        style={{
-                                            background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.25) 50%, transparent 60%)',
-                                            backgroundSize: '200% 100%',
-                                        }}
-                                        animate={{ backgroundPosition: ['200% 0', '-200% 0'] }}
-                                        transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                                    />
+                                    <ShoppingCart className="w-4 h-4 text-white relative z-10" strokeWidth={1.5} />
+                                    {/* Shimmer glide... */}
                                 </motion.button>
                             </div>
                         </div>
