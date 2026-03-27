@@ -38,6 +38,10 @@ function SearchParamsHandler({ setSearchQuery, pathname }: { setSearchQuery: (q:
 export default function LuxuryNavbar() {
   const pathname = usePathname();
   const router = useRouter();
+
+  // Hide navbar entirely on auth pages so the mobile bottom nav doesn't cover form buttons
+  const isAuthPage = pathname === '/sign-in' || pathname === '/sign-up';
+  if (isAuthPage) return null;
   const { user, isAuthenticated: isLoggedIn, isAdmin, logout } = useAuth();
   const { vibe, currentVibe } = useVibe();
 
