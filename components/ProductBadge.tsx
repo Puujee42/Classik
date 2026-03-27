@@ -27,10 +27,6 @@ export default function ProductBadge({
         badgeLabel = 'ШИНЭ';
         badgeIcon = '✨';
         badgeStyle = 'from-blue-500/90 to-indigo-500/90 border-blue-400/40 shadow-blue-500/30';
-    } else if (isFeatured) {
-        badgeLabel = 'ОНЦГОЙ';
-        badgeIcon = '✨';
-        badgeStyle = 'from-orange-500/90 to-red-500/90 border-orange-400/40 shadow-[#E06B8B]/30';
     } else {
         return null; // No badge
     }
