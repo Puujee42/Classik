@@ -494,9 +494,10 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
       {/* ── Font injection ── */}
       <style dangerouslySetInnerHTML={{
         __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
         .font-sora { font-family: 'Sora', sans-serif; }
         .font-dm  { font-family: 'DM Sans', sans-serif; }
+        .font-editorial { font-family: 'Cormorant Garamond', serif; }
         body { background-color: #FAFAF9; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -519,7 +520,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
           </motion.button>
         </div>
 
-        {/* ── Sticky header ─────────────────────────────────────────────── */}
+        {/* ── Sticky header — Skincare Pill Style ─────────────────────────── */}
         <AnimatePresence>
           {isScrolled && (
             <motion.div
@@ -528,11 +529,11 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
               exit={{ y: -64, opacity: 0 }}
               transition={{ type: 'spring', damping: 28, stiffness: 320 }}
               className="fixed top-0 left-0 right-0 z-[100] hidden md:block"
-              style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(24px)', borderBottom: '1px solid rgba(0,0,0,0.06)' }}
+              style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(24px)', borderBottom: '1px solid rgba(224,107,139,0.08)', boxShadow: '0 2px 20px rgba(224,107,139,0.06)' }}
             >
               <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl overflow-hidden border border-slate-100 bg-white shrink-0 relative">
+                  <div className="w-11 h-11 rounded-full overflow-hidden border border-rose-100/50 bg-[#FFF5F8] shrink-0 relative">
                     <Image src={product.image || '/placeholder-product.png'} alt={product.name} fill className="object-contain p-1.5" />
                   </div>
                   <div>
@@ -542,11 +543,11 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                 </div>
                 <div className="flex items-center gap-3">
                   <motion.button whileTap={{ scale: 0.95 }} onClick={handleAddToCart}
-                    className="px-5 py-2.5 rounded-2xl bg-slate-100 text-slate-900 font-bold text-sm hover:bg-slate-200 transition-colors">
+                    className="px-5 py-2.5 rounded-full bg-[#FFF0F4] text-[#E06B8B] font-bold text-sm hover:bg-[#FFE0EA] transition-colors border border-rose-200/50">
                     Сагсанд нэмэх
                   </motion.button>
                   <motion.button whileTap={{ scale: 0.95 }} onClick={handleBuyNow}
-                    className="px-5 py-2.5 rounded-2xl bg-[#E06B8B] text-white font-bold text-sm shadow-lg shadow-[#E06B8B]/25 hover:bg-[#C9597A] transition-colors">
+                    className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#E06B8B] to-[#D55A7B] text-white font-bold text-sm shadow-lg shadow-[#E06B8B]/25 hover:shadow-xl transition-all">
                     Шууд авах
                   </motion.button>
                 </div>
@@ -561,14 +562,18 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
             {/* ── LEFT: GALLERY ───────────────────────────────────────────── */}
             <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-4">
 
-              {/* Main image */}
+              {/* Main image — Skincare Hero */}
               <div
-                className="group relative w-full bg-white overflow-hidden md:rounded-3xl md:border md:border-slate-100 md:shadow-sm md:aspect-square"
+                className="group relative w-full skincare-hero-gradient overflow-hidden md:rounded-[2rem] md:border md:border-rose-100/60 md:shadow-sm md:aspect-square"
                 style={{ aspectRatio: '1/1' }}
                 onMouseMove={mainImgPhysics.handleMouseMove}
                 onMouseEnter={mainImgPhysics.handleMouseEnter}
                 onMouseLeave={mainImgPhysics.handleMouseLeave}
               >
+                {/* Decorative blobs */}
+                <div className="absolute top-10 left-10 w-40 h-40 bg-[#FDDCE5] skincare-hero-blob skincare-blob-pulse" />
+                <div className="absolute bottom-20 right-10 w-32 h-32 bg-[#FDE8D8] skincare-hero-blob skincare-blob-pulse" style={{ animationDelay: '2s' }} />
+
                 {/* Desktop fade image */}
                 <div className="hidden md:block w-full h-full" onClick={() => setShowLightbox(true)}>
                   <AnimatePresence mode="wait">
@@ -581,7 +586,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                       className="w-full h-full cursor-zoom-in absolute inset-0 flex items-center justify-center p-8"
                     >
                       <div ref={mainImgPhysics.ref} className="w-full h-full relative origin-center">
-                        <Image src={images[activeImageIndex]} alt={product.name} fill className="object-contain pointer-events-none" priority />
+                        <Image src={images[activeImageIndex]} alt={product.name} fill className="object-contain pointer-events-none drop-shadow-lg" priority />
                       </div>
                     </motion.div>
                   </AnimatePresence>
@@ -590,14 +595,14 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                   {images.length > 1 && (<>
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveImageIndex(p => Math.max(0, p - 1)); }}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-slate-100 text-slate-600 hover:text-[#E06B8B] disabled:opacity-30"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-rose-100/50 text-slate-500 hover:text-[#E06B8B] disabled:opacity-30"
                       disabled={activeImageIndex === 0}
                     >
                       <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveImageIndex(p => Math.min(images.length - 1, p + 1)); }}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-slate-100 text-slate-600 hover:text-[#E06B8B] disabled:opacity-30"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-rose-100/50 text-slate-500 hover:text-[#E06B8B] disabled:opacity-30"
                       disabled={activeImageIndex === images.length - 1}
                     >
                       <ChevronRight className="w-5 h-5" />
@@ -639,8 +644,8 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                 {/* Badges */}
                 <div className="absolute top-5 left-5 flex flex-col gap-2 z-10 select-none">
                   {discount > 0 && (
-                    <div className="px-3 py-1.5 bg-[#E06B8B] text-white rounded-2xl shadow-lg shadow-[#E06B8B]/20 w-fit">
-                      <span className="text-[10px] font-black uppercase tracking-widest">-{discount}% Off</span>
+                    <div className="px-3.5 py-1.5 bg-gradient-to-r from-[#E06B8B] to-[#F2A0B5] text-white rounded-full shadow-lg shadow-[#E06B8B]/20 w-fit">
+                      <span className="text-[10px] font-black uppercase tracking-widest">-{discount}%</span>
                     </div>
                   )}
                 </div>
@@ -648,17 +653,17 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                 {/* FABs */}
                 <div className="absolute top-5 right-5 flex flex-col gap-2.5 z-10">
                   <motion.button whileTap={{ scale: 0.88 }} onClick={e => { e.stopPropagation(); handleWishlist(); }}
-                    className="w-10 h-10 bg-white/95 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 text-slate-400 hover:text-red-500 transition-colors">
+                    className="w-11 h-11 bg-white/95 backdrop-blur-md rounded-full flex items-center justify-center shadow-sm border border-rose-100/50 text-slate-400 hover:text-red-500 transition-colors">
                     <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} strokeWidth={2} />
                   </motion.button>
                   <motion.button whileTap={{ scale: 0.88 }} onClick={e => { e.stopPropagation(); handleShare(); }}
-                    className="w-10 h-10 bg-white/95 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 text-slate-400 hover:text-blue-500 transition-colors">
+                    className="w-11 h-11 bg-white/95 backdrop-blur-md rounded-full flex items-center justify-center shadow-sm border border-rose-100/50 text-slate-400 hover:text-blue-500 transition-colors">
                     <Share2 className="w-5 h-5" strokeWidth={2} />
                   </motion.button>
                 </div>
               </div>
 
-              {/* Thumbnail strip */}
+              {/* Thumbnail strip — pill style */}
               {images.length > 1 && (
                 <div className="hidden md:flex gap-3 overflow-x-auto hide-scrollbar py-2 px-1">
                   {images.map((img, i) => (
@@ -681,24 +686,11 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                 </div>
               )}
 
-              {/* Trust grid */}
-              <div className="hidden md:grid grid-cols-3 gap-3 mt-2">
-                {[
-                  { icon: ShieldCheck, color: 'emerald', bg: 'bg-emerald-50', text: 'text-emerald-500', label: 'Баталгаат хугацаа', sub: '100% Оригинал' },
-                  { icon: RotateCcw, color: 'purple', bg: 'bg-purple-50', text: 'text-purple-500', label: 'Буцаалт хэвийн', sub: '7 хоногт буцаах' },
-                ].map(({ icon: Icon, bg, text, label, sub }) => (
-                  <div key={label} className="flex flex-col items-center justify-center bg-white p-5 rounded-3xl border border-slate-100 text-center gap-2">
-                    <div className={`w-10 h-10 ${bg} ${text} rounded-full flex items-center justify-center`}>
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span className="font-bold text-slate-900 text-[13px] leading-tight">{label}</span>
-                    <span className="text-xs text-slate-400">{sub}</span>
-                  </div>
-                ))}
-              </div>
+              {/* Skincare Benefit Strip — Dynamic from product data */}
+              <SkincarebenefitStrip product={product} />
             </div>
 
-            {/* ── RIGHT: INFO PANEL (TAOBAO LAYOUT) ────────────────────────────────────────── */}
+            {/* ── RIGHT: INFO PANEL — SKINCARE BEAUTY STORY ────────────────────────────────── */}
             <div ref={orb.containerRef} className="lg:col-span-6 xl:col-span-5 relative md:mt-0 -mt-6">
 
               {/* Floating orb */}
@@ -706,121 +698,109 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                 <div
                   ref={orb.ref}
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-3xl rounded-full"
-                  style={{ width: 180, height: 180, background: 'radial-gradient(circle, rgba(224,107,139,0.15) 0%, transparent 70%)' }}
+                  style={{ width: 180, height: 180, background: 'radial-gradient(circle, rgba(224,107,139,0.12) 0%, transparent 70%)' }}
                 />
               </div>
 
               <div className="relative z-10 flex flex-col bg-white md:bg-transparent px-5 md:px-0 pt-6 md:pt-0">
-                {/* 1. Product Title */}
-                <h1 className="text-xl md:text-[22px] font-bold text-gray-900 leading-snug mb-3">
+                
+                {/* Brand Tag */}
+                {product.brand && (
+                  <span className="skincare-brand-tag mb-2">{product.brand}</span>
+                )}
+
+                {/* Product Title — Editorial */}
+                <h1 className="text-2xl md:text-[28px] font-bold text-gray-900 leading-snug mb-2 tracking-tight">
                   {product.name}
                 </h1>
 
-                {/* 2. Price Panel (Taobao Style) */}
-                <div className="bg-[#FFF5F8] p-4 rounded-sm flex flex-col gap-2 mb-4 border border-[#FFDDE8]">
-                  {/* Row 1: Original Price */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <span className="text-gray-500 text-sm min-w-[60px]">Үнэ</span>
-                      {product.originalPrice && product.originalPrice > displayPrice ? (
-                        <span className="text-gray-400 text-sm line-through">
-                          {formatPrice(product.originalPrice)}
-                        </span>
-                      ) : (
-                        <span className="text-[28px] md:text-[34px] font-bold text-[#E06B8B] leading-none tracking-tight font-sora">
-                          {formatPrice(displayPrice * quantity)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                {/* Short tagline/description teaser */}
+                {product.description && (
+                  <p className="text-sm text-slate-400 font-medium leading-relaxed mb-4 line-clamp-2">
+                    {product.description}
+                  </p>
+                )}
 
-                  {/* Row 2: Promo Price */}
-                  <div className="flex items-end gap-4 mt-1">
-                    <span className="text-gray-500 text-sm min-w-[60px] pb-1.5">Хямдрал</span>
-                    <div className="flex flex-col">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[28px] md:text-[34px] font-bold text-[#E06B8B] leading-none tracking-tight font-sora">
-                          {formatPrice(displayPrice * quantity)}
-                        </span>
-                      </div>
-                      {quantity > 1 && (
-                        <span className="text-xs text-gray-400 font-medium mt-1">
-                          Нэгж үнэ: {formatPrice(displayPrice)}
+                {/* Price — Clean Editorial Block */}
+                <div className="bg-gradient-to-r from-[#FFF5F8] to-[#FFFAF5] p-5 rounded-2xl mb-5 border border-rose-100/40">
+                  <div className="flex items-end gap-3">
+                    <span className="text-[32px] md:text-[38px] font-extrabold text-[#E06B8B] leading-none tracking-tight font-sora">
+                      {formatPrice(displayPrice * quantity)}
+                    </span>
+                    {product.originalPrice && product.originalPrice > displayPrice && (
+                      <span className="text-base text-slate-400 line-through font-medium pb-1">
+                        {formatPrice(product.originalPrice)}
+                      </span>
+                    )}
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="px-2.5 py-1 bg-[#E06B8B] text-white text-[10px] font-black rounded-full uppercase tracking-wider">
+                        {discount}% хямдралтай
+                      </span>
+                      {savings > 0 && (
+                        <span className="text-xs text-emerald-600 font-bold">
+                          {formatPrice(savings)} хэмнэлт
                         </span>
                       )}
                     </div>
-                  </div>
+                  )}
+                  {quantity > 1 && (
+                    <span className="text-xs text-slate-400 font-medium mt-2 block">
+                      Нэгж үнэ: {formatPrice(displayPrice)}
+                    </span>
+                  )}
                 </div>
 
-                {/* 3. Details Matrix Grid */}
-                <div className="flex flex-col gap-4 text-sm mb-6 border-b border-gray-100 pb-6">
-                  {/* Delivery */}
-                  <div className="flex items-start">
-                    <span className="text-gray-500 min-w-[70px] mt-0.5">Хүргэлт</span>
-                    <div className="flex flex-col">
-                      <span className="font-medium">
-                        1 хоногт хүргэнэ
-                      </span>
-                      <span className="text-xs text-gray-400">Монгол даяар хүргэнэ</span>
-                    </div>
-                  </div>
-
-                  {/* Variations mapped dynamically if exist, else static fallback example */}
+                {/* Options — Pill style */}
+                <div className="flex flex-col gap-5 text-sm mb-6">
                   {product.options && product.options.length > 0 && (
                     product.options.map((option: any) => (
-                      <div key={option.id} className="flex items-start mt-2">
-                        <span className="text-gray-500 min-w-[70px] mt-2">{option.name}</span>
-                        <div className="flex-1">
-                          <div className="flex flex-wrap gap-2">
-                            {option.values.map((val: any) => {
-                              const isSelected = selectedOptions[option.name] === val;
+                      <div key={option.id}>
+                        <span className="text-slate-500 font-semibold text-xs uppercase tracking-wider mb-2.5 block">{option.name}</span>
+                        <div className="flex flex-wrap gap-2">
+                          {option.values.map((val: any) => {
+                            const isSelected = selectedOptions[option.name] === val;
+                            let valImage = '';
+                            if (product.variants) {
+                              const matchingVariant = product.variants.find((v: any) => v.options[option.name] === val && v.image);
+                              if (matchingVariant) valImage = matchingVariant.image;
+                            }
+                            const hasImage = !!valImage;
 
-                              // Find an image from variants that matches this specific option value
-                              let valImage = '';
-                              if (product.variants) {
-                                const matchingVariant = product.variants.find((v: any) => v.options[option.name] === val && v.image);
-                                if (matchingVariant) {
-                                  valImage = matchingVariant.image;
-                                }
-                              }
-                              const hasImage = !!valImage;
-
-                              return (
-                                <button
-                                  key={val}
-                                  onClick={() => setSelectedOptions(p => ({ ...p, [option.name]: val }))}
-                                  className={`transition-all border ${isSelected
-                                    ? 'border-[#E06B8B] border-2 px-3 py-1 bg-[#FFF5F8] text-gray-900'
-                                    : 'border-gray-300 bg-white text-gray-900 px-3 py-1 hover:border-[#E06B8B]'
-                                    } ${hasImage ? 'rounded-sm flex items-center gap-2 h-9' : 'rounded-sm h-8'}`}
-                                >
-                                  {hasImage && (
-                                    <div className="w-5 h-5 bg-gray-100 rounded-sm overflow-hidden shrink-0">
-                                      <Image src={valImage} width={20} height={20} alt="" className="object-cover w-full h-full" />
-                                    </div>
-                                  )}
-                                  <span className={isSelected ? 'font-bold' : 'font-medium'}>{val}</span>
-                                </button>
-                              );
-                            })}
-                          </div>
+                            return (
+                              <button
+                                key={val}
+                                onClick={() => setSelectedOptions(p => ({ ...p, [option.name]: val }))}
+                                className={`pill-option ${isSelected ? 'selected' : ''} ${hasImage ? 'flex items-center gap-2' : ''}`}
+                              >
+                                {hasImage && (
+                                  <div className="w-5 h-5 bg-gray-100 rounded-full overflow-hidden shrink-0">
+                                    <Image src={valImage} width={20} height={20} alt="" className="object-cover w-full h-full" />
+                                  </div>
+                                )}
+                                <span>{val}</span>
+                              </button>
+                            );
+                          })}
                         </div>
                         {option.name.includes('Хэмжээ') && product.sizeGuideUrl && (
-                          <a href={product.sizeGuideUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 text-xs hover:underline mt-2 ml-2 shrink-0">
-                            Хэмжээний заавар
+                          <a href={product.sizeGuideUrl} target="_blank" rel="noopener noreferrer" className="text-[#E06B8B] text-xs hover:underline mt-2 inline-block font-medium">
+                            Хэмжээний заавар →
                           </a>
                         )}
                       </div>
                     ))
                   )}
 
-                  <div className="flex items-center mt-4">
-                    <span className="text-gray-500 min-w-[70px]">Тоо</span>
-                    <div className="flex items-center">
-                      <div className="flex border border-gray-300 rounded-sm overflow-hidden h-10">
+                  {/* Quantity — Modern rounded */}
+                  <div>
+                    <span className="text-slate-500 font-semibold text-xs uppercase tracking-wider mb-2.5 block">Тоо ширхэг</span>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center border border-slate-200 rounded-full overflow-hidden h-11">
                         <button
                           onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                          className="w-10 flex items-center justify-center bg-gray-50 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                          className="w-11 flex items-center justify-center text-slate-500 hover:bg-rose-50 hover:text-[#E06B8B] active:bg-rose-100 transition-colors h-full"
                           aria-label="Decrease quantity"
                         >
                           <Minus className="w-4 h-4" strokeWidth={2.5} />
@@ -830,55 +810,46 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                           value={quantity}
                           onChange={(e) => {
                             const val = parseInt(e.target.value);
-                            if (!isNaN(val)) {
-                              setQuantity(Math.max(1, Math.min(displayInventory, val)));
-                            }
+                            if (!isNaN(val)) setQuantity(Math.max(1, Math.min(displayInventory, val)));
                           }}
-                          className="w-14 text-center border-l border-r border-gray-300 text-sm font-bold text-gray-900 bg-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="w-12 text-center text-sm font-bold text-gray-900 bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                         <button
                           onClick={() => setQuantity(Math.min(displayInventory, quantity + 1))}
-                          className="w-10 flex items-center justify-center bg-gray-50 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                          className="w-11 flex items-center justify-center text-slate-500 hover:bg-rose-50 hover:text-[#E06B8B] active:bg-rose-100 transition-colors h-full"
                           aria-label="Increase quantity"
                         >
                           <Plus className="w-4 h-4" strokeWidth={2.5} />
                         </button>
                       </div>
-                      <span className="text-gray-400 ml-4 text-xs">
-                        {displayInventory} Ширхэг бэлэн
+                      <span className="text-slate-400 text-xs font-medium">
+                        {displayInventory} ширхэг бэлэн
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* 4. Call to Action Buttons */}
+                {/* CTA Buttons — Pill shaped, gradient */}
                 <div className="flex gap-3 mb-6">
                   <button
                     onClick={handleBuyNow}
                     disabled={!canAddToCart}
-                    className="flex-1 bg-[#FFDDE8] text-[#E06B8B] py-3.5 rounded-sm font-bold text-[15px] hover:bg-[#FFCBD8] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="flex-1 bg-[#FFF0F4] text-[#E06B8B] py-4 rounded-full font-bold text-[15px] hover:bg-[#FFE0EA] transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-rose-200/50"
                   >
                     Шууд авах
                   </button>
                   <button
                     onClick={handleAddToCart}
                     disabled={!canAddToCart}
-                    className="flex-1 bg-[#E06B8B] text-white py-3.5 rounded-sm font-bold text-[15px] hover:bg-[#C9597A] transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_4px_12px_rgba(224,107,139,0.3)]"
+                    className="flex-1 bg-gradient-to-r from-[#E06B8B] to-[#D55A7B] text-white py-4 rounded-full font-bold text-[15px] hover:shadow-xl hover:shadow-[#E06B8B]/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#E06B8B]/20"
                   >
                     <ShoppingBag className="w-4 h-4" />
                     Сагсанд нэмэх
                   </button>
                 </div>
 
-                {/* 5. Footer/Trust Row */}
-                <div className="flex items-center">
-                  <span className="text-gray-500 text-xs min-w-[70px]">Төлбөр</span>
-                  <div className="flex items-center gap-4 text-xs font-medium text-gray-600">
-                    <span className="flex items-center gap-1"><span className="w-4 h-4 bg-blue-100 text-blue-600 rounded-sm flex items-center justify-center font-bold text-[9px]">Q</span> QPay</span>
-                    <span className="flex items-center gap-1"><span className="w-4 h-4 bg-emerald-100 text-emerald-600 rounded-sm flex items-center justify-center font-bold text-[9px]">S</span> SocialPay</span>
-                    <span className="flex items-center gap-1"><span className="w-4 h-4 bg-gray-100 text-gray-600 rounded-sm flex items-center justify-center font-bold text-[9px]">C</span> Банкны карт</span>
-                  </div>
-                </div>
+                {/* Trust Badges — Dynamic from product data */}
+                <DynamicTrustBadges product={product} />
 
               </div>
             </div>
@@ -889,11 +860,16 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
             <ProductInfoSections product={product} />
           </div>
 
-          {/* ── RELATED ───────────────────────────────────────────────────── */}
+          {/* ── RELATED — Skincare Recommendations ───────────────────────── */}
           <div className="mt-8 md:mt-24 px-4 md:px-0">
-            <h2 className="font-sora font-bold text-xl md:text-3xl text-slate-900 mb-5 md:mb-8 border-l-4 border-[#E06B8B] pl-4">
-              Төстэй бараа
-            </h2>
+            <div className="flex items-center gap-3 mb-5 md:mb-8">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FFF0F4] to-[#FFE0EA] flex items-center justify-center">
+                <span className="text-base">✨</span>
+              </div>
+              <h2 className="font-sora font-bold text-xl md:text-2xl text-slate-900">
+                Танд тохирох бүтээгдэхүүн
+              </h2>
+            </div>
             <RelatedProducts products={product.relatedProducts || []} />
           </div>
         </div>
@@ -954,12 +930,12 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
         )}
       </AnimatePresence>
 
-      {/* ── Mobile bottom CTA ─────────────────────────────────────────────── */}
+      {/* ── Mobile bottom CTA — Skincare Pill Style ─────────────────────── */}
       <div
         className="fixed left-0 right-0 z-[60] md:hidden"
-        style={{ bottom: '56px', background: 'rgba(255,255,255,0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderTop: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 -4px 20px rgba(0,0,0,0.06)' }}
+        style={{ bottom: '56px', background: 'rgba(255,255,255,0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderTop: '1px solid rgba(224,107,139,0.08)', boxShadow: '0 -4px 20px rgba(224,107,139,0.06)' }}
       >
-        <div className="flex items-center gap-3 px-4 pt-3 pb-4">
+        <div className="flex items-center gap-2.5 px-4 pt-3 pb-4">
           {/* Price */}
           <div className="flex flex-col justify-center min-w-0 mr-auto">
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
@@ -975,21 +951,21 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
             )}
           </div>
 
-          {/* Сагslaх */}
+          {/* Сагсанд */}
           <motion.button
             whileTap={{ scale: 0.93 }}
             onClick={handleAddToCart}
-            className="flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-2xl bg-slate-100 text-slate-900 font-bold text-sm active:bg-slate-200 transition-colors shrink-0"
+            className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-full bg-[#FFF0F4] text-[#E06B8B] font-bold text-sm active:bg-[#FFE0EA] transition-colors shrink-0 border border-rose-200/50"
           >
             <ShoppingBag className="w-4 h-4" strokeWidth={2} />
-            Сагslaх
+            Сагс
           </motion.button>
 
           {/* Худалдан авах */}
           <motion.button
             whileTap={{ scale: 0.93 }}
             onClick={handleBuyNow}
-            className="flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-2xl bg-[#E06B8B] text-white font-bold text-sm shadow-lg shadow-[#E06B8B]/30 active:bg-[#C9597A] transition-colors shrink-0"
+            className="flex items-center justify-center gap-1.5 px-5 py-3 rounded-full bg-gradient-to-r from-[#E06B8B] to-[#D55A7B] text-white font-bold text-sm shadow-lg shadow-[#E06B8B]/30 active:bg-[#C9597A] transition-colors shrink-0"
           >
             Авах
             <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
@@ -1001,51 +977,77 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SECTIONS COMPONENT
+// SECTIONS COMPONENT — SKINCARE PRODUCT STORY
 // ─────────────────────────────────────────────────────────────────────────────
 
 function ProductInfoSections({ product }: { product: any }) {
   return (
-    <div className="flex flex-col gap-8 md:gap-12">
-      {/* Description Section */}
-      <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100 font-dm">
-        <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
-          <FileText className="w-6 h-6 text-[#E06B8B]" />
-          Тайлбар
-        </h3>
-        <div className="prose prose-sm md:prose-base text-slate-600 max-w-none">
-          <p className="leading-relaxed font-medium">
-            {product.description || 'Дэлгэрэнгүй мэдээлэл ороогүй байна.'}
-          </p>
+    <div className="flex flex-col gap-8 md:gap-12 px-4 md:px-0">
+      {/* Product Story / Description */}
+      <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-rose-100/40">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FFF0F4] to-[#FFE0EA] flex items-center justify-center">
+            <FileText className="w-5 h-5 text-[#E06B8B]" />
+          </div>
+          <h3 className="text-xl md:text-2xl font-bold text-slate-900">Бүтээгдэхүй тухай</h3>
+        </div>
+        <div className="skincare-editorial-text leading-relaxed whitespace-pre-line">
+          {product.description || 'Дэлгэрэнгүй мэдээлэл ороогүй байна.'}
         </div>
       </div>
 
-      {/* Specs Section */}
-      <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100 font-dm">
-        <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
-          <List className="w-6 h-6 text-[#E06B8B]" />
-          Үзүүлэлт
-        </h3>
-        <div className="divide-y divide-slate-50 border border-slate-100 rounded-2xl overflow-hidden">
-          {product.attributes && Object.keys(product.attributes).length > 0 ? (
-            Object.entries(product.attributes).map(([k, v], i) => (
-              <div key={k} className={`flex py-4 px-6 ${i % 2 === 0 ? 'bg-slate-50/50' : 'bg-white'}`}>
-                <span className="w-2/5 font-bold text-slate-400 text-sm md:text-base">{k}</span>
-                <span className="w-3/5 font-bold text-slate-900 text-sm md:text-base">{String(v)}</span>
+      {/* Ingredients / Attributes — Visual Grid */}
+      <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-rose-100/40">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] flex items-center justify-center">
+            <List className="w-5 h-5 text-emerald-600" />
+          </div>
+          <h3 className="text-xl md:text-2xl font-bold text-slate-900">Орц найрлага & Үзүүлэлт</h3>
+        </div>
+        {product.attributes && Object.keys(product.attributes).length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {Object.entries(product.attributes).map(([k, v]) => (
+              <div key={k} className="ingredient-card flex flex-col items-start text-left gap-1">
+                <span className="text-xs font-bold text-[#E06B8B] uppercase tracking-wider">{k}</span>
+                <span className="text-sm font-semibold text-slate-800">{String(v)}</span>
               </div>
-            ))
-          ) : (
-            <p className="text-slate-400 font-medium italic py-6 px-6 text-center">Үзүүлэлтийн мэдээлэл байхгүй байна.</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-slate-400 font-medium italic text-center py-6">Үзүүлэлтийн мэдээлэл байхгүй байна.</p>
+        )}
       </div>
 
-      {/* Reviews Section */}
-      <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100 font-dm">
-        <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
-          <Star className="w-6 h-6 text-[#E06B8B]" fill="currentColor" />
-          Үнэлгээ {product.reviewCount ? `(${product.reviewCount})` : ''}
-        </h3>
+      {/* How to Use — Step Cards */}
+      {product.sections && product.sections.length > 0 && (
+        <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-rose-100/40">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FFF3E0] to-[#FFE0B2] flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5 text-amber-600" />
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold text-slate-900">Хэрхэн хэрэглэх</h3>
+          </div>
+          <div className="flex flex-col gap-4">
+            {product.sections.map((section: string, i: number) => (
+              <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-gradient-to-r from-[#FFFBFE] to-white border border-rose-50">
+                <div className="step-number">{i + 1}</div>
+                <p className="text-sm text-slate-700 font-medium leading-relaxed pt-1.5">{section}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Reviews */}
+      <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-rose-100/40">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FFF8E1] to-[#FFECB3] flex items-center justify-center">
+            <Star className="w-5 h-5 text-amber-500" fill="currentColor" />
+          </div>
+          <h3 className="text-xl md:text-2xl font-bold text-slate-900">
+            Үнэлгээ {product.reviewCount ? `(${product.reviewCount})` : ''}
+          </h3>
+        </div>
         <div className="py-2">
           <ProductReviews productId={product.id} />
         </div>
@@ -1054,5 +1056,111 @@ function ProductInfoSections({ product }: { product: any }) {
   );
 }
 
-// Minimal Icons
-// ... existing code ...
+// ─────────────────────────────────────────────────────────────────────────────
+// DYNAMIC BENEFIT STRIP — Derives benefits from product data
+// ─────────────────────────────────────────────────────────────────────────────
+
+const SKINCARE_BENEFIT_KEYWORDS: { keywords: string[]; icon: string; label: string; sub: string }[] = [
+  { keywords: ['чийг', 'hydrat', 'moisture', 'чийгшүүл'], icon: '💧', label: 'Чийгшүүлэгч', sub: 'Гүнзгий чийгшүүлнэ' },
+  { keywords: ['байгал', 'organic', 'natural', 'натур'], icon: '🌿', label: 'Байгалийн орц', sub: 'Органик найрлага' },
+  { keywords: ['дерматолог', 'dermat', 'эмнэлзүй', 'clinical'], icon: '🧬', label: 'Дерматолог батласан', sub: 'Эмнэлзүйн судалгаатай' },
+  { keywords: ['гялалз', 'glow', 'bright', 'vitamin c', 'витамин'], icon: '✨', label: 'Гялалзуулагч', sub: 'Арьсыг гялалзуулна' },
+  { keywords: ['хамгаал', 'spf', 'sunscreen', 'нарны', 'protect'], icon: '☀️', label: 'Нарнаас хамгаална', sub: 'UV хамгаалалт' },
+  { keywords: ['үрчлээ', 'anti-aging', 'wrinkle', 'retinol', 'ретинол'], icon: '🔬', label: 'Анти-эйж', sub: 'Үрчлээсний эсрэг' },
+  { keywords: ['тайвшруул', 'calm', 'soothe', 'sensitive', 'мэдрэг'], icon: '🧴', label: 'Тайвшруулагч', sub: 'Мэдрэг арьсанд' },
+  { keywords: ['цэвэрл', 'clean', 'cleanse', 'wash', 'угаал'], icon: '🫧', label: 'Цэвэрлэгч', sub: 'Гүнзгий цэвэрлэнэ' },
+  { keywords: ['нүд', 'eye', 'dark circle'], icon: '👁️', label: 'Нүдний арьс', sub: 'Нүдний хүрээний арчилгаа' },
+  { keywords: ['сэргээ', 'repair', 'recover', 'restore'], icon: '💎', label: 'Сэргээгч', sub: 'Арьсыг сэргээнэ' },
+];
+
+function deriveBenefits(product: any): { icon: string; label: string; sub: string }[] {
+  const searchText = [
+    product.name || '',
+    product.description || '',
+    product.category || '',
+    product.subcategory || '',
+    ...(product.sections || []),
+    ...Object.keys(product.attributes || {}),
+    ...Object.values(product.attributes || {}).map(v => String(v)),
+  ].join(' ').toLowerCase();
+
+  const matched = SKINCARE_BENEFIT_KEYWORDS.filter(b =>
+    b.keywords.some(kw => searchText.includes(kw))
+  );
+
+  // Always show at least 3 benefit cards
+  if (matched.length >= 3) return matched.slice(0, 3);
+
+  // Fill with defaults if not enough matches
+  const defaults = [
+    { icon: '🛡️', label: '100% Оригинал', sub: 'Баталгаажсан чанар' },
+    { icon: '🌸', label: 'Арьс арчилгаа', sub: 'Мэргэжлийн бүтээгдэхүүн' },
+    { icon: '✅', label: 'Чанарын баталгаа', sub: 'Шалгагдсан найрлага' },
+  ];
+  const remaining = defaults.filter(d => !matched.some(m => m.label === d.label));
+  return [...matched, ...remaining].slice(0, 3);
+}
+
+function SkincarebenefitStrip({ product }: { product: any }) {
+  const benefits = useMemo(() => deriveBenefits(product), [product]);
+  return (
+    <div className="hidden md:grid grid-cols-3 gap-3 mt-2">
+      {benefits.map(({ icon, label, sub }) => (
+        <div key={label} className="benefit-strip-card">
+          <span className="text-2xl">{icon}</span>
+          <span className="font-bold text-slate-800 text-[13px] leading-tight">{label}</span>
+          <span className="text-[11px] text-slate-400 leading-tight">{sub}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DYNAMIC TRUST BADGES — Derives from product delivery/payment data
+// ─────────────────────────────────────────────────────────────────────────────
+
+function DynamicTrustBadges({ product }: { product: any }) {
+  const badges = useMemo(() => {
+    const list: { icon: string; label: string }[] = [];
+
+    // Always show guarantee
+    list.push({ icon: '🛡️', label: 'Баталгаат бүтээгдэхүүн' });
+
+    // Delivery — dynamic from product data
+    if (product.dispatchTime) {
+      list.push({ icon: '🚚', label: `Хүргэлт ${product.dispatchTime}` });
+    } else if (product.delivery) {
+      list.push({ icon: '🚚', label: product.delivery });
+    } else {
+      list.push({ icon: '🚚', label: 'Хүргэлт 1-3 хоног' });
+    }
+
+    // Shipping info
+    if (product.shippingDestination) {
+      list.push({ icon: '📦', label: product.shippingDestination });
+    } else {
+      list.push({ icon: '🔄', label: '7 хоногт буцаах' });
+    }
+
+    // Payment
+    if (product.paymentMethods) {
+      list.push({ icon: '💳', label: product.paymentMethods });
+    } else {
+      list.push({ icon: '💳', label: 'QPay / SocialPay' });
+    }
+
+    return list;
+  }, [product]);
+
+  return (
+    <div className="flex items-center gap-4 flex-wrap">
+      {badges.map(({ icon, label }) => (
+        <span key={label} className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+          <span className="text-sm">{icon}</span>
+          {label}
+        </span>
+      ))}
+    </div>
+  );
+}

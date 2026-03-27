@@ -32,7 +32,7 @@ interface Review {
 const ReviewItem = ({ review }: { review: Review }) => (
   <div className="py-4 border-b border-gray-100">
     <div className="flex items-center mb-2">
-      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-600 text-sm mr-3">
+      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#E06B8B] to-[#F2A0B5] flex items-center justify-center font-bold text-white text-sm mr-3">
         {review.userName?.charAt(0) || 'U'}
       </div>
       <div>
@@ -126,8 +126,8 @@ export default function ProductReviews({ productId }: { productId: string }) {
     <div className="space-y-6">
       {isAuthenticated ? (
         hasPurchased ? (
-          <form onSubmit={handleSubmit} className="bg-gray-50 p-4 rounded-lg border border-gray-100">
-            <h3 className="font-bold text-gray-800 mb-2">Үнэлгээ өгөх</h3>
+          <form onSubmit={handleSubmit} className="bg-[#FFF5F8] p-5 rounded-2xl border border-rose-100/40">
+            <h3 className="font-bold text-gray-800 mb-3">Үнэлгээ өгөх</h3>
             <div className="mb-3">
               <StarRating rating={rating} setRating={setRating} />
             </div>
@@ -135,14 +135,14 @@ export default function ProductReviews({ productId }: { productId: string }) {
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                className="w-full p-3 pr-12 border border-gray-200 rounded-md focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all text-sm"
+                className="w-full p-3 pr-12 border border-rose-200/50 rounded-xl focus:ring-2 focus:ring-[#E06B8B]/30 focus:border-[#E06B8B] transition-all text-sm bg-white"
                 rows={3}
                 placeholder="Сэтгэгдлээ энд бичнэ үү..."
               />
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="absolute top-1/2 right-2 -translate-y-1/2 p-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 disabled:bg-gray-300 transition-colors flex items-center justify-center w-9 h-9"
+                className="absolute top-1/2 right-2 -translate-y-1/2 p-2 bg-[#E06B8B] text-white rounded-full hover:bg-[#C9597A] disabled:bg-gray-300 transition-colors flex items-center justify-center w-9 h-9"
               >
                 {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send size={18} />}
               </button>
