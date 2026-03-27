@@ -72,7 +72,7 @@ export default function HomePage() {
   const suggestedMax = prices.length > 0 ? Math.ceil(Math.max(...prices) / (currency === 'USD' ? 10 : 1000)) * (currency === 'USD' ? 10 : 1000) : (currency === 'USD' ? 1000 : 1000000);
 
   return (
-    <div className={`min-h-screen bg-[#FAF9F6] relative selection:text-white pb-20 lg:pb-0 overflow-hidden transition-colors duration-700`}
+    <div className={`min-h-screen bg-[#FAF9F6] relative selection:text-white overflow-hidden transition-colors duration-700`}
       style={{ ['--selection-bg' as string]: currentVibe.accent }}
     >
 
@@ -304,34 +304,34 @@ export default function HomePage() {
 
       {/* ═══════════════ SECTION 3: ALL PRODUCTS GRID ═══════════════ */}
       {!loading && !error && sortedProducts.length > 0 && (
-        <section className="relative z-10 w-full mx-auto max-w-[1400px] pt-12 pb-8">
-          
+        <section className="relative z-10 w-full mx-auto max-w-[1400px] pt-12 pb-2">
+
           {/* Beautiful Feminine Header */}
           <div className="text-center mb-10 px-4">
-            <motion.p 
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-[10px] md:text-[11px] uppercase tracking-[0.25em] font-bold mb-3"
-                style={{ color: '#D4AF37' }}
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-[10px] md:text-[11px] uppercase tracking-[0.25em] font-bold mb-3"
+              style={{ color: '#D4AF37' }}
             >
-                Цуглуулга
+              Цуглуулга
             </motion.p>
-            <motion.h2 
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="font-serif text-3xl md:text-5xl text-[#333] mb-4"
+            <motion.h2
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="font-serif text-3xl md:text-5xl text-[#333] mb-4"
             >
-                Танд зориулсан <span className="font-script text-4xl md:text-6xl text-[#E27289] block mt-1 sm:inline sm:mt-0">Бүтээгдэхүүн</span>
+              Танд зориулсан <span className="font-script text-4xl md:text-6xl text-[#E27289] block mt-1 sm:inline sm:mt-0">Бүтээгдэхүүн</span>
             </motion.h2>
-            <motion.div 
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-                className="h-[1px] w-24 bg-gradient-to-r from-transparent via-[#E27289] to-transparent mx-auto"
+            <motion.div
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="h-[1px] w-24 bg-gradient-to-r from-transparent via-[#E27289] to-transparent mx-auto"
             />
           </div>
 
@@ -344,15 +344,15 @@ export default function HomePage() {
           <div className="hidden md:block">
             <PremiumProductGrid products={sortedProducts} />
           </div>
-          
-          <div className="flex justify-center mt-6 mb-16">
+
+          <div className="flex justify-center mt-6 mb-6">
             <motion.a
-                href="/shop"
-                whileHover={{ y: -3, boxShadow: `0 8px 25px rgba(226,114,137,0.3)` }}
-                whileTap={{ scale: 0.97 }}
-                className="px-10 py-4 text-[13px] uppercase tracking-[0.2em] inline-block rounded-full bg-white border border-[#E27289]/30 text-[#E27289] font-bold transition-all shadow-sm hover:bg-[#E27289] hover:text-white"
+              href="/shop"
+              whileHover={{ y: -3, boxShadow: `0 8px 25px rgba(226,114,137,0.3)` }}
+              whileTap={{ scale: 0.97 }}
+              className="px-10 py-4 text-[13px] uppercase tracking-[0.2em] inline-block rounded-full bg-white border border-[#E27289]/30 text-[#E27289] font-bold transition-all shadow-sm hover:bg-[#E27289] hover:text-white"
             >
-                БҮХ БҮТЭЭГДЭХҮҮН ҮЗЭХ
+              БҮХ БҮТЭЭГДЭХҮҮН ҮЗЭХ
             </motion.a>
           </div>
         </section>
@@ -360,7 +360,7 @@ export default function HomePage() {
 
 
       {/* ═══════════════ SECTION 3.5: BRAND PILLARS ═══════════════ */}
-      <section className="relative z-10 py-10 lg:py-16 bg-white/50 border-y border-[#D4AF37]/10">
+      <section className="relative z-10 py-6 lg:py-10 bg-white/50 border-y border-[#D4AF37]/10">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-6 md:gap-8 lg:justify-between items-center pb-2 md:pb-0">
             {[
@@ -435,38 +435,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ NEWSLETTER CTA ═══════════════ */}
-      <section className="relative z-10 py-16 lg:py-24 text-center px-4 md:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-xl mx-auto"
-        >
-          <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs font-bold mb-3 md:mb-4" style={{ color: '#D4AF37' }}>БИДЭНТЭЙ ХОЛБОГДООРОЙ</p>
-          <h2 className="font-serif text-2xl md:text-4xl text-[#333] mb-3 md:mb-4">
-            Таны <span className="font-script text-4xl md:text-5xl" style={{ color: currentVibe.accent }}>Гоо сайхан</span>
-          </h2>
-          <p className="text-[#666] font-light text-sm md:text-base mb-6 md:mb-8 px-2 md:px-0">
-            Classik клубт нэгдээд онцгой арьс арчилгааны нууцууд болон хувийн зөвлөгөөг цаг алдалгүй аваарай.
-          </p>
-          <div className="relative group flex flex-col md:block gap-3 md:gap-0 mt-4">
-            <input
-              type="email"
-              placeholder="Имэйл хаяг"
-              className="w-full py-3.5 md:py-4 px-6 md:pr-40 rounded-full border border-[#D4AF37]/20 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-[13px] md:text-sm focus:outline-none focus:ring-2 transition-all outline-none"
-              style={{ '--focus-border': currentVibe.accent, '--focus-ring': `${currentVibe.accent}33`, outlineColor: currentVibe.accent } as React.CSSProperties}
-            />
-            <motion.button
-              whileHover={{ y: -1, boxShadow: `0 8px 20px ${currentVibe.glow.replace('0.3', '0.4')}` }}
-              whileTap={{ scale: 0.97 }}
-              className="md:absolute md:right-2 md:top-2 md:bottom-2 w-full md:w-auto py-3.5 md:py-0 px-8 text-white rounded-full text-xs font-bold uppercase tracking-[0.15em] transition-all"
-              style={{ backgroundColor: currentVibe.accent, boxShadow: `0 4px 14px ${currentVibe.glow}` }}
-            >
-              БҮРТГҮҮЛЭХ
-            </motion.button>
-          </div>
-        </motion.div>
-      </section>
+
     </div>
   );
 }

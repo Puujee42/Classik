@@ -104,7 +104,7 @@ export default function RootLayout({
           <CherryBlossoms />
           <ClientLayout>
             <LuxuryNavbar />
-            <main className="min-h-screen pb-16 md:pb-0 relative z-0">{children}</main>
+            <main className="min-h-screen relative z-0">{children}</main>
             <Footer />
           </ClientLayout>
         </body>

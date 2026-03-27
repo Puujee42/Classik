@@ -147,7 +147,9 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
                         )}
 
                         {/* Top-Right Stacked Icons (Wishlist + Quick View) */}
-                        <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 z-20 flex flex-col gap-1 sm:gap-1.5 opacity-100">
+                        {/* Single, clean absolute wrapper */}
+                        <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-10">
+                            {/* Wishlist Button */}
                             <button
                                 onClick={(e) => {
                                     e.preventDefault();
@@ -156,25 +158,36 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
                                     if (isWishlisted) removeFromWishlist(product.id);
                                     else addToWishlist({ ...product } as any);
                                 }}
-                                className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/80 backdrop-blur-md shadow-sm flex items-center justify-center transition-transform active:scale-90"
+                                // FORCED SIZING: p-0, flex-none, and exact pixel brackets
+                                className="group/btn p-0 flex-none w-[28px] h-[28px] min-w-[28px] min-h-[28px] rounded-full bg-white/95 shadow-sm flex items-center justify-center border border-black/5 transition-all hover:bg-white active:scale-90"
                             >
-                                <Heart className={`w-3.5 h-3.5 sm:w-[18px] sm:h-[18px] ${isWishlisted ? 'fill-[#E27289] text-[#E27289]' : 'text-gray-400'}`} strokeWidth={isWishlisted ? 0 : 1.5} />
+                                <Heart
+                                    className={`w-[14px] h-[14px] transition-colors duration-300 ${isWishlisted ? 'fill-[#E27289] text-[#E27289]' : 'text-slate-500 group-hover/btn:text-black'
+                                        }`}
+                                    strokeWidth={isWishlisted ? 0 : 1.5}
+                                />
                             </button>
+
+                            {/* Quick View Button */}
                             <button
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
                                     setQuickViewOpen(true);
                                 }}
-                                className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/80 backdrop-blur-md shadow-sm flex items-center justify-center transition-transform active:scale-90"
+                                // FORCED SIZING
+                                className="group/btn p-0 flex-none w-[28px] h-[28px] min-w-[28px] min-h-[28px] rounded-full bg-white/95 shadow-sm flex items-center justify-center border border-black/5 transition-all hover:bg-white active:scale-90"
                             >
-                                <Eye className="w-3.5 h-3.5 sm:w-[18px] sm:h-[18px] text-gray-400" strokeWidth={1.5} />
+                                <Eye
+                                    className="w-[14px] h-[14px] text-slate-500 group-hover/btn:text-black transition-colors duration-300"
+                                    strokeWidth={1.5}
+                                />
                             </button>
                         </div>
                     </div>
 
                     <div className="p-3 pb-4">
-                        <h3 className="text-[12px] font-medium text-gray-800 truncate mb-1.5">
+                        <h3 className="text-[11px] font-bold text-[#E27289] uppercase tracking-wider truncate mb-1 opacity-90 hover:opacity-100 transition-opacity">
                             {product.name}
                         </h3>
 
@@ -193,14 +206,14 @@ export default function MobileProductCard({ product }: MobileProductCardProps) {
                                     </span>
                                 </div>
                             </div>
-                            
+
                             {/* Floating Cart Button */}
                             <button
                                 ref={cartBtnRef}
                                 onClick={handleAddToCart}
-                                className="w-8 h-8 rounded-full bg-[#E27289] shadow-[0_4px_12px_rgba(226,114,137,0.3)] flex items-center justify-center absolute -right-1 -bottom-1 active:scale-95 transition-transform"
+                                className="w-7 h-7 rounded-full bg-[#E27289] shadow-[0_4px_12px_rgba(226,114,137,0.3)] flex items-center justify-center absolute -right-1 -bottom-1 active:scale-95 transition-transform"
                             >
-                                <ShoppingCart className="w-4 h-4 text-white" strokeWidth={2} />
+                                <ShoppingCart className="w-3.5 h-3.5 text-white" strokeWidth={2} />
                             </button>
                         </div>
                     </div>

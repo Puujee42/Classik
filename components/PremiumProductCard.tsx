@@ -80,7 +80,7 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
             >
                 <Link href={`/product/${product.id}`} className="block h-full" onClick={(e) => { if (isDragging.current || quickViewOpen) e.preventDefault(); }}>
                     <div className="bg-white rounded-[20px] shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 h-full flex flex-col relative overflow-hidden group">
-                        
+
                         {/* Image Section */}
                         <div className="relative aspect-[4/5] overflow-hidden bg-[#FAF9F8]">
                             {/* Badges */}
@@ -155,14 +155,20 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
                                     className="flex w-full h-full"
                                 >
                                     {allImages.map((img, i) => (
-                                        <div key={i} className="w-full h-full shrink-0 relative">
+                                        <div
+                                            key={i}
+                                            className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-100 shrink-0"
+                                        >
                                             <Image
                                                 src={img}
                                                 alt={product.name}
                                                 fill
-                                                className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                                                sizes="(max-width: 768px) 50vw, 25vw"
+                                                className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                priority={i === 0} // Optional: load first image faster
                                             />
+                                            {/* Subtle inner overlay for depth */}
+                                            <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl" />
                                         </div>
                                     ))}
                                 </motion.div>
@@ -171,9 +177,11 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
                                     src={allImages[0]}
                                     alt={product.name}
                                     fill
-                                    className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                                    className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
                                     sizes="(max-width: 768px) 50vw, 25vw"
+                                    priority
                                 />
+
                             )}
 
                             {/* Dot Indicators */}
@@ -192,7 +200,7 @@ export default function PremiumProductCard({ product, isFeatured = false }: { pr
 
                         {/* Content Section */}
                         <div className="p-4 sm:p-5 flex flex-col flex-1">
-                            <h3 className="text-[14px] sm:text-[15px] font-medium text-gray-800 truncate">
+                            <h3 className="text-[11px] font-bold text-[#E27289] uppercase tracking-wider truncate mb-1 opacity-90 hover:opacity-100 transition-opacity">
                                 {product.name}
                             </h3>
 
