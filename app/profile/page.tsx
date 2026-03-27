@@ -7,8 +7,9 @@ import Link from 'next/link';
 import {
   Package, Heart, MapPin, Bell, ShieldCheck,
   ChevronRight, LogOut, Camera, KeyRound, Eye,
-  EyeOff, CheckCircle, User, Clock, XCircle,
-  TrendingUp, Lock, Link2, Loader2
+  EyeOff, CheckCircle, Clock, XCircle,
+  TrendingUp, Lock, Link2, Loader2,
+  Sparkles, Crown, Star
 } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '@/context/AuthContext';
@@ -113,7 +114,7 @@ export default function ProfilePage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed': return <CheckCircle className="w-4 h-4 text-emerald-500" />;
-      case 'cancelled': return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'cancelled': return <XCircle className="w-4 h-4 text-red-400" />;
       default: return <Clock className="w-4 h-4 text-amber-500" />;
     }
   };
@@ -132,15 +133,18 @@ export default function ProfilePage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'cancelled': return 'bg-red-50 text-red-700 border-red-200';
+      case 'cancelled': return 'bg-red-50 text-red-600 border-red-200';
       default: return 'bg-amber-50 text-amber-700 border-amber-200';
     }
   };
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[#FAF9F6] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: currentVibe?.accent || '#E06B8B' }} />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: currentVibe?.bg || '#FAF9F6' }}>
+        <div className="flex flex-col items-center gap-3">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-transparent" style={{ borderTopColor: currentVibe?.accent || '#E06B8B', borderRightColor: currentVibe?.accent || '#E06B8B' }} />
+          <span className="text-[13px] text-[#999] font-medium">Уншиж байна...</span>
+        </div>
       </div>
     );
   }
@@ -157,60 +161,104 @@ export default function ProfilePage() {
     { id: 'password', label: 'Нууц үг', icon: KeyRound },
   ];
 
+  const completedOrders = orders.filter(o => o.status === 'completed').length;
+  const totalSpent = orders.reduce((sum, o) => sum + o.totalPrice, 0);
+
   return (
-    <div className="min-h-screen bg-[#FAF9F6] pb-[120px] font-sans" style={{ backgroundColor: currentVibe.bg }}>
+    <div className="min-h-screen pb-[120px] font-sans" style={{ backgroundColor: currentVibe.bg }}>
 
-      {/* ─── HEADER ─── */}
-      <div className="relative pt-10 pb-16 px-4 flex flex-col items-center" style={{ background: `linear-gradient(135deg, ${currentVibe.accent}, ${currentVibe.accent}dd)` }}>
-        {/* Curved bottom */}
-        <div className="absolute bottom-[-1px] left-0 w-full overflow-hidden leading-[0]">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" className="block w-full h-[32px]">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,121.37,189.9,109.83,235.84,101.55,278.49,76.65,321.39,56.44Z" fill={currentVibe.bg} />
-          </svg>
-        </div>
+      {/* ─── HEADER with decorative elements ─── */}
+      <div className="relative overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0" style={{
+          background: `linear-gradient(135deg, ${currentVibe.accent} 0%, ${currentVibe.accent}cc 50%, ${currentVibe.accent}99 100%)`
+        }} />
 
-        {/* Avatar */}
-        <div className="relative mb-3">
-          <div className="w-[88px] h-[88px] rounded-full border-[3px] border-white shadow-lg bg-white flex items-center justify-center overflow-hidden">
-            {user.imageUrl ? (
-              <Image src={user.imageUrl} alt={user.name || 'User'} width={88} height={88} className="object-cover w-full h-full" />
-            ) : (
-              <span className="text-[32px] font-extrabold" style={{ color: currentVibe.accent }}>{initials}</span>
-            )}
+        {/* Decorative circles */}
+        <div className="absolute -top-20 -right-20 w-48 h-48 rounded-full opacity-10 bg-white" />
+        <div className="absolute top-10 -left-10 w-32 h-32 rounded-full opacity-10 bg-white" />
+        <div className="absolute bottom-10 right-10 w-20 h-20 rounded-full opacity-5 bg-white" />
+
+        {/* Shimmer line */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+
+        {/* Content */}
+        <div className="relative pt-12 pb-[80px] px-4 flex flex-col items-center">
+
+          {/* Avatar */}
+          <div className="relative mb-4">
+            {/* Glow ring behind avatar */}
+            <div className="absolute inset-[-6px] rounded-full animate-pulse opacity-30" style={{
+              background: `radial-gradient(circle, white 30%, transparent 70%)`
+            }} />
+            <div className="relative w-[100px] h-[100px] rounded-full bg-white shadow-[0_8px_32px_rgba(0,0,0,0.15)] flex items-center justify-center overflow-hidden ring-[3px] ring-white/50">
+              {user.imageUrl ? (
+                <Image src={user.imageUrl} alt={user.name || 'User'} width={100} height={100} className="object-cover w-full h-full" />
+              ) : (
+                <span className="text-[38px] font-extrabold gradient-text-rose">{initials}</span>
+              )}
+            </div>
+            <button className="absolute -bottom-1 -right-1 w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-lg ring-2 ring-white hover:scale-110 active:scale-95 transition-transform">
+              <Camera className="w-4.5 h-4.5" style={{ color: currentVibe.accent }} strokeWidth={2.5} />
+            </button>
           </div>
-          <button className="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-100">
-            <Camera className="w-3.5 h-3.5" style={{ color: currentVibe.accent }} strokeWidth={2.5} />
-          </button>
+
+          <h1 className="text-[24px] font-extrabold text-white tracking-tight leading-none mb-1 drop-shadow-sm">{user.name || 'Хэрэглэгч'}</h1>
+          <p className="text-[14px] text-white/70 font-medium tracking-wide">{user.phone || user.email || ''}</p>
+
+          {user.role === 'admin' && (
+            <div className="mt-3 flex items-center gap-1.5 px-4 py-1.5 bg-white/15 backdrop-blur-sm rounded-full border border-white/20 shadow-sm">
+              <Crown className="w-3.5 h-3.5 text-[#D4AF37]" strokeWidth={2.5} />
+              <span className="text-[11px] font-bold text-white tracking-widest">АДМИН</span>
+            </div>
+          )}
         </div>
 
-        <h1 className="text-[20px] font-bold text-white tracking-tight mb-0.5">{user.name || 'Хэрэглэгч'}</h1>
-        <p className="text-[13px] text-white/75 font-medium">{user.phone || user.email || ''}</p>
-        {user.role === 'admin' && (
-          <span className="mt-2 px-3 py-0.5 bg-white/20 rounded-full text-white text-[11px] font-bold tracking-wider">АДМИН</span>
-        )}
+        {/* Elegant curve */}
+        <div className="absolute -bottom-1 left-0 right-0 h-8" style={{
+          background: currentVibe.bg,
+          borderTopLeftRadius: '50% 100%',
+          borderTopRightRadius: '50% 100%'
+        }} />
       </div>
 
       {/* ─── STATS ROW ─── */}
-      <div className="relative z-20 px-4 -mt-6 mb-5">
-        <div className="bg-white rounded-[16px] shadow-[0_4px_20px_rgba(0,0,0,0.08)] p-4 grid grid-cols-3 divide-x divide-[#F0F0F0]">
-          <div className="flex flex-col items-center gap-0.5 px-2">
-            <span className="text-[22px] font-bold" style={{ color: currentVibe.accent }}>{dataLoading ? '—' : orders.length}</span>
-            <span className="text-[11px] text-[#999] font-semibold">Захиалга</span>
-          </div>
-          <div className="flex flex-col items-center gap-0.5 px-2">
-            <span className="text-[22px] font-bold" style={{ color: currentVibe.accent }}>{wishlistCount}</span>
-            <span className="text-[11px] text-[#999] font-semibold">Хадгалсан</span>
-          </div>
-          <div className="flex flex-col items-center gap-0.5 px-2">
-            <span className="text-[22px] font-bold" style={{ color: currentVibe.accent }}>{dataLoading ? '—' : addressCount}</span>
-            <span className="text-[11px] text-[#999] font-semibold">Хаяг</span>
+      <div className="relative z-20 px-4 -mt-12 mb-6">
+        <div className="card-classik bg-white p-1 overflow-hidden">
+          {/* Subtle gold accent line at top */}
+          <div className="absolute top-0 left-[10%] right-[10%] h-[2px] rounded-full" style={{
+            background: `linear-gradient(90deg, transparent, ${currentVibe.accent}40, #D4AF3740, ${currentVibe.accent}40, transparent)`
+          }} />
+
+          <div className="grid grid-cols-3 py-3">
+            <div className="flex flex-col items-center gap-1 px-2 border-r border-gray-100">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1" style={{ backgroundColor: `${currentVibe.accent}10` }}>
+                <Package className="w-4 h-4" style={{ color: currentVibe.accent }} strokeWidth={2} />
+              </div>
+              <span className="text-[22px] font-extrabold" style={{ color: currentVibe.accent }}>{dataLoading ? '—' : orders.length}</span>
+              <span className="text-[10px] text-[#999] font-bold tracking-wider uppercase">Захиалга</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 px-2 border-r border-gray-100">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1" style={{ backgroundColor: `${currentVibe.accent}10` }}>
+                <Heart className="w-4 h-4" style={{ color: currentVibe.accent }} strokeWidth={2} />
+              </div>
+              <span className="text-[22px] font-extrabold" style={{ color: currentVibe.accent }}>{wishlistCount}</span>
+              <span className="text-[10px] text-[#999] font-bold tracking-wider uppercase">Хадгалсан</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 px-2">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1" style={{ backgroundColor: `${currentVibe.accent}10` }}>
+                <MapPin className="w-4 h-4" style={{ color: currentVibe.accent }} strokeWidth={2} />
+              </div>
+              <span className="text-[22px] font-extrabold" style={{ color: currentVibe.accent }}>{dataLoading ? '—' : addressCount}</span>
+              <span className="text-[10px] text-[#999] font-bold tracking-wider uppercase">Хаяг</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* ─── TAB BAR ─── */}
-      <div className="px-4 mb-4">
-        <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-1 flex gap-1">
+      <div className="px-4 mb-5">
+        <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-1.5 flex gap-1 shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-white/80">
           {tabs.map(tab => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
@@ -218,14 +266,17 @@ export default function ProfilePage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-[10px] text-[12px] font-bold transition-all ${
+                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[13px] font-bold transition-all duration-300 ${
                   active
-                    ? 'text-white shadow-sm'
-                    : 'text-[#999]'
+                    ? 'text-white shadow-md'
+                    : 'text-[#999] hover:text-[#555] hover:bg-white/60'
                 }`}
-                style={active ? { backgroundColor: currentVibe.accent } : {}}
+                style={active ? {
+                  backgroundColor: currentVibe.accent,
+                  boxShadow: `0 4px 16px ${currentVibe.glow}`
+                } : {}}
               >
-                <Icon className="w-3.5 h-3.5" strokeWidth={2.5} />
+                <Icon className="w-4 h-4" strokeWidth={active ? 2.5 : 2} />
                 {tab.label}
               </button>
             );
@@ -234,72 +285,85 @@ export default function ProfilePage() {
       </div>
 
       {/* ─── TAB CONTENT ─── */}
-      <div className="px-4 space-y-4">
+      <div className="px-4 space-y-5">
 
         {/* OVERVIEW */}
         {activeTab === 'overview' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
+
+            {/* Welcome card */}
+            <div className="card-classik overflow-hidden">
+              <div className="relative px-5 py-5" style={{
+                background: `linear-gradient(135deg, ${currentVibe.accent}08, ${currentVibe.accent}04, transparent)`
+              }}>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm" style={{
+                    background: `linear-gradient(135deg, ${currentVibe.accent}20, ${currentVibe.accent}08)`
+                  }}>
+                    <Sparkles className="w-6 h-6" style={{ color: currentVibe.accent }} strokeWidth={1.5} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[15px] font-bold text-[#1A1A1A] mb-0.5">
+                      Сайн байна уу, {user.name?.split(' ')[0] || 'Хэрэглэгч'}! ✨
+                    </p>
+                    <p className="text-[12px] text-[#888] font-medium leading-relaxed">
+                      Таны Classik профайл дашбоард
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Quick stats cards */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
-                <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-3" style={{ backgroundColor: `${currentVibe.accent}15` }}>
-                  <Package className="w-5 h-5" style={{ color: currentVibe.accent }} strokeWidth={2} />
-                </div>
-                <p className="text-[24px] font-bold text-[#1A1A1A]">{dataLoading ? '—' : orders.length}</p>
-                <p className="text-[12px] text-[#999] font-medium mt-0.5">Нийт захиалга</p>
-              </div>
-              <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
-                <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-3" style={{ backgroundColor: `${currentVibe.accent}15` }}>
-                  <Heart className="w-5 h-5" style={{ color: currentVibe.accent }} strokeWidth={2} />
-                </div>
-                <p className="text-[24px] font-bold text-[#1A1A1A]">{wishlistCount}</p>
-                <p className="text-[12px] text-[#999] font-medium mt-0.5">Хадгалсан бараа</p>
-              </div>
-              <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
-                <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-3" style={{ backgroundColor: `${currentVibe.accent}15` }}>
-                  <MapPin className="w-5 h-5" style={{ color: currentVibe.accent }} strokeWidth={2} />
-                </div>
-                <p className="text-[24px] font-bold text-[#1A1A1A]">{dataLoading ? '—' : addressCount}</p>
-                <p className="text-[12px] text-[#999] font-medium mt-0.5">Хадгалсан хаяг</p>
-              </div>
-              <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
-                <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-3" style={{ backgroundColor: `${currentVibe.accent}15` }}>
-                  <CheckCircle className="w-5 h-5" style={{ color: currentVibe.accent }} strokeWidth={2} />
-                </div>
-                <p className="text-[24px] font-bold text-[#1A1A1A]">
-                  {dataLoading ? '—' : orders.filter(o => o.status === 'completed').length}
-                </p>
-                <p className="text-[12px] text-[#999] font-medium mt-0.5">Хүргэгдсэн</p>
-              </div>
+              {[
+                { icon: Package, label: 'Нийт захиалга', value: dataLoading ? '—' : orders.length, gradient: 'from-blue-50 to-indigo-50/50' },
+                { icon: Heart, label: 'Хадгалсан бараа', value: wishlistCount, gradient: 'from-pink-50 to-rose-50/50' },
+                { icon: CheckCircle, label: 'Хүргэгдсэн', value: dataLoading ? '—' : completedOrders, gradient: 'from-emerald-50 to-green-50/50' },
+                { icon: Star, label: 'Нийт зарцуулсан', value: dataLoading ? '—' : formatPrice(totalSpent), gradient: 'from-amber-50 to-yellow-50/50', isPrice: true },
+              ].map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <div key={idx} className={`card-classik p-4 group cursor-default transition-all duration-300 hover:-translate-y-0.5 bg-gradient-to-br ${item.gradient}`}>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-white shadow-sm ring-1 ring-gray-100 transition-transform duration-300 group-hover:scale-110" >
+                      <Icon className="w-5 h-5" style={{ color: currentVibe.accent }} strokeWidth={1.8} />
+                    </div>
+                    <p className={`${item.isPrice ? 'text-[18px]' : 'text-[26px]'} font-extrabold text-[#1A1A1A] leading-none`}>{item.value}</p>
+                    <p className="text-[11px] text-[#888] font-bold tracking-wide mt-1.5 uppercase">{item.label}</p>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Recent orders preview */}
             {orders.length > 0 && (
-              <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden">
-                <div className="px-4 pt-4 pb-3 flex items-center justify-between border-b border-[#F5F5F5]">
-                  <h3 className="text-[14px] font-bold text-[#1A1A1A]">Сүүлийн захиалгууд</h3>
+              <div className="card-classik overflow-hidden">
+                <div className="px-5 pt-5 pb-3 flex items-center justify-between">
+                  <h3 className="text-[15px] font-extrabold text-[#1A1A1A] tracking-tight">Сүүлийн захиалгууд</h3>
                   <button
                     onClick={() => setActiveTab('orders')}
-                    className="text-[12px] font-bold"
+                    className="text-[12px] font-bold flex items-center gap-1 transition-all hover:gap-2"
                     style={{ color: currentVibe.accent }}
                   >
                     Бүгдийг харах
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <div className="divide-y divide-[#F5F5F5]">
+                <div className="divide-y divide-gray-100/80">
                   {orders.slice(0, 3).map(order => (
-                    <div key={order._id} className="px-4 py-3 flex items-center justify-between">
+                    <div key={order._id} className="px-5 py-3.5 flex items-center justify-between hover:bg-gray-50/50 transition-colors">
                       <div className="flex items-center gap-3">
-                        {getStatusIcon(order.status)}
+                        <div className="w-9 h-9 rounded-[10px] bg-white flex items-center justify-center shadow-sm ring-1 ring-gray-100">
+                          {getStatusIcon(order.status)}
+                        </div>
                         <div>
                           <p className="text-[13px] font-bold text-[#1A1A1A]">#{order._id.slice(-6).toUpperCase()}</p>
-                          <p className="text-[11px] text-[#999]">{new Date(order.createdAt).toLocaleDateString('mn-MN')}</p>
+                          <p className="text-[11px] text-[#AAA] font-medium">{new Date(order.createdAt).toLocaleDateString('mn-MN')}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-[13px] font-bold text-[#1A1A1A]">{formatPrice(order.totalPrice)}</p>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getStatusColor(order.status)}`}>
+                      <div className="text-right flex flex-col items-end gap-1">
+                        <p className="text-[14px] font-bold text-[#1A1A1A]">{formatPrice(order.totalPrice)}</p>
+                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${getStatusColor(order.status)}`}>
                           {getStatusText(order.status)}
                         </span>
                       </div>
@@ -311,17 +375,20 @@ export default function ProfilePage() {
 
             {/* Menu links */}
             <div>
-              <h2 className="text-[11px] font-bold text-[#999] uppercase tracking-wider ml-1 mb-2">Холбоосууд</h2>
-              <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden">
-                <MenuLink icon={Package} iconBg={`${currentVibe.accent}15`} iconColor={currentVibe.accent} label="Миний захиалга" href="/orders" subtitle={`${orders.length} захиалга`} />
+              <h2 className="text-[11px] font-bold text-[#999] uppercase tracking-widest ml-2 mb-3 flex items-center gap-1.5">
+                <span className="w-4 h-px rounded-full" style={{ backgroundColor: currentVibe.accent }} />
+                Холбоосууд
+              </h2>
+              <div className="card-classik overflow-hidden">
+                <MenuLink icon={Package} iconBg={`${currentVibe.accent}12`} iconColor={currentVibe.accent} label="Миний захиалга" href="/orders" subtitle={`${orders.length} захиалга`} />
                 <MenuDiv />
-                <MenuLink icon={Heart} iconBg={`${currentVibe.accent}15`} iconColor={currentVibe.accent} label="Хадгалсан бараа" href="/wishlist" />
+                <MenuLink icon={Heart} iconBg={`${currentVibe.accent}12`} iconColor={currentVibe.accent} label="Хадгалсан бараа" href="/wishlist" />
                 <MenuDiv />
-                <MenuLink icon={MapPin} iconBg={`${currentVibe.accent}15`} iconColor={currentVibe.accent} label="Миний хаягууд" href="/addresses" subtitle={`${addressCount} хаяг`} />
+                <MenuLink icon={MapPin} iconBg={`${currentVibe.accent}12`} iconColor={currentVibe.accent} label="Миний хаягууд" href="/addresses" subtitle={`${addressCount} хаяг`} />
                 <MenuDiv />
-                <MenuLink icon={Bell} iconBg={`${currentVibe.accent}15`} iconColor={currentVibe.accent} label="Мэдэгдэл" href="/settings/notifications" />
+                <MenuLink icon={Bell} iconBg={`${currentVibe.accent}12`} iconColor={currentVibe.accent} label="Мэдэгдэл" href="/settings/notifications" />
                 <MenuDiv />
-                <MenuLink icon={ShieldCheck} iconBg={`${currentVibe.accent}15`} iconColor={currentVibe.accent} label="Нууцлал & Аюулгүй байдал" href="/settings/security" />
+                <MenuLink icon={ShieldCheck} iconBg={`${currentVibe.accent}12`} iconColor={currentVibe.accent} label="Нууцлал & Аюулгүй байдал" href="/settings/security" />
               </div>
             </div>
 
@@ -329,54 +396,69 @@ export default function ProfilePage() {
             <ConnectedAccounts />
 
             {/* Logout */}
-            <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden">
-              <button onClick={handleLogout} className="w-full flex items-center gap-4 px-4 h-[64px] active:bg-[var(--vibe-bg)] transition-colors" style={{ '--vibe-bg': currentVibe.bg } as React.CSSProperties}>
-                <div className="w-[42px] h-[42px] rounded-[10px] bg-[#FFF5F5] flex items-center justify-center">
-                  <LogOut className="w-5 h-5 text-[#E06B8B]" strokeWidth={2} />
-                </div>
-                <span className="text-[15px] font-bold text-[#E06B8B]">Гарах</span>
+            <div className="card-classik overflow-hidden group">
+              <button onClick={handleLogout} className="w-full flex items-center justify-center gap-3 px-4 h-[60px] active:bg-[#fff5f5] transition-all">
+                <LogOut className="w-5 h-5 text-[#E06B8B] group-hover:rotate-[-12deg] transition-transform duration-300" strokeWidth={2} />
+                <span className="text-[15px] font-bold text-[#E06B8B]">Системээс гарах</span>
               </button>
             </div>
 
-            <p className="text-center text-[12px] text-[#CCCCCC] font-medium">Classik v1.0.0</p>
+            {/* Footer brand */}
+            <div className="flex flex-col items-center gap-1.5 pt-3 pb-6">
+              <div className="flex items-center gap-1 text-[11px] text-[#CCC] font-bold tracking-widest">
+                <Sparkles className="w-3 h-3" />
+                CLASSIK
+              </div>
+              <p className="text-[11px] text-[#DDD] font-medium">v1.0.0</p>
+            </div>
           </div>
         )}
 
         {/* ORDERS */}
         {activeTab === 'orders' && (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {dataLoading ? (
-              <div className="flex justify-center py-12">
-                <div className="animate-spin rounded-full h-7 w-7 border-b-2" style={{ borderColor: currentVibe.accent }} />
+              <div className="flex justify-center py-16">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-transparent" style={{ borderTopColor: currentVibe.accent, borderRightColor: currentVibe.accent }} />
+                  <span className="text-[12px] text-[#999] font-medium">Уншиж байна...</span>
+                </div>
               </div>
             ) : orders.length === 0 ? (
-              <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] py-16 flex flex-col items-center gap-3">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: `${currentVibe.accent}15` }}>
-                  <Package className="w-8 h-8" style={{ color: currentVibe.accent }} strokeWidth={1.5} />
+              <div className="card-classik py-16 flex flex-col items-center gap-4">
+                <div className="w-20 h-20 rounded-3xl flex items-center justify-center" style={{
+                  background: `linear-gradient(135deg, ${currentVibe.accent}15, ${currentVibe.accent}08)`
+                }}>
+                  <Package className="w-10 h-10" style={{ color: currentVibe.accent }} strokeWidth={1.2} />
                 </div>
-                <p className="text-[15px] font-bold text-[#1A1A1A]">Захиалга байхгүй байна</p>
-                <p className="text-[13px] text-[#999]">Та дэлгүүрчилж эхэлцгээе</p>
-                <Link href="/" className="mt-2 px-6 py-2.5 text-white rounded-full text-[13px] font-bold transition-all" style={{ backgroundColor: currentVibe.accent, boxShadow: `0 4px 14px ${currentVibe.glow}` }}>
+                <div className="text-center">
+                  <p className="text-[17px] font-bold text-[#1A1A1A]">Захиалга байхгүй байна</p>
+                  <p className="text-[13px] text-[#888] font-medium mt-1">Шинэ дүр төрхөө олж нээгээрэй</p>
+                </div>
+                <Link href="/" className="btn-rose mt-2 px-8 py-3 text-[13px] flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5" />
                   Дэлгүүр үзэх
                 </Link>
               </div>
             ) : (
               orders.map(order => (
-                <div key={order._id} className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden">
-                  <div className="px-4 py-3 border-b border-[#F5F5F5] flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(order.status)}
-                      <span className="text-[13px] font-bold text-[#1A1A1A]">Захиалга #{order._id.slice(-6).toUpperCase()}</span>
+                <div key={order._id} className="card-classik overflow-hidden group transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
+                  <div className="px-5 py-4 border-b border-gray-100/80 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center group-hover:bg-[#FFF5F5] transition-colors">
+                        {getStatusIcon(order.status)}
+                      </div>
+                      <span className="text-[14px] font-bold text-[#1A1A1A]">#{order._id.slice(-6).toUpperCase()}</span>
                     </div>
-                    <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${getStatusColor(order.status)}`}>
+                    <span className={`text-[11px] font-bold px-3 py-1.5 rounded-full border ${getStatusColor(order.status)}`}>
                       {getStatusText(order.status)}
                     </span>
                   </div>
-                  <div className="px-4 py-3 flex items-center justify-between">
-                    <p className="text-[12px] text-[#999]">
+                  <div className="px-5 py-4 flex items-center justify-between bg-gray-50/30 group-hover:bg-white transition-colors">
+                    <p className="text-[13px] text-[#888] font-medium">
                       {new Date(order.createdAt).toLocaleDateString('mn-MN', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </p>
-                    <p className="text-[15px] font-bold" style={{ color: currentVibe.accent }}>{formatPrice(order.totalPrice)}</p>
+                    <p className="text-[16px] font-extrabold tracking-tight" style={{ color: currentVibe.accent }}>{formatPrice(order.totalPrice)}</p>
                   </div>
                 </div>
               ))
@@ -386,99 +468,81 @@ export default function ProfilePage() {
 
         {/* PASSWORD */}
         {activeTab === 'password' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             {/* Info card */}
-            <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-4 py-4 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${currentVibe.accent}15` }}>
-                <Lock className="w-5 h-5" style={{ color: currentVibe.accent }} />
+            <div className="card-classik px-5 py-5 flex items-center gap-4 overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-24 h-24 rounded-full opacity-[0.03]" style={{ backgroundColor: currentVibe.accent, transform: 'translate(30%, -30%)' }} />
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-gradient-to-br shadow-sm" style={{
+                background: `linear-gradient(135deg, ${currentVibe.accent}20, ${currentVibe.accent}08)`
+              }}>
+                <Lock className="w-5 h-5" style={{ color: currentVibe.accent }} strokeWidth={2} />
               </div>
               <div>
-                <p className="text-[14px] font-bold text-[#1A1A1A]">Нууцлалаа хамгаалаарай</p>
-                <p className="text-[12px] text-[#999] mt-0.5">Хамгийн багадаа 6 тэмдэгт оруулна уу</p>
+                <p className="text-[15px] font-bold text-[#1A1A1A]">Нууцлалаа хамгаалаарай</p>
+                <p className="text-[12px] text-[#888] font-medium mt-1">Хамгийн багадаа 6 тэмдэгт оруулна уу</p>
               </div>
             </div>
 
             {pwSuccess && (
-              <div className="bg-green-50 border border-green-200 rounded-[14px] px-4 py-3 flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
-                <p className="text-[13px] text-green-700 font-bold">Нууц үг амжилттай солигдлоо!</p>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl px-5 py-4 flex items-center gap-3 shadow-sm">
+                <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0" strokeWidth={2} />
+                <p className="text-[13px] text-emerald-700 font-bold">Нууц үг амжилттай солигдлоо!</p>
               </div>
             )}
 
-            <form onSubmit={handlePasswordChange} className="space-y-3">
+            <form onSubmit={handlePasswordChange} className="space-y-4">
 
               {/* Current password */}
-              <div>
-                <label className="text-[11px] font-bold text-[#999] uppercase tracking-wider ml-1 mb-2 block">Одоогийн нууц үг</label>
-                <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-4 h-[56px] flex items-center gap-3 focus-within:ring-2 transition-all" style={{ '--tw-ring-color': `${currentVibe.accent}40` } as React.CSSProperties}>
-                  <Lock className="w-4 h-4 text-[#CCCCCC] shrink-0" strokeWidth={1.5} />
-                  <input
-                    type={showCurrent ? 'text' : 'password'}
-                    value={currentPassword}
-                    onChange={e => setCurrentPassword(e.target.value)}
-                    placeholder="Одоогийн нууц үгээ оруулна уу"
-                    required
-                    className="flex-1 text-[15px] text-[#1A1A1A] placeholder-[#CCCCCC] bg-transparent outline-none"
-                  />
-                  <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="text-[#CCC] p-1">
-                    {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
+              <PasswordField
+                label="Одоогийн нууц үг"
+                placeholder="Одоогийн нууц үгээ оруулна уу"
+                value={currentPassword}
+                onChange={setCurrentPassword}
+                show={showCurrent}
+                onToggleShow={() => setShowCurrent(!showCurrent)}
+                accent={currentVibe.accent}
+              />
 
               {/* New password */}
               <div>
-                <label className="text-[11px] font-bold text-[#999] uppercase tracking-wider ml-1 mb-2 block">Шинэ нууц үг</label>
-                <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-4 h-[56px] flex items-center gap-3 focus-within:ring-2 transition-all" style={{ '--tw-ring-color': `${currentVibe.accent}40` } as React.CSSProperties}>
-                  <Lock className="w-4 h-4 text-[#CCCCCC] shrink-0" strokeWidth={1.5} />
-                  <input
-                    type={showNew ? 'text' : 'password'}
-                    value={newPassword}
-                    onChange={e => setNewPassword(e.target.value)}
-                    placeholder="Шинэ нууц үг"
-                    required
-                    className="flex-1 text-[15px] text-[#1A1A1A] placeholder-[#CCCCCC] bg-transparent outline-none"
-                  />
-                  <button type="button" onClick={() => setShowNew(!showNew)} className="text-[#CCC] p-1">
-                    {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
+                <PasswordField
+                  label="Шинэ нууц үг"
+                  placeholder="Шинэ нууц үг"
+                  value={newPassword}
+                  onChange={setNewPassword}
+                  show={showNew}
+                  onToggleShow={() => setShowNew(!showNew)}
+                  accent={currentVibe.accent}
+                />
                 {newPassword && newPassword.length < 6 && (
-                  <p className="text-[12px] text-red-500 ml-1 mt-1">Хамгийн багадаа 6 тэмдэгт байх ёстой</p>
+                  <p className="text-[12px] text-red-500 ml-2 mt-1.5 font-medium">Хамгийн багадаа 6 тэмдэгт байх ёстой</p>
                 )}
               </div>
 
               {/* Confirm password */}
               <div>
-                <label className="text-[11px] font-bold text-[#999] uppercase tracking-wider ml-1 mb-2 block">Нууц үг давтах</label>
-                <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] px-4 h-[56px] flex items-center gap-3 focus-within:ring-2 transition-all" style={{ '--tw-ring-color': `${currentVibe.accent}40` } as React.CSSProperties}>
-                  <Lock className="w-4 h-4 text-[#CCCCCC] shrink-0" strokeWidth={1.5} />
-                  <input
-                    type={showConfirm ? 'text' : 'password'}
-                    value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    placeholder="Шинэ нууц үгээ дахин оруулна уу"
-                    required
-                    className="flex-1 text-[15px] text-[#1A1A1A] placeholder-[#CCCCCC] bg-transparent outline-none"
-                  />
-                  <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="text-[#CCC] p-1">
-                    {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
+                <PasswordField
+                  label="Нууц үг давтах"
+                  placeholder="Шинэ нууц үгээ дахин оруулна уу"
+                  value={confirmPassword}
+                  onChange={setConfirmPassword}
+                  show={showConfirm}
+                  onToggleShow={() => setShowConfirm(!showConfirm)}
+                  accent={currentVibe.accent}
+                />
                 {confirmPassword && confirmPassword !== newPassword && (
-                  <p className="text-[12px] text-red-500 ml-1 mt-1">Нууц үг таарахгүй байна</p>
+                  <p className="text-[12px] text-red-500 ml-2 mt-1.5 font-medium">Нууц үг таарахгүй байна</p>
                 )}
                 {confirmPassword && confirmPassword === newPassword && newPassword.length >= 6 && (
-                  <p className="text-[12px] text-[#22C55E] ml-1 mt-1 font-medium">✓ Нууц үг таарч байна</p>
+                  <p className="text-[12px] text-emerald-500 ml-2 mt-1.5 font-bold">✓ Нууц үг таарч байна</p>
                 )}
               </div>
 
-              <div className="pt-1">
+              <div className="pt-2">
                 <button
                   type="submit"
                   disabled={pwLoading}
-                  className="w-full h-[52px] text-white font-bold text-[16px] rounded-[14px] flex items-center justify-center gap-2 transition-all active:opacity-80 disabled:opacity-50"
-                  style={{ backgroundColor: currentVibe.accent, boxShadow: `0 4px 14px ${currentVibe.glow}` }}
+                  className="btn-rose w-full h-[54px] text-white font-bold text-[15px] rounded-xl flex items-center justify-center gap-2"
                 >
                   {pwLoading
                     ? <span className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
@@ -489,6 +553,34 @@ export default function ProfilePage() {
             </form>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Password Field Component ────────────────────────────────────────────────
+function PasswordField({
+  label, placeholder, value, onChange, show, onToggleShow, accent
+}: {
+  label: string; placeholder: string; value: string; onChange: (v: string) => void;
+  show: boolean; onToggleShow: () => void; accent: string;
+}) {
+  return (
+    <div>
+      <label className="text-[11px] font-bold text-[#999] uppercase tracking-widest ml-1 mb-2 block">{label}</label>
+      <div className="card-classik px-4 h-[56px] flex items-center gap-3 focus-within:ring-2 focus-within:border-transparent transition-all" style={{ '--tw-ring-color': `${accent}40` } as React.CSSProperties}>
+        <Lock className="w-4 h-4 text-[#CCC] shrink-0" strokeWidth={2} />
+        <input
+          type={show ? 'text' : 'password'}
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder={placeholder}
+          required
+          className="flex-1 text-[15px] text-[#1A1A1A] placeholder-[#CCC] bg-transparent outline-none font-medium"
+        />
+        <button type="button" onClick={onToggleShow} className="text-[#CCC] hover:text-[#888] p-1 transition-colors">
+          {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+        </button>
       </div>
     </div>
   );
@@ -506,15 +598,6 @@ function GoogleIcon() {
   );
 }
 
-// ─── Facebook Icon ──────────────────────────────────────────────────────────
-function FacebookIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2">
-      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-    </svg>
-  );
-}
-
 // ─── Connected Accounts ─────────────────────────────────────────────────────
 interface LinkedAccounts {
   google: { linked: boolean; email?: string };
@@ -523,6 +606,7 @@ interface LinkedAccounts {
 
 function ConnectedAccounts() {
   const { user } = useAuth();
+  const { currentVibe } = useVibe();
   const [linked, setLinked] = useState<LinkedAccounts | null>(null);
   const [busy, setBusy] = useState<'google' | 'facebook' | null>(null);
   const [confirmUnlink, setConfirmUnlink] = useState<'google' | 'facebook' | null>(null);
@@ -531,7 +615,7 @@ function ConnectedAccounts() {
     fetch('/api/user/link-social')
       .then(r => r.ok ? r.json() : null)
       .then(data => data && setLinked(data))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const googleLogin = useGoogleLogin({
@@ -550,7 +634,7 @@ function ConnectedAccounts() {
         } else {
           toast.error(data.error || 'Холбоход алдаа гарлаа');
         }
-      } catch (error) {
+      } catch {
         toast.error('Сервертэй холбогдож чадсангүй');
       } finally {
         setBusy(null);
@@ -572,7 +656,6 @@ function ConnectedAccounts() {
     }
   };
 
-  // ── Disconnect ───────────────────────────────────────────────────────────
   const handleDisconnect = async (provider: 'google' | 'facebook') => {
     setConfirmUnlink(null);
     setBusy(provider);
@@ -584,7 +667,6 @@ function ConnectedAccounts() {
       });
       const data = await res.json();
       if (res.ok) {
-        // Update local state immediately — no reload needed
         setLinked(prev => prev ? {
           ...prev,
           [provider]: { linked: false },
@@ -602,32 +684,32 @@ function ConnectedAccounts() {
 
   const providers: { key: 'google' | 'facebook'; label: string; icon: React.ReactNode }[] = [
     { key: 'google', label: 'Google', icon: <GoogleIcon /> },
-    { key: 'facebook', label: 'Facebook', icon: <FacebookIcon /> },
   ];
 
   return (
     <div>
-      <h2 className="text-[11px] font-bold text-[#999] uppercase tracking-wider ml-1 mb-2">
+      <h2 className="text-[11px] font-bold text-[#999] uppercase tracking-widest ml-2 mb-3 flex items-center gap-1.5">
+        <span className="w-4 h-px rounded-full" style={{ backgroundColor: currentVibe.accent }} />
         Холбогдсон данс
       </h2>
-      <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden">
+      <div className="card-classik overflow-hidden">
 
         {/* Confirm unlink overlay */}
         {confirmUnlink && (
-          <div className="px-4 py-4 bg-red-50 border-b border-red-100 flex flex-col gap-3">
-            <p className="text-[13px] font-bold text-red-700">
+          <div className="px-5 py-5 bg-gradient-to-r from-[#FFF5F5] to-[#FFF0F0] border-b border-red-100 flex flex-col gap-3">
+            <p className="text-[14px] font-bold text-red-600">
               {confirmUnlink === 'google' ? 'Google' : 'Facebook'} холболтыг салгах уу?
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-2.5">
               <button
                 onClick={() => handleDisconnect(confirmUnlink)}
-                className="flex-1 py-2 bg-red-500 text-white text-[13px] font-bold rounded-[10px] active:opacity-80 transition-opacity"
+                className="flex-1 py-2.5 bg-red-500 hover:bg-red-600 text-white text-[13px] font-bold rounded-xl active:scale-[0.98] transition-all shadow-sm"
               >
                 Тийм, салгах
               </button>
               <button
                 onClick={() => setConfirmUnlink(null)}
-                className="flex-1 py-2 bg-[#F0F0F0] text-[#333] text-[13px] font-bold rounded-[10px] active:opacity-80 transition-opacity"
+                className="flex-1 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-[#333] text-[13px] font-bold rounded-xl active:scale-[0.98] transition-all shadow-sm"
               >
                 Болих
               </button>
@@ -642,19 +724,23 @@ function ConnectedAccounts() {
           return (
             <div
               key={p.key}
-              className={`flex items-center justify-between px-4 h-[72px] ${i < providers.length - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
+              className={`flex items-center justify-between px-5 h-[76px] hover:bg-gray-50/30 transition-colors ${i < providers.length - 1 ? 'border-b border-gray-100' : ''}`}
             >
               {/* Left: icon + label + status */}
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-[10px] bg-[#F5F5F5] flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-white shadow-sm ring-1 ring-gray-100 flex items-center justify-center shrink-0">
                   {p.icon}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[15px] font-bold text-[#1A1A1A]">{p.label}</p>
-                  {isLinked && email
-                    ? <p className="text-[11px] text-[#999] mt-0.5 truncate max-w-[170px]">{email}</p>
-                    : <p className="text-[11px] text-[#BBBBBB] mt-0.5">Холбоогүй байна</p>
-                  }
+                  <p className="text-[15px] font-bold text-[#1A1A1A] tracking-tight">{p.label}</p>
+                  {/* BUG FIX: Show correct status for Google-signup users */}
+                  {isLinked ? (
+                    <p className="text-[12px] text-[#888] font-medium mt-0.5 truncate max-w-[170px]">
+                      {email || 'Холбогдсон'}
+                    </p>
+                  ) : (
+                    <p className="text-[12px] text-[#BBB] font-medium mt-0.5">Холбоогүй байна</p>
+                  )}
                 </div>
               </div>
 
@@ -665,18 +751,18 @@ function ConnectedAccounts() {
                 <button
                   onClick={() => setConfirmUnlink(p.key)}
                   disabled={!!busy}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-[10px] text-[12px] font-bold text-red-600 transition-colors disabled:opacity-60 shrink-0"
+                  className="flex items-center gap-1.5 px-3.5 py-2 bg-[#FFF5F5] hover:bg-[#FFEBEB] border border-[#FFEBEB] rounded-xl text-[12px] font-bold text-[#E06B8B] transition-all active:scale-[0.98] disabled:opacity-60 shrink-0 shadow-sm"
                 >
-                  <XCircle className="w-3.5 h-3.5" />
+                  <XCircle className="w-3.5 h-3.5" strokeWidth={2.5} />
                   Салгах
                 </button>
               ) : (
                 <button
                   onClick={() => handleConnect(p.key)}
                   disabled={!!busy}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#F5F5F5] hover:bg-[#EBEBEB] rounded-[10px] text-[12px] font-bold text-[#1A1A1A] transition-colors disabled:opacity-60 shrink-0"
+                  className="flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl text-[12px] font-bold text-[#333] transition-all active:scale-[0.98] disabled:opacity-60 shrink-0 shadow-sm"
                 >
-                  <Link2 className="w-3.5 h-3.5" />
+                  <Link2 className="w-3.5 h-3.5" strokeWidth={2.5} />
                   Холбох
                 </button>
               )}
@@ -695,21 +781,21 @@ function MenuLink({
   icon: any; iconBg: string; iconColor: string; label: string; href: string; subtitle?: string;
 }) {
   return (
-    <Link href={href} className="flex items-center justify-between px-4 h-[64px] active:bg-gray-50 transition-colors">
+    <Link href={href} className="flex items-center justify-between px-5 h-[68px] hover:bg-gray-50/50 active:bg-gray-100/50 transition-colors group">
       <div className="flex items-center gap-4 flex-1 min-w-0">
-        <div className="w-[42px] h-[42px] rounded-[10px] flex items-center justify-center shrink-0" style={{ backgroundColor: iconBg }}>
-          <Icon className="w-5 h-5" style={{ color: iconColor }} strokeWidth={2} />
+        <div className="w-[44px] h-[44px] rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:shadow-sm" style={{ backgroundColor: iconBg }}>
+          <Icon className="w-5 h-5" style={{ color: iconColor }} strokeWidth={1.8} />
         </div>
-        <div className="flex flex-col min-w-0">
-          <span className="text-[15px] font-bold text-[#1A1A1A] leading-tight truncate">{label}</span>
-          {subtitle && <span className="text-[12px] text-[#999] mt-0.5">{subtitle}</span>}
+        <div className="flex flex-col min-w-0 justify-center">
+          <span className="text-[15px] font-bold text-[#1A1A1A] tracking-tight truncate">{label}</span>
+          {subtitle && <span className="text-[12px] text-[#888] font-medium mt-0.5">{subtitle}</span>}
         </div>
       </div>
-      <ChevronRight className="w-4 h-4 text-[#CCCCCC] shrink-0 ml-2" strokeWidth={2} />
+      <ChevronRight className="w-4 h-4 text-[#CCC] shrink-0 ml-2 transition-all duration-300 group-hover:text-[#888] group-hover:translate-x-1" strokeWidth={2} />
     </Link>
   );
 }
 
 function MenuDiv() {
-  return <div className="ml-[72px] h-[1px] bg-[#F5F5F5]" />;
+  return <div className="ml-[76px] h-[1px] bg-gray-100/80" />;
 }

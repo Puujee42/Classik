@@ -243,7 +243,7 @@ export default function DiscoveryProductCard({
             onClick={handleQuickAdd}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="w-8 h-8 md:w-9 md:h-9 bg-[#E06B8B] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#E06B8B]/20 hover:bg-[#E64500] transition-all"
+            className="w-8 h-8 md:w-9 md:h-9 bg-[#E06B8B] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#E06B8B]/20 hover:bg-[#C9597A] transition-all"
           >
             <ShoppingCartIcon className="w-4 h-4" strokeWidth={2.5} />
           </motion.button>

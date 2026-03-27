@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ShoppingBag, Truck, Tag, PackageCheck, MessageSquare, Mail } from 'lucide-react';
+import { useVibe } from '@/context/VibeContext';
 
 export default function NotificationsSettingsPage() {
+    const { currentVibe } = useVibe();
     const [settings, setSettings] = useState([
         { id: 'order', icon: ShoppingBag, label: 'Захиалгын мэдэгдэл', enabled: true },
         { id: 'delivery', icon: Truck, label: 'Хүргэлтийн мэдэгдэл', enabled: true },
@@ -19,9 +21,9 @@ export default function NotificationsSettingsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F5F5F5] font-sans pb-10">
+        <div className="min-h-screen font-sans pb-10" style={{ backgroundColor: currentVibe.bg }}>
             {/* Header */}
-            <div className="bg-white h-[56px] flex items-center px-4 shadow-[0_2px_8px_rgba(0,0,0,0.06)] sticky top-0 z-50">
+            <div className="glass-white h-[56px] flex items-center px-4 sticky top-0 z-50">
                 <Link href="/profile" className="p-2 -ml-2 text-[#1A1A1A]">
                     <ChevronLeft className="w-6 h-6" strokeWidth={2} />
                 </Link>
@@ -31,23 +33,26 @@ export default function NotificationsSettingsPage() {
             </div>
 
             <div className="p-4 mt-2">
-                <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden">
+                <div className="card-classik overflow-hidden">
                     {settings.map((item, index) => (
                         <div
                             key={item.id}
-                            className={`flex items-center justify-between px-4 h-[64px] ${index !== settings.length - 1 ? 'border-b border-[#F5F5F5]' : ''}`}
+                            className={`flex items-center justify-between px-4 h-[64px] ${index !== settings.length - 1 ? 'border-b border-gray-100' : ''}`}
                         >
                             <div className="flex items-center gap-4">
-                                <div className={`w-[40px] h-[40px] rounded-[10px] flex items-center justify-center ${item.enabled ? 'bg-orange-50' : 'bg-gray-50'}`}>
-                                    <item.icon className="w-5 h-5" style={{ color: item.enabled ? '#FF6B00' : '#999999' }} strokeWidth={1.5} />
+                                <div className="w-[40px] h-[40px] rounded-xl flex items-center justify-center" style={{
+                                    backgroundColor: item.enabled ? `${currentVibe.accent}12` : '#F5F5F5'
+                                }}>
+                                    <item.icon className="w-5 h-5" style={{ color: item.enabled ? currentVibe.accent : '#999999' }} strokeWidth={1.5} />
                                 </div>
                                 <span className="text-[15px] font-bold text-[#1A1A1A]">{item.label}</span>
                             </div>
                             <button
                                 onClick={() => toggleSetting(item.id)}
-                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0 ${item.enabled ? 'bg-[#FF6B00]' : 'bg-[#E5E5E5]'}`}
+                                className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0 shadow-inner"
+                                style={{ backgroundColor: item.enabled ? currentVibe.accent : '#E5E5E5' }}
                             >
-                                <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${item.enabled ? 'translate-x-5' : 'translate-x-1'}`} />
+                                <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${item.enabled ? 'translate-x-5' : 'translate-x-0.5'}`} />
                             </button>
                         </div>
                     ))}

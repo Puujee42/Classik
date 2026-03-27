@@ -546,7 +546,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                     Сагсанд нэмэх
                   </motion.button>
                   <motion.button whileTap={{ scale: 0.95 }} onClick={handleBuyNow}
-                    className="px-5 py-2.5 rounded-2xl bg-[#E06B8B] text-white font-bold text-sm shadow-lg shadow-[#E06B8B]/25 hover:bg-[#E64500] transition-colors">
+                    className="px-5 py-2.5 rounded-2xl bg-[#E06B8B] text-white font-bold text-sm shadow-lg shadow-[#E06B8B]/25 hover:bg-[#C9597A] transition-colors">
                     Шууд авах
                   </motion.button>
                 </div>
@@ -717,7 +717,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                 </h1>
 
                 {/* 2. Price Panel (Taobao Style) */}
-                <div className="bg-[#FFF8F6] p-4 rounded-sm flex flex-col gap-2 mb-4 border border-[#FFE8E3]">
+                <div className="bg-[#FFF5F8] p-4 rounded-sm flex flex-col gap-2 mb-4 border border-[#FFDDE8]">
                   {/* Row 1: Original Price */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -790,7 +790,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                                   key={val}
                                   onClick={() => setSelectedOptions(p => ({ ...p, [option.name]: val }))}
                                   className={`transition-all border ${isSelected
-                                    ? 'border-[#E06B8B] border-2 px-3 py-1 bg-white text-gray-900'
+                                    ? 'border-[#E06B8B] border-2 px-3 py-1 bg-[#FFF5F8] text-gray-900'
                                     : 'border-gray-300 bg-white text-gray-900 px-3 py-1 hover:border-[#E06B8B]'
                                     } ${hasImage ? 'rounded-sm flex items-center gap-2 h-9' : 'rounded-sm h-8'}`}
                                 >
@@ -856,14 +856,14 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
                   <button
                     onClick={handleBuyNow}
                     disabled={!canAddToCart}
-                    className="flex-1 bg-[#FFE4D0] text-[#E06B8B] py-3.5 rounded-sm font-bold text-[15px] hover:bg-[#FFD4B8] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="flex-1 bg-[#FFDDE8] text-[#E06B8B] py-3.5 rounded-sm font-bold text-[15px] hover:bg-[#FFCBD8] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     Шууд авах
                   </button>
                   <button
                     onClick={handleAddToCart}
                     disabled={!canAddToCart}
-                    className="flex-1 bg-[#FF4400] text-white py-3.5 rounded-sm font-bold text-[15px] hover:bg-[#E63D00] transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_4px_12px_rgba(255,68,0,0.3)]"
+                    className="flex-1 bg-[#E06B8B] text-white py-3.5 rounded-sm font-bold text-[15px] hover:bg-[#C9597A] transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_4px_12px_rgba(224,107,139,0.3)]"
                   >
                     <ShoppingBag className="w-4 h-4" />
                     Сагсанд нэмэх
@@ -989,7 +989,7 @@ export default function ProductDetailClient({ product, initialReviews }: { produ
           <motion.button
             whileTap={{ scale: 0.93 }}
             onClick={handleBuyNow}
-            className="flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-2xl bg-[#E06B8B] text-white font-bold text-sm shadow-lg shadow-[#E06B8B]/30 active:bg-[#E64500] transition-colors shrink-0"
+            className="flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-2xl bg-[#E06B8B] text-white font-bold text-sm shadow-lg shadow-[#E06B8B]/30 active:bg-[#C9597A] transition-colors shrink-0"
           >
             Авах
             <ArrowRight className="w-4 h-4" strokeWidth={2.5} />

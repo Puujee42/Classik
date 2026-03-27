@@ -28,7 +28,7 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
                 className="mb-12 flex flex-col items-start gap-3"
             >
                 <div className="flex items-center gap-3">
-                    <div className="h-10 w-1 bg-orange-500 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)]" />
+                    <div className="h-10 w-1 bg-[#E06B8B] rounded-full shadow-[0_0_15px_rgba(224,107,139,0.4)]" />
                     <h2 className="text-3xl font-black text-slate-900 tracking-tight">
                         Танд санал болгох бараа
                     </h2>

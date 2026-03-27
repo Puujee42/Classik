@@ -138,7 +138,7 @@ export async function GET() {
     const usersCollection = await getCollection('users');
     const user = await usersCollection.findOne(
       { _id: new ObjectId(userId) },
-      { projection: { googleId: 1, facebookId: 1, googleEmail: 1, facebookEmail: 1 } }
+      { projection: { googleId: 1, facebookId: 1, googleEmail: 1, facebookEmail: 1, email: 1 } }
     );
 
     if (!user) {
@@ -146,8 +146,12 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      google: user.googleId ? { linked: true, email: user.googleEmail } : { linked: false },
-      facebook: user.facebookId ? { linked: true, email: user.facebookEmail } : { linked: false },
+      google: user.googleId
+        ? { linked: true, email: user.googleEmail || user.email || '' }
+        : { linked: false },
+      facebook: user.facebookId
+        ? { linked: true, email: user.facebookEmail || user.email || '' }
+        : { linked: false },
     });
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
